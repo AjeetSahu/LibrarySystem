@@ -1,32 +1,68 @@
 package edu.sjsu.cmpe275.term.model;
 
-public class Patron {
-	int universityId;
-	String email;
-	String firstName;
-	String lastName;
-	int totalIssuedCount;
-	int dayIssuedCount;
-	int penalty;
-	int phoneNumber;
-	boolean status; //activation
+import java.io.Serializable;
+import java.util.List;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+
+@Entity
+public class Patron implements Serializable {
+	private static final long serialVersionUID = 5865760835716664141L;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private int patronId;
+	@Column(unique=true)
+	private int universityId;
+	private String email;
+	private String firstName;
+	private String lastName;
+	private String password;
+	private int totalIssuedCount;
+	private int dayIssuedCount;
+	private int penalty;
+	private int phoneNumber;
+	private boolean status; //activation
+	@ManyToMany(cascade = {CascadeType.ALL},fetch=FetchType.EAGER)
+	@JoinTable(name="PATRON_BOOKSTATUS", joinColumns={@JoinColumn(name="patronId", referencedColumnName = "patronId")},
+	inverseJoinColumns={@JoinColumn(name="bookStatusId", referencedColumnName= "bookStatusId")})
+	private List<BookStatus> bookStatus;
 	
 	public Patron() {
 		super();
 	}
 
-	public Patron(int universityId, String email, String firstName, String lastName, int totalIssuedCount,
-			int dayIssuedCount, int penalty, int phoneNumber, boolean status) {
+	public Patron(int patronId, int universityId, String email, String firstName, String lastName, String password,
+			int totalIssuedCount, int dayIssuedCount, int penalty, int phoneNumber, boolean status,
+			List<BookStatus> bookStatus) {
 		super();
+		this.patronId = patronId;
 		this.universityId = universityId;
 		this.email = email;
 		this.firstName = firstName;
 		this.lastName = lastName;
+		this.password = password;
 		this.totalIssuedCount = totalIssuedCount;
 		this.dayIssuedCount = dayIssuedCount;
 		this.penalty = penalty;
 		this.phoneNumber = phoneNumber;
 		this.status = status;
+		this.bookStatus = bookStatus;
+	}
+
+	public int getPatronId() {
+		return patronId;
+	}
+
+	public void setPatronId(int patronId) {
+		this.patronId = patronId;
 	}
 
 	public int getUniversityId() {
@@ -43,6 +79,14 @@ public class Patron {
 
 	public void setEmail(String email) {
 		this.email = email;
+	}
+	
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
 	}
 
 	public String getFirstName() {
@@ -99,5 +143,13 @@ public class Patron {
 
 	public void setStatus(boolean status) {
 		this.status = status;
+	}
+
+	public List<BookStatus> getBookStatus() {
+		return bookStatus;
+	}
+
+	public void setBookStatus(List<BookStatus> bookStatus) {
+		this.bookStatus = bookStatus;
 	}	
 }
