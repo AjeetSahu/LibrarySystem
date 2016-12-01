@@ -24,11 +24,12 @@ public class Book implements Serializable {
 	private Publisher publisher;
 	private String location;
 	private int numberOfCopies;
-	private boolean currentStatus;
+	private int availableCopies;
+	private boolean currentStatus; //available or unavailable
 	private String[] keywords;
 	@OneToOne(cascade = CascadeType.ALL)
 	private Picture coverImage;
-	@OneToMany(mappedBy="bookStatusId" )
+	@OneToMany(mappedBy="book")
 	private List<BookStatus> bookStatus;
 	
 	public Book() {
@@ -36,7 +37,7 @@ public class Book implements Serializable {
 	}
 
 	public Book(int bookId, String isbn, String author, String title, Publisher publisher, String location,
-			int numberOfCopies, boolean currentStatus, String[] keywords, Picture coverImage,
+			int numberOfCopies, int availableCopies, boolean currentStatus, String[] keywords, Picture coverImage,
 			List<BookStatus> bookStatus) {
 		super();
 		this.bookId = bookId;
@@ -46,6 +47,7 @@ public class Book implements Serializable {
 		this.publisher = publisher;
 		this.location = location;
 		this.numberOfCopies = numberOfCopies;
+		this.availableCopies= availableCopies;
 		this.currentStatus = currentStatus;
 		this.keywords = keywords;
 		this.coverImage = coverImage;
@@ -90,6 +92,14 @@ public class Book implements Serializable {
 
 	public void setLocation(String location) {
 		this.location = location;
+	}
+	
+	public int getAvailableCopies() {
+		return availableCopies;
+	}
+
+	public void setAvailableCopies(int availableCopies) {
+		this.availableCopies = availableCopies;
 	}
 
 	public int getNumberOfCopies() {

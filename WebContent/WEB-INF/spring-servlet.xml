@@ -79,13 +79,6 @@
       <property name="password" value="pratik_04" />
    </bean>
    
-   <!-- <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-      <property name="driverClassName" value="com.mysql.jdbc.Driver" />
-      <property name="url" value="jdbc:mysql://cmpe275lab2db.cvt5ycqyuqsy.us-east-1.rds.amazonaws.com:3306/cmpe275lab2db" />
-      <property name="username" value="lab2user" />
-      <property name="password" value="cmpe275lab2" />
-   </bean> -->
-   
    <bean id="jpaVendorAdapter" class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
         <property name="showSql" value="true"/>
         <property name="generateDdl" value="true"/>

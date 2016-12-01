@@ -3,8 +3,8 @@ package edu.sjsu.cmpe275.term.model;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
-
 import javax.persistence.CascadeType;
+import javax.persistence.Embeddable;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -14,6 +14,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 
 @Entity
+@Embeddable
 public class BookStatus implements Serializable {
 	private static final long serialVersionUID = 5865760835716664141L;
 	@Id
@@ -27,10 +28,8 @@ public class BookStatus implements Serializable {
 	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name="book_Id")
 	private Book book;
-	@ManyToMany(mappedBy="patronId")
+	@ManyToMany(mappedBy="bookStatus")
 	private List<Patron> patrons;
-	@ManyToMany(mappedBy="librarianId")
-	private List<Librarian> librarians;
 	
 	public BookStatus() {
 		super();
@@ -47,7 +46,6 @@ public class BookStatus implements Serializable {
 		this.requestStatus = requestStatus;
 		this.book = book;
 		this.patrons = patrons;
-		this.librarians = librarians;
 	}
 
 	public Date getIssueDate() {
@@ -112,13 +110,5 @@ public class BookStatus implements Serializable {
 
 	public void setPatrons(List<Patron> patrons) {
 		this.patrons = patrons;
-	}
-
-	public List<Librarian> getLibrarians() {
-		return librarians;
-	}
-
-	public void setLibrarians(List<Librarian> librarians) {
-		this.librarians = librarians;
-	} 		
+	}	
 }
