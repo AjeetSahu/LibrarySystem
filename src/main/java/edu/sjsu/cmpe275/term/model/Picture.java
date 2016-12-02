@@ -15,6 +15,7 @@ public class Picture implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int pictureId;
 	private String imageLocation;
+	@Transient
 	private MultipartFile image;
 	
 	public Picture() {
@@ -40,7 +41,6 @@ public class Picture implements Serializable {
 	public void setLocation(String location) {
 		this.imageLocation = location;
 	}
-	@Transient
 	public MultipartFile getImage() {
 		return image;
 	}
