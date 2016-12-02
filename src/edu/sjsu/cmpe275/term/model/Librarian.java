@@ -2,16 +2,11 @@ package edu.sjsu.cmpe275.term.model;
 
 import java.io.Serializable;
 import java.util.List;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 
 @Entity
 public class Librarian implements Serializable {
@@ -26,10 +21,6 @@ public class Librarian implements Serializable {
 	private String lastName;
 	private String password;
 	private boolean status; //activation
-	@ManyToMany(cascade = {CascadeType.ALL},fetch=FetchType.EAGER)
-	@JoinTable(name="LIBRARIAN_BOOKSTATUS", joinColumns={@JoinColumn(name="librarianId", referencedColumnName = "librarianId")},
-	inverseJoinColumns={@JoinColumn(name="bookStatusId", referencedColumnName= "bookStatusId")})
-	private List<BookStatus> bookStatus;
 	
 	public Librarian() {
 		super();
@@ -45,7 +36,6 @@ public class Librarian implements Serializable {
 		this.lastName = lastName;
 		this.password = password;
 		this.status = status;
-		this.bookStatus = bookStatus;
 	}
 
 	public int getLibrarianId() {
@@ -103,12 +93,4 @@ public class Librarian implements Serializable {
 	public void setStatus(boolean status) {
 		this.status = status;
 	}
-
-	public List<BookStatus> getBookStatus() {
-		return bookStatus;
-	}
-
-	public void setBookStatus(List<BookStatus> bookStatus) {
-		this.bookStatus = bookStatus;
-	}	
 }
