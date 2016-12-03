@@ -27,6 +27,7 @@
  	<jpa:repositories base-package="edu.sjsu.cmpe275.term.model"/>
     <bean id ="appController" class="edu.sjsu.cmpe275.term.controller.AppController">
     	<property name="bookService" ref="bookService"></property>
+    	
    	</bean>
    	 <bean id ="bookService" class="edu.sjsu.cmpe275.term.service.BookServiceImpl">
     	<property name="bookDAO" ref="bookDAO"></property>
@@ -44,7 +45,6 @@
         <property name="basenames">
             <list>
             	<value>classpath:messages</value>
-                <value>classpath:validation</value>
             </list>
         </property>
     </bean>
