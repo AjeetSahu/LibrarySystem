@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -19,14 +20,20 @@ public class BookStatus implements Serializable {
 	private static final long serialVersionUID = 5865760835716664141L;
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "BOOKSTATUSID")
 	private int bookStatusId;
+	@Column(name = "ISUUEDATE")
 	private Date issueDate;
+	@Column(name = "DUEDATE")
 	private Date dueDate;
+	@Column(name = "RETURNDATE")
 	private Date returnDate;
+	@Column(name = "REQUESTDATE")
 	private Date requestDate;
+	@Column(name = "REQUESTSTATUS")
 	private String requestStatus;
 	@ManyToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name="book_Id")
+	@JoinColumn(name="BOOKID")
 	private Book book;
 	@ManyToMany(mappedBy="bookStatus")
 	private List<Patron> patrons;

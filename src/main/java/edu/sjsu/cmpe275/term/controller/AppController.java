@@ -69,7 +69,7 @@ public class AppController {
 	
 	/*DELETE AN EXISTING BOOK*/
 	@RequestMapping(value="/book/{bookISBN}", method = RequestMethod.DELETE)
-	public String deleteUser(@PathVariable("bookISBN") String isbn, Model model) {
+	public String deleteBook(@PathVariable("bookISBN") String isbn, Model model) {
 		if(bookService.findBookByISBN(isbn)==null){
 	        System.out.println("A book with ISBN "+isbn+" doesnot exist");
 	        model.addAttribute("httpStatus", HttpStatus.NOT_FOUND);
@@ -80,9 +80,9 @@ public class AppController {
 		return "BookDeletedSuccessfully";
 	}
 	
-	/*UPDATE USER ON CLICKING UPDATE IN UPDATEUSER PAGE*/
+	/*UPDATE Book ON CLICKING UPDATE IN UPDATEBook PAGE*/
 	@RequestMapping(value="/book/{bookISBN}", method = RequestMethod.POST)
-	public String updateUser(@ModelAttribute("book") Book book,
+	public String updateBook(@ModelAttribute("book") Book book,
 			Model model) {
 		System.out.println("IN UPDATE METHOD");
 		Book book1 = bookService.findBookByISBN(book.getIsbn());
