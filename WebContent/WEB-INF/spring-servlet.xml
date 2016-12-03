@@ -28,8 +28,7 @@
     <bean id ="appController" class="edu.sjsu.cmpe275.term.controller.AppController">
     	<property name="bookService" ref="bookService"></property>
     	<property name="librarianService" ref="librarianService"></property>
-    	<property name="patronService" ref="patronService"></property>
-    	
+    	<property name="patronService" ref="patronService"></property> 	
    	</bean>
    	 <bean id ="bookService" class="edu.sjsu.cmpe275.term.service.BookServiceImpl">
     	<property name="bookDAO" ref="bookDAO"></property>

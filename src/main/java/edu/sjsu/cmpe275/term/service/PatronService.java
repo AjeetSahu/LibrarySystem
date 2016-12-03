@@ -4,4 +4,5 @@ import edu.sjsu.cmpe275.term.model.Patron;
 
 public interface PatronService {
 	public Patron saveNewPatron(Patron patron);
+	public Patron findPatronById(String id);
 }

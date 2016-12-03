@@ -19,4 +19,9 @@ public class PatronServiceImpl implements PatronService {
 			return patronDAO.saveNewPatron(patron);
 			
 		}
+
+		@Override
+		public Patron findPatronById(String id) {
+			return patronDAO.findPatronById(id);
+		}
 }
