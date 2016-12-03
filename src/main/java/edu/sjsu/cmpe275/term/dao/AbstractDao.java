@@ -115,4 +115,17 @@ public abstract class AbstractDao<PK extends Serializable, T> {
 			return false;
 		}
 	}
+	
+	@SuppressWarnings("unchecked")
+	public List<T> getAllIssuedBookByPatronId(PK id) {
+		//int patronId=0;
+		try{
+			//patronId= Integer.parseInt(id.toString());
+			 return this.entityManager.createNativeQuery("").getResultList();
+		}
+		catch (NumberFormatException e) {
+		    System.out.println("Exception while parsing id to string: "+e);
+		    return null;
+		}
+	}
 }
