@@ -51,7 +51,7 @@ public class AppController {
 	
 	/**
      * This method will send compose and send the message 
-     * 
+     * @author Pratik
      */
     public void sendMail(String to, int activationCode) 
     {
@@ -63,8 +63,8 @@ public class AppController {
         activationMailSender.send(message);
     }
 	
-	/*GET GO TO WELCOME PAGE*/
 	/**
+	 * GET GO TO WELCOME PAGE
 	 * @author Pratik
 	 *
 	 */
@@ -75,8 +75,8 @@ public class AppController {
 		return welcome;
 	}
 	
-	/*CREATE NEW BOOK ON CLICKING ADD BOOK IN ADDNEWBOOK PAGE*/
 	/**
+	 * CREATE NEW BOOK ON CLICKING ADD BOOK IN ADDNEWBOOK PAGE
 	 * @author Pratik
 	 *
 	 */
@@ -96,8 +96,8 @@ public class AppController {
 		}
 	}
 	
-	/*GET BOOK BY ISBN*/
 	/**
+	 * GET BOOK BY ISBN
 	 * @author Pratik
 	 *
 	 */
@@ -117,8 +117,8 @@ public class AppController {
 		return bookFound;	
 	}
 	
-	/*DELETE AN EXISTING BOOK*/
 	/**
+	 * DELETE AN EXISTING BOOK
 	 * @author Pratik
 	 *
 	 */
@@ -134,8 +134,8 @@ public class AppController {
 		return "BookDeletedSuccessfully";
 	}
 	
-	/*UPDATE Book ON CLICKING UPDATE IN UPDATEBook PAGE*/
 	/**
+	 * UPDATE Book ON CLICKING UPDATE IN UPDATEBOOK PAGE
 	 * @author Pratik
 	 *
 	 */
@@ -153,8 +153,9 @@ public class AppController {
 		model.addAttribute("httpStatus", HttpStatus.OK);
 		return "BookUpdatedSuccessfully";
 	}
-	/*CREATE NEW PATRON ON CLICKING CREATE PATRON IN SIGNUP PAGE*/
+	
 	/**
+	 * CREATE NEW PATRON ON CLICKING CREATE PATRON IN SIGNUP PAGE
 	 * @author Pratik
 	 *
 	 */
@@ -174,8 +175,8 @@ public class AppController {
 		}
 	}
 	
-	/*GET PATRON BY ID*/
 	/**
+	 * GET PATRON BY ID
 	 * @author Pratik
 	 *
 	 */
@@ -195,8 +196,8 @@ public class AppController {
 		return patronFound;	
 	}
 	
-	/*CREATE NEW LIBRARIAN ON CLICKING CREATE LIBRARIAN IN SIGNUP PAGE*/
 	/**
+	 * CREATE NEW LIBRARIAN ON CLICKING CREATE LIBRARIAN IN SIGNUP PAGE
 	 * @author Pratik
 	 *
 	 */
@@ -215,9 +216,9 @@ public class AppController {
 			return "Conflict";
 		}
 	}
-	
-	/*GET LIBRARIAN BY ID*/
+
 	/**
+	 * GET LIBRARIAN BY ID
 	 * @author Pratik
 	 *
 	 */
