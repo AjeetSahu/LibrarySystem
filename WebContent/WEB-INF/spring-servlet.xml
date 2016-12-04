@@ -28,13 +28,21 @@
     <bean id ="appController" class="edu.sjsu.cmpe275.term.controller.AppController">
     	<property name="bookService" ref="bookService"></property>
     	<property name="librarianService" ref="librarianService"></property>
+    	<property name="patronService" ref="patronService"></property>
+    	
    	</bean>
    	 <bean id ="bookService" class="edu.sjsu.cmpe275.term.service.BookServiceImpl">
     	<property name="bookDAO" ref="bookDAO"></property>
+    	
     </bean>
     <bean id="librarianService" class="edu.sjsu.cmpe275.term.service.LibrarianServiceImpl">
     	<property name="librarianDAO" ref="librarianDAO"></property>
     </bean>
+       <bean id="patronService" class="edu.sjsu.cmpe275.term.service.PatronServiceImpl">
+    	<property name="patronDAO" ref="patronDAO"></property>
+    </bean>
+    
+    <bean id ="patronDAO" class="edu.sjsu.cmpe275.term.dao.PatronDAOImpl"/>
     <bean id ="bookDAO" class="edu.sjsu.cmpe275.term.dao.BookDAOImpl"/>
     <bean id="librarianDAO" class="edu.sjsu.cmpe275.term.dao.LibrarianDAOImpl"/>
              

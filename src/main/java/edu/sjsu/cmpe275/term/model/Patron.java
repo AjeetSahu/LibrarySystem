@@ -14,7 +14,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 
 @Entity
-public class Patron implements Serializable {
+public class Patron  implements Serializable {
 	private static final long serialVersionUID = 5865760835716664141L;
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,6 +40,7 @@ public class Patron implements Serializable {
 	private int phoneNumber;
 	@Column(name = "STATUS",  nullable= false, columnDefinition= "boolean default false")
 	private boolean status; //activation
+	
 	@ManyToMany(cascade = {CascadeType.ALL},fetch=FetchType.EAGER)
 	@JoinTable(name="PATRON_BOOKSTATUS", joinColumns={@JoinColumn(name="patronId", referencedColumnName = "patronId")},
 	inverseJoinColumns={@JoinColumn(name="bookStatusId", referencedColumnName= "bookStatusId")})
