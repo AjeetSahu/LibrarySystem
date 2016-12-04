@@ -1,6 +1,3 @@
-/**
- * 
- */
 package edu.sjsu.cmpe275.term.dao;
 
 import org.springframework.stereotype.Repository;

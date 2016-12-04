@@ -3,6 +3,8 @@ package edu.sjsu.cmpe275.term.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.mail.MailSender;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -32,6 +34,9 @@ public class AppController {
 	@Autowired
 	private PatronService patronService;
 	
+	@Autowired
+	private MailSender activationMailSender;
+	
 	public void setBookService(BookService bookService) {
 		this.bookService = bookService;
 	}
@@ -43,6 +48,20 @@ public class AppController {
 	public void setPatronService(PatronService patronService) {
 		this.patronService = patronService;
 	}
+	
+	/**
+     * This method will send compose and send the message 
+     * 
+     */
+    public void sendMail(String to, int activationCode) 
+    {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(to);
+        message.setSubject("Library Management System Activation Code");
+        message.setText("Thank you for creating an account at Library Management System. "
+        		+ "Please activate your account using your activation code = "+activationCode);
+        activationMailSender.send(message);
+    }
 	
 	/*GET GO TO WELCOME PAGE*/
 	/**
