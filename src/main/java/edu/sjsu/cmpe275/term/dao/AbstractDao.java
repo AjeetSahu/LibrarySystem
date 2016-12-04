@@ -1,5 +1,8 @@
 package edu.sjsu.cmpe275.term.dao;
-
+/**
+ * @author Pratik
+ *
+ */
 import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
 import java.util.List;

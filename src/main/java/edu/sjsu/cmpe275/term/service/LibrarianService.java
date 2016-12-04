@@ -1,6 +1,3 @@
-/**
- * 
- */
 package edu.sjsu.cmpe275.term.service;
 
 import edu.sjsu.cmpe275.term.model.Librarian;
@@ -12,5 +9,10 @@ import edu.sjsu.cmpe275.term.model.Librarian;
 public interface LibrarianService {
 	
 	public Librarian saveNewLibrarian(Librarian librarian);
+	/**
+	 * @author Pratik
+	 *
+	 */
+	public Librarian findLibrarianById(String id);
 
 }
