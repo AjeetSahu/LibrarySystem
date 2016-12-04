@@ -24,5 +24,13 @@ public class LibrarianDAOImpl extends AbstractDao<String, Librarian> implements 
 		return save(librarian);
 		
 	}
+	/**
+	 * @author Pratik
+	 *
+	 */
+	@Override
+	public Librarian findLibrarianById(String id) {
+		return findById(id);
+	}
 
 }

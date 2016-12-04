@@ -1,5 +1,8 @@
 package edu.sjsu.cmpe275.term.model;
-
+/**
+ * @author Pratik
+ *
+ */
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Column;

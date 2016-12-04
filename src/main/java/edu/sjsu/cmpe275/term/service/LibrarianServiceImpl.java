@@ -19,7 +19,7 @@ public class LibrarianServiceImpl implements LibrarianService{
 	@Autowired
 	private LibrarianDAO librarianDAO;
 	
-	public void setLibrarian(LibrarianDAO librarianDAO){
+	public void setLibrarianDAO(LibrarianDAO librarianDAO){
 		this.librarianDAO = librarianDAO;
 	}
 
@@ -30,7 +30,13 @@ public class LibrarianServiceImpl implements LibrarianService{
 	public Librarian saveNewLibrarian(Librarian librarian) {
 		return librarianDAO.saveNewLibrarian(librarian);
 	}
-	
-	
+	/**
+	 * @author Pratik
+	 *
+	 */
+	@Override
+	public Librarian findLibrarianById(String id) {
+		return librarianDAO.findLibrarianById(id);
+	}
 
 }
