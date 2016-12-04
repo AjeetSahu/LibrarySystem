@@ -30,13 +30,17 @@ public class Librarian implements Serializable {
 	private String password;
 	@Column(name = "STATUS", nullable= false, columnDefinition= "boolean default false")
 	private boolean status; //activation
+	@Column(name = "ACTIVATIONCODE", nullable= false, length=5)
+	private int activationCode;
 	
+
+
 	public Librarian() {
 		super();
 	}
 
 	public Librarian(int librarianId, int universityId, String email, String firstName, String lastName,
-			String password, boolean status, List<BookStatus> bookStatus) {
+			String password, boolean status, int activationCode) {
 		super();
 		this.librarianId = librarianId;
 		this.universityId = universityId;
@@ -45,6 +49,7 @@ public class Librarian implements Serializable {
 		this.lastName = lastName;
 		this.password = password;
 		this.status = status;
+		this.activationCode = activationCode;
 	}
 
 	public int getLibrarianId() {
@@ -101,5 +106,19 @@ public class Librarian implements Serializable {
 
 	public void setStatus(boolean status) {
 		this.status = status;
+	}
+	
+	/**
+	 * @return the activationCode
+	 */
+	public int getActivationCode() {
+		return activationCode;
+	}
+
+	/**
+	 * @param activationCode the activationCode to set
+	 */
+	public void setActivationCode(int activationCode) {
+		this.activationCode = activationCode;
 	}
 }
