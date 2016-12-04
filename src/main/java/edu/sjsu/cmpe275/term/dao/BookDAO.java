@@ -7,7 +7,7 @@ public interface BookDAO {
 
 	public Book findBookByISBN(String isbn);
 
-	public void saveNewBook(Book book);
+	public Book saveNewBook(Book book);
 	
 	public void updateBook(Book book);
 	

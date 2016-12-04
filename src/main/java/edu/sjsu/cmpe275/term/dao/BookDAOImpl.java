@@ -14,8 +14,8 @@ public class BookDAOImpl extends AbstractDao<String, Book> implements BookDAO{
 	}
 
 	@Override
-	public void saveNewBook(Book book) {
-		save(book);
+	public Book saveNewBook(Book book) {
+		return save(book);
 	}
 
 	@Override
