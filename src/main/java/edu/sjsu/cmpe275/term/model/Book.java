@@ -19,21 +19,28 @@ public class Book implements Serializable {
 	private static final long serialVersionUID = 5865760835716664141L;
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "BOOKID")
 	private int bookId;
+	@Column(name = "ISBN")
 	private String isbn;
+	@Column(name = "AUTHOR")
 	private String author;
+	@Column(name = "TITLE")
 	private String title;
 	@Embedded
 	private Publisher publisher;
+	@Column(name = "LOCATION")
 	private String location;
+	@Column(name = "NUMBEROFCOPIES")
 	private int numberOfCopies;
-	@Column(name="availableCopies", nullable= false, columnDefinition= "int default 100")
+	@Column(name="AVAILABLECOPIES", nullable= false, columnDefinition= "int default 100")
 	private int availableCopies;
-	@Column(name="currentStatus", nullable= false, columnDefinition= "boolean default true")
+	@Column(name="CURRENTSTATUS", nullable= false, columnDefinition= "boolean default false")
 	private boolean currentStatus; //available or unavailable
+	@Column(name = "KEYWORDS")
 	private String[] keywords;
 	@OneToOne(cascade = CascadeType.ALL, fetch=FetchType.LAZY)
-	@JoinColumn(name="pictureId")
+	@JoinColumn(name="PICTUREID")
 	private Picture coverImage;
 	@OneToMany(mappedBy="book")
 	private List<BookStatus> bookStatus;

@@ -18,17 +18,27 @@ public class Patron implements Serializable {
 	private static final long serialVersionUID = 5865760835716664141L;
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "PATRONID")
 	private int patronId;
-	@Column(unique=true)
+	@Column(name= "UNIVERSITYID", unique=true)
 	private int universityId;
+	@Column(name = "EMAIL")
 	private String email;
+	@Column(name = "FIRSTNAME")
 	private String firstName;
+	@Column(name = "LASTNAME")
 	private String lastName;
+	@Column(name = "PASSWORD")
 	private String password;
+	@Column(name = "TOTALISSUEDCOUNT")
 	private int totalIssuedCount;
+	@Column(name = "DAYISSUEDCOUNT")
 	private int dayIssuedCount;
+	@Column(name = "PENALTY")
 	private int penalty;
+	@Column(name = "PHONENUMBER")
 	private int phoneNumber;
+	@Column(name = "STATUS",  nullable= false, columnDefinition= "boolean default false")
 	private boolean status; //activation
 	@ManyToMany(cascade = {CascadeType.ALL},fetch=FetchType.EAGER)
 	@JoinTable(name="PATRON_BOOKSTATUS", joinColumns={@JoinColumn(name="patronId", referencedColumnName = "patronId")},

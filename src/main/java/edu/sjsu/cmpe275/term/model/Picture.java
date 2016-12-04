@@ -1,6 +1,8 @@
 package edu.sjsu.cmpe275.term.model;
 
 import java.io.Serializable;
+
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -13,7 +15,9 @@ public class Picture implements Serializable {
 	private static final long serialVersionUID = 5865760835716664141L;
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "PICTUREID")
 	private int pictureId;
+	@Column(name = "IMAGELOCATION")
 	private String imageLocation;
 	@Transient
 	private MultipartFile image;

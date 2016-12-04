@@ -13,13 +13,19 @@ public class Librarian implements Serializable {
 	private static final long serialVersionUID = 5865760835716664141L;
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "LIBRARIANID")
 	private int librarianId;
-	@Column(unique=true)
+	@Column(name = "UNIVERSITYID", unique = true)
 	private int universityId;
+	@Column(name = "EMAIL")
 	private String email;
+	@Column(name = "FIRSTNAME")
 	private String firstName;
+	@Column(name = "LASTNAME")
 	private String lastName;
+	@Column(name = "PASSWORD")
 	private String password;
+	@Column(name = "STATUS", nullable= false, columnDefinition= "boolean default false")
 	private boolean status; //activation
 	
 	public Librarian() {
