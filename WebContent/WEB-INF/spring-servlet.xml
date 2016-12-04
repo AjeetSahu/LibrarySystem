@@ -27,12 +27,16 @@
  	<jpa:repositories base-package="edu.sjsu.cmpe275.term.model"/>
     <bean id ="appController" class="edu.sjsu.cmpe275.term.controller.AppController">
     	<property name="bookService" ref="bookService"></property>
-    	
+    	<property name="librarianService" ref="librarianService"></property>
    	</bean>
    	 <bean id ="bookService" class="edu.sjsu.cmpe275.term.service.BookServiceImpl">
     	<property name="bookDAO" ref="bookDAO"></property>
     </bean>
+    <bean id="librarianService" class="edu.sjsu.cmpe275.term.service.LibrarianServiceImpl">
+    	<property name="librarianDAO" ref="librarianDAO"></property>
+    </bean>
     <bean id ="bookDAO" class="edu.sjsu.cmpe275.term.dao.BookDAOImpl"/>
+    <bean id="librarianDAO" class="edu.sjsu.cmpe275.term.dao.LibrarianDAOImpl"/>
              
     <!-- This helps in mapping the logical view names to directly view files under a certain pre-configured directory -->
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
