@@ -3,6 +3,7 @@ package edu.sjsu.cmpe275.term.model;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -26,7 +27,9 @@ public class Book implements Serializable {
 	private Publisher publisher;
 	private String location;
 	private int numberOfCopies;
+	@Column(name="availableCopies", nullable= false, columnDefinition= "int default 100")
 	private int availableCopies;
+	@Column(name="currentStatus", nullable= false, columnDefinition= "boolean default true")
 	private boolean currentStatus; //available or unavailable
 	private String[] keywords;
 	@OneToOne(cascade = CascadeType.ALL, fetch=FetchType.LAZY)
