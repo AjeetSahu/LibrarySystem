@@ -43,6 +43,8 @@ public class Patron  implements Serializable {
 	private int phoneNumber;
 	@Column(name = "STATUS",  nullable= false, columnDefinition= "boolean default false")
 	private boolean status; //activation
+	@Column(name = "ACTIVATIONCODE", nullable= false, length=5)
+	private int activationCode;
 	
 	@ManyToMany(cascade = {CascadeType.ALL},fetch=FetchType.EAGER)
 	@JoinTable(name="PATRON_BOOKSTATUS", joinColumns={@JoinColumn(name="patronId", referencedColumnName = "patronId")},
@@ -55,7 +57,7 @@ public class Patron  implements Serializable {
 
 	public Patron(int patronId, int universityId, String email, String firstName, String lastName, String password,
 			int totalIssuedCount, int dayIssuedCount, int penalty, int phoneNumber, boolean status,
-			List<BookStatus> bookStatus) {
+			List<BookStatus> bookStatus, int activationCode) {
 		super();
 		this.patronId = patronId;
 		this.universityId = universityId;
@@ -69,6 +71,7 @@ public class Patron  implements Serializable {
 		this.phoneNumber = phoneNumber;
 		this.status = status;
 		this.bookStatus = bookStatus;
+		this.activationCode = activationCode;
 	}
 
 	public int getPatronId() {
@@ -165,5 +168,21 @@ public class Patron  implements Serializable {
 
 	public void setBookStatus(List<BookStatus> bookStatus) {
 		this.bookStatus = bookStatus;
+	}
+
+	/**
+	 * @return the activationCode
+	 */
+	public int getActivationCode() {
+		return activationCode;
+	}
+
+	/**
+	 * @param activationCode the activationCode to set
+	 */
+	public void setActivationCode(int activationCode) {
+		this.activationCode = activationCode;
 	}	
+	
+	
 }

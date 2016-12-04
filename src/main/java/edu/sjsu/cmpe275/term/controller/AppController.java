@@ -52,6 +52,7 @@ public class AppController {
 	@RequestMapping(value = "/welcome", method = RequestMethod.GET)
 	public ModelAndView goToWelcomePage(ModelMap model) {
 		ModelAndView welcome = new ModelAndView("welcome");
+		System.out.println("HI There");
 		return welcome;
 	}
 	
