@@ -4,8 +4,8 @@
 		<class>edu.sjsu.cmpe275.term.model.Book</class>
 		<class>edu.sjsu.cmpe275.term.model.BookStatus</class>
 		<class>edu.sjsu.cmpe275.term.model.Librarian</class>
-		<class>edu.sjsu.cmpe275.term.model.Patron</class>
 		<class>edu.sjsu.cmpe275.term.model.Picture</class>
+		<class>edu.sjsu.cmpe275.term.model.Patron</class>
 		<class>edu.sjsu.cmpe275.term.model.Publisher</class>
 	</persistence-unit>
 </persistence>
