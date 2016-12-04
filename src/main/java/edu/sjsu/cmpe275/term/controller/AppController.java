@@ -204,7 +204,10 @@ public class AppController {
 	@RequestMapping(value="/newLibrarian", method = RequestMethod.POST)
 	public String createNewLibrarian(@ModelAttribute("librarian") Librarian librarian,
 			UriComponentsBuilder ucBuilder, Model model) {
+		int randomCode = (int)(Math.random() * 100000);
+		librarian.setActivationCode(randomCode);
 		librarian = librarianService.saveNewLibrarian(librarian);
+		
 		HttpHeaders headers = new HttpHeaders();
 		if(librarian != null){
 		    headers.setLocation(ucBuilder.path("/librarian/{id}").buildAndExpand(librarian.getLibrarianId()).toUri());
@@ -237,4 +240,7 @@ public class AppController {
 		model.addAttribute("httpStatus", HttpStatus.OK);
 		return librarianFound;	
 	}
+	
+
+	
 }
