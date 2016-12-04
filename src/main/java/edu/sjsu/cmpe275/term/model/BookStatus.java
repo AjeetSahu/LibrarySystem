@@ -35,6 +35,8 @@ public class BookStatus implements Serializable {
 	private Date requestDate;
 	@Column(name = "REQUESTSTATUS")
 	private String requestStatus;
+	@Column(name = "CURRENTDATE")
+	private Date currentDate;
 	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name="BOOKID")
 	private Book book;
@@ -45,14 +47,15 @@ public class BookStatus implements Serializable {
 		super();
 	}
 
-	public BookStatus(int bookStatusId, Date issueDate, Date toReturnDate, Date returnDate, Date requestDate,
-			String requestStatus, Book book, List<Patron> patrons, List<Librarian> librarians) {
+	public BookStatus(int bookStatusId, Date issueDate, Date dueDate, Date returnDate, Date requestDate,
+			String requestStatus, Date currentDate, Book book, List<Patron> patrons, List<Librarian> librarians) {
 		super();
 		this.bookStatusId = bookStatusId;
 		this.issueDate = issueDate;
-		this.dueDate = toReturnDate;
+		this.dueDate = dueDate;
 		this.returnDate = returnDate;
 		this.requestDate = requestDate;
+		this.currentDate = currentDate;
 		this.requestStatus = requestStatus;
 		this.book = book;
 		this.patrons = patrons;
@@ -66,16 +69,25 @@ public class BookStatus implements Serializable {
 		this.issueDate = issueDate;
 	}
 
-	public Date getToReturnDate() {
+	public Date getReturnDate() {
+		return returnDate;
+	}
+	
+
+	public Date getDueDate() {
 		return dueDate;
 	}
 
-	public void setToReturnDate(Date toReturnDate) {
-		this.dueDate = toReturnDate;
+	public void setDueDate(Date dueDate) {
+		this.dueDate = dueDate;
 	}
 
-	public Date getReturnDate() {
-		return returnDate;
+	public Date getCurrentDate() {
+		return currentDate;
+	}
+
+	public void setCurrentDate(Date currentDate) {
+		this.currentDate = currentDate;
 	}
 
 	public void setReturnDate(Date returnDate) {
@@ -121,4 +133,6 @@ public class BookStatus implements Serializable {
 	public void setPatrons(List<Patron> patrons) {
 		this.patrons = patrons;
 	}	
+	
+	
 }
