@@ -28,6 +28,12 @@ public interface LibrarianService {
 	public Librarian findLibrarianByUniversityId(String id);
 	/**
 	 * @author Pratik
+	 * @param id
+	 * @return
+	 */
+	public Librarian findLibrarianByEmailId(String id);
+	/**
+	 * @author Pratik
 	 * @param librarian
 	 */
 	public void updateLibrarian(Librarian librarian);

@@ -37,6 +37,10 @@ public class LibrarianDAOImpl extends AbstractDao<String, Librarian> implements 
 	public void updateLibrarian(Librarian librarian) {
 		update(librarian);
 	}
+	@Override
+	public Librarian findLibrarianByEmailId(String id) {
+		return findById(id);
+	}
 	
 
 }

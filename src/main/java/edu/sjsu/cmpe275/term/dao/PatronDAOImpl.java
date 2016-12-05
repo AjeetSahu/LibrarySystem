@@ -26,5 +26,10 @@ public class PatronDAOImpl extends AbstractDao<String, Patron> implements Patron
 	public void updatePatron(Patron patron) {
 		update(patron);		
 	}
+	
+	@Override
+	public Patron findPatronByEmailId(String id) {
+		return findById(id);
+	}
 
 }

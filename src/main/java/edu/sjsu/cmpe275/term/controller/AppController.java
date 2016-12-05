@@ -1,6 +1,8 @@
 package edu.sjsu.cmpe275.term.controller;
 
 import java.util.Date;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -13,6 +15,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.UriComponentsBuilder;
 import edu.sjsu.cmpe275.term.model.Book;
@@ -91,12 +95,47 @@ public class AppController {
 	 * @author Pratik
 	 *
 	 */
-
 	@RequestMapping(value = "/welcome", method = RequestMethod.GET)
 	public ModelAndView goToWelcomePage(ModelMap model) {
 		ModelAndView welcome = new ModelAndView("welcome");
 		return welcome;
 	}
+	
+	/**
+	 * POST AUTHENTICATE USER LOGIN PAGE
+	 * @author Pratik
+	 *
+	 */
+    @RequestMapping(method = RequestMethod.POST)
+    public String authenticateUser(@RequestParam Map<String, String> reqParams, Model model){
+		if(reqParams.get("email").contains("@sjsu.edu")){
+			Librarian librarian = librarianService.findLibrarianByEmailId(reqParams.get("email"));
+			if(librarian != null){
+				if(librarian.isStatus()==true){
+					librarian.setStatus(false);
+					return "homePage";
+				}else{
+					model.addAttribute("message", "Authentication failed, incorrect email or password!");
+					return "login";
+				}
+			}else{
+				return "error";
+			}
+		}else{
+			Patron patron = patronService.findPatronByEmailId(reqParams.get("email"));
+			if(patron != null){
+				if(patron.isStatus()==true){
+					patron.setStatus(false);
+					return "homePage";
+				}else{
+					model.addAttribute("message", "Authentication failed, incorrect email or password!");
+					return "login";
+				}
+			}else{
+				return "error";
+			}		
+		}
+    }
 	
 	/**
 	 * Goto ADDNEWBOOK PAGE and search book by ISBN
