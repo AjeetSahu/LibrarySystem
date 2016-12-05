@@ -39,35 +39,90 @@
                         <a href="#">Home</a>
                     </li>
                     <li>
-                        <a href="#">SignIn</a>
+                        <a href="#">Profile</a>
+                    </li>
+                    <li>
+                        <a href="#">Signout</a>
                     </li>
                 </ul>
             </div>
             <!-- /.navbar-collapse -->
     </nav>
     </div>
+        <div class="row">
+        <div class="col-md-3">
+		
+
+     <div id="wrapper">
+
+        <!-- Sidebar -->
+        <div id="sidebar-wrapper">
+            <ul class="sidebar-nav">
+                <li class="sidebar-brand">
+                    <a href="#">
+                        Start Bootstrap
+                    </a>
+                </li>
+                <li>
+                    <a href="#">Dashboard</a>
+                </li>
+                <li>
+                    <a href="#">Search Book</a>
+                </li>
+                <li>
+                    <a href="#">Add Book</a>
+                </li>
+                <li>
+                    <a href="#">Delete Book</a>
+                </li>
+                <li>
+                    <a href="#">Profile</a>
+                </li>
+                <li>
+                    <a href="#">Sign Out</a>
+                </li>
+            </ul>
+        </div>
+        <!-- /#sidebar-wrapper -->
+
     </div>
-    <div class="container" style="padding-top:120px">
+    <!-- /#wrapper -->
+</div>
+		  
+                     
+       </div>
        <div class="row"> 
        		<div class="col-md-3"></div>
-	       		<div class="col-md-7">
-	           <form action="" method="POST"> 
-			  <label for="ex1">UNIVERSITYID: </label>
+	       		<div class="col-md-6" style="padding-top:110px;">
+	             <form action="" method="POST" commandName="fileUploadForm"
+		enctype="multipart/form-data"> 
+			  <label for="ex1">ISBN: </label>
 			  <input class="form-control" type="text" name="id" >
 				<br>
-			  <label for="ex1">Firstname: </label>
-			  <input class="form-control" type="text" name="firstname" >
+			  <label for="ex1">Author: </label>
+			  <input class="form-control" type="text" name="author" >
 				<br>
-			  <label for="ex1">Lastname: </label>
-			  <input class="form-control" type="text" name="lastname" >
+			  <label for="ex1">Title: </label>
+			  <input class="form-control" type="text" name="title" >
 			  <br>
-			  <label for="ex1">Email: </label>
-			  <input class="form-control" type="text" name="email" >
-			<br>
-			  <label for="ex1">PASSWORD: </label>
-			  <input class="form-control" type="text" name="password" >
+			  <label for="ex1">Publisher: </label>
+			  <input class="form-control" type="text" name="publisher" >
+				<br>
+			  <label for="ex1">Year Of Publication: </label>
+			  <input class="form-control" type="text" name="yearOfPublication" >
+			  <br>
+			  <label for="ex1">Location: </label>
+			  <input class="form-control" type="text" name="location" >
+			  <br>
+			  <label for="ex1">Number Of Copies: </label>
+			  <input class="form-control" type="text" name="numberOfCopies" >
+			  <br>
+			  <label for="ex1">Keywords </label>
+			  <input class="form-control" type="text" name="keywords" >
+			  <br>
+			  <label for="ex1">Cover Image </label>
+			  <input class="form-control" type="file" name="file" value="Upload" >
 		<br>
-		
 		
 		<div style="padding-left:300px;">
 			<input class="btn btn-primary btn-lg" type="submit" name="submit" value="  Register  ">
@@ -78,6 +133,6 @@
          </div>
                 		
 	
-                </div> 
+                </div>
 	</body>
 </html>
