@@ -91,8 +91,7 @@ public class AppController {
 	 * @author Pratik
 	 *
 	 */
-
-	@RequestMapping(value = "/welcome", method = RequestMethod.GET)
+	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public ModelAndView goToWelcomePage(ModelMap model) {
 		ModelAndView welcome = new ModelAndView("welcome");
 		return welcome;
@@ -263,6 +262,28 @@ public class AppController {
 	public ModelAndView patronHome(ModelMap model) {
 		ModelAndView patron = new ModelAndView("PatronHome");
 		return patron;
+	}
+	
+	/**
+	 * Goto Patron profile page to update Patron info 
+	 * @author Amitesh
+	 *
+	 */
+	@RequestMapping(value = "/patronProfile", method = RequestMethod.GET)
+	public ModelAndView patronProfile(ModelMap model) {
+		ModelAndView patronProfile = new ModelAndView("PatronProfile");
+		return patronProfile;
+	}
+	
+	/**
+	 * Goto Patron profile page to update Patron info 
+	 * @author Amitesh
+	 *
+	 */
+	@RequestMapping(value = "/error", method = RequestMethod.GET)
+	public ModelAndView error(ModelMap model) {
+		ModelAndView error = new ModelAndView("Error");
+		return error;
 	}
 	
 	/**
