@@ -75,6 +75,28 @@ public class AppController {
 	}
 	
 	/**
+	 * Goto ADDNEWBOOK PAGE and search book by ISBN
+	 * @author Amitesh
+	 *
+	 */
+	@RequestMapping(value = "/newBook", method = RequestMethod.GET)
+	public ModelAndView goToAddNewBookPage(ModelMap model) {
+		ModelAndView welcome = new ModelAndView("AddNewBook");
+		return welcome;
+	}
+	
+	/**
+	 * Goto ADDNEWBOOK PAGE and add book manually
+	 * @author Amitesh
+	 *
+	 */
+	@RequestMapping(value = "/newBookManually", method = RequestMethod.GET)
+	public ModelAndView goToAddNewBookManualPage(ModelMap model) {
+		ModelAndView welcome = new ModelAndView("AddNewBookManually");
+		return welcome;
+	}
+	
+	/**
 	 * CREATE NEW BOOK ON CLICKING ADD BOOK IN ADDNEWBOOK PAGE
 	 * @author Pratik
 	 *
