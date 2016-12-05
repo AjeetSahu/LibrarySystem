@@ -265,6 +265,18 @@ public class AppController {
 	}
 	
 	/**
+	 * Goto Librarian Home PAGE to access features 
+	 * @author Amitesh
+	 *
+	 */
+	@RequestMapping(value = "/libraryHome", method = RequestMethod.GET)
+	public ModelAndView libraryHome(ModelMap model) {
+		ModelAndView librarian = new ModelAndView("LibraryHome");
+		return librarian;
+	}
+	
+	
+	/**
 	 * Goto Patron profile page to update Patron info 
 	 * @author Amitesh
 	 *
@@ -277,6 +289,17 @@ public class AppController {
 	
 	/**
 	 * Goto Patron profile page to update Patron info 
+	 * @author Amitesh
+	 *
+	 */
+	@RequestMapping(value = "/libraryProfile", method = RequestMethod.GET)
+	public ModelAndView libraryProfile(ModelMap model) {
+		ModelAndView libraryProfile = new ModelAndView("LibraryProfile");
+		return libraryProfile;
+	}
+	
+	/**
+	 * Goto Error page, if resource not found 
 	 * @author Amitesh
 	 *
 	 */

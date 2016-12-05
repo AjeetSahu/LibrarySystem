@@ -50,7 +50,7 @@
           <p><b>Or you could just press this button below:</b></p>
           <a href="<%=request.getContextPath() %>/" class="btn btn-large btn-info"><i class="icon-home icon-white"></i> Take Me Home</a>
         </div>
-        <br />
+        <br/>
         
     </div>
   </div>

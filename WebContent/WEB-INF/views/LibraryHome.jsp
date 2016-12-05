@@ -36,13 +36,13 @@
             <div class="collapse navbar-collapse pull-right" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
                     <li>
-                        <a href="<%=request.getContextPath() %>/patronHome">Home</a>
+                        <a href="<%=request.getContextPath() %>/libraryHome">Home</a>
                     </li>
                     <li>
-                        <a href="#">Profile</a>
+                        <a href="<%=request.getContextPath() %>/libraryProfile">Profile</a>
                     </li>
                     <li>
-                        <a href="<%=request.getContextPath() %>/">Signout</a>
+                        <a href="<%=request.getContextPath() %>/">SignOut</a>
                     </li>
                 </ul>
             </div>
@@ -52,6 +52,7 @@
         <div class="row">
         <div class="col-md-3">
 		
+
     <div id="wrapper">
 
         <!-- Sidebar -->
@@ -63,22 +64,19 @@
                     </a>
                 </li>
                 <li>
-                    <a href="<%=request.getContextPath() %>/patronHome">Home</a>
+                    <a href="<%=request.getContextPath() %>/libraryHome">Dashboard</a>
                 </li>
                 <li>
-                    <a href="#">Search Book</a>
+                    <a href="<%=request.getContextPath() %>/newBook">Search Book</a>
                 </li>
                 <li>
-                    <a href="#">Already Issued Books</a>
+                    <a href="<%=request.getContextPath() %>/addNewBookManually">Add Book</a>
                 </li>
                 <li>
-                    <a href="#">Issue Book</a>
+                    <a href="#">Delete Book</a>
                 </li>
                 <li>
-                    <a href="#">Return Book</a>
-                </li>
-                <li>
-                    <a href="<%=request.getContextPath() %>/patronProfile">Profile</a>
+                    <a href="<%=request.getContextPath() %>/libraryProfile">Profile</a>
                 </li>
                 <li>
                     <a href="<%=request.getContextPath() %>/">Signout</a>
@@ -86,39 +84,14 @@
             </ul>
         </div>
         <!-- /#sidebar-wrapper -->
-
+	
     </div>
     <!-- /#wrapper -->
-</div>
-		  
-                     
-       	</div>
-       	<div class="row"> 
-       		<div class="col-md-3"></div>
-	       		<div class="col-md-7" style="padding-top:110px;">
-	            	<form>
-		            	<label for="ex1">UNIVERSITYID: </label>
-						<input class="form-control" type="text" name="id" value="123" disabled>
-						<br>
-						<label for="ex1">FIRSTNAME: </label>
-					    <input class="form-control" type="text" name="firstname" value="abc">
-						<br>
-					    <label for="ex1">LASTNAME: </label>
-					    <input class="form-control" type="text" name="lastname" value="abc">
-					    <br>
-					    <label for="ex1">EMAIL: </label>
-					    <input class="form-control" type="text" name="email" value="abc">
-					    <br>
-					    <label for="ex1">PASSWORD: </label>
-					    <input class="form-control" type="text" name="password" value="abc">
-					    <br>
-					    <input type="button" class="btn btn-primary btn-lg" value="Update Details">
-	            	</form>
-	        	</div>
-         	<div class="col-md-1"></div>
-         </div>
+</div>     
+       </div>
                 		
 	
                 </div>
 	</body>
+	
 </html>
