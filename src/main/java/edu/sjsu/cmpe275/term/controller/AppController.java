@@ -29,7 +29,7 @@ public class AppController {
 	/*GET GO TO WELCOME PAGE*/
 	@RequestMapping(value = "/welcome", method = RequestMethod.GET)
 	public ModelAndView goToWelcomePage(ModelMap model) {
-		ModelAndView welcome = new ModelAndView("welcome");
+		ModelAndView welcome = new ModelAndView("PatronHome");
 		return welcome;
 	}
 	
