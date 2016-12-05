@@ -19,7 +19,7 @@ public class Librarian implements Serializable {
 	private int librarianId;
 	@Column(name = "UNIVERSITYID", unique = true)
 	private int universityId;
-	@Column(name = "EMAIL")
+	@Column(name = "EMAIL", unique=true)
 	private String email;
 	@Column(name = "FIRSTNAME")
 	private String firstName;

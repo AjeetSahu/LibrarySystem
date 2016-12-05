@@ -51,15 +51,15 @@
        <div class="row"> 
        		<div class="col-md-3"></div>
 	       		<div class="col-md-7">
-	           <form action="/newUser" method="POST"> 
+	           <form action="/LibrarySystem/newUser" method="POST"> 
 			  <label for="ex1">UNIVERSITYID: </label>
-			  <input class="form-control" type="text" name="id" >
+			  <input class="form-control" type="text" name="universityId" >
 				<br>
 			  <label for="ex1">FIRSTNAME: </label>
-			  <input class="form-control" type="text" name="firstname" >
+			  <input class="form-control" type="text" name="firstName" >
 				<br>
 			  <label for="ex1">LASTNAME: </label>
-			  <input class="form-control" type="text" name="lastname" >
+			  <input class="form-control" type="text" name="lastName" >
 			  <br>
 			  <label for="ex1">EMAIL: </label>
 			  <input class="form-control" type="text" name="email" >

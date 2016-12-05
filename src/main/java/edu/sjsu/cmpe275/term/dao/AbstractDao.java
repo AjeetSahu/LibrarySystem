@@ -29,10 +29,11 @@ public abstract class AbstractDao<PK extends Serializable, T> {
 	 * @param id
 	 * @return
 	 */
+	
 	public T findById(PK id) {
-		int userid=0;
 		try{
-			 userid= Integer.parseInt(id.toString());
+			System.out.println("inside findById");
+			int userid= Integer.parseInt(id.toString());
 			if(this.entityManager.find(this.persistentClass, userid) != null){
 				T entity = (T) this.entityManager.find(this.persistentClass, userid);
 				return entity;	
@@ -48,6 +49,32 @@ public abstract class AbstractDao<PK extends Serializable, T> {
 		}
 		catch(Exception e){
 			System.out.println(this.persistentClass.getName()+" not found!");
+			return null;
+		}
+		return null;
+	}
+	
+	
+	public T findByEmailId(PK id) {
+		try{
+			System.out.println(this.persistentClass);
+			System.out.println("Here");
+			System.out.println(this.entityManager.find(this.persistentClass, id));
+			if(this.entityManager.find(this.persistentClass, id) != null){
+				T entity = (T) this.entityManager.find(this.persistentClass, id);
+				return entity;	
+			}
+		}
+		catch (NumberFormatException e) {
+		    System.out.println("Exception while parsing id to string: "+e);
+		}
+		catch(RollbackException e)
+		{	
+			System.out.println("Rollback Exception in findById");
+			return null;
+		}
+		catch(Exception e){
+			System.out.println(this.persistentClass.getName()+" not found! "+ e);
 			return null;
 		}
 		return null;

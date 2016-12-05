@@ -25,7 +25,7 @@ public class Patron  implements Serializable {
 	private int patronId;
 	@Column(name= "UNIVERSITYID", unique=true)
 	private int universityId;
-	@Column(name = "EMAIL")
+	@Column(name = "EMAIL", unique=true)
 	private String email;
 	@Column(name = "FIRSTNAME")
 	private String firstName;

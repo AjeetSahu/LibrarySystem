@@ -28,7 +28,8 @@
     <bean id ="appController" class="edu.sjsu.cmpe275.term.controller.AppController">
     	<property name="bookService" ref="bookService"></property>
     	<property name="librarianService" ref="librarianService"></property>
-    	<property name="patronService" ref="patronService"></property> 	
+    	<property name="patronService" ref="patronService"></property>
+    	<property name="activationMailSender" ref="mailSender"></property> 	
    	</bean>
    	 <bean id ="bookService" class="edu.sjsu.cmpe275.term.service.BookServiceImpl">
     	<property name="bookDAO" ref="bookDAO"></property>
@@ -48,15 +49,21 @@
     <!-- SET default mail properties -->
     <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
         <property name="host" value="smtp.gmail.com"/>
-        <property name="port" value="25"/>
+        
         <property name="username" value="libraryMangementSystem@gmail.com"/>
         <property name="password" value="password04"/>
         <property name="javaMailProperties">
             <props>
-                <prop key="mail.transport.protocol">smtp</prop>
+                <!-- <prop key="mail.transport.protocol">smtp</prop> -->
                 <prop key="mail.smtp.auth">true</prop>
                 <prop key="mail.smtp.starttls.enable">true</prop>
                 <prop key="mail.debug">true</prop>
+                <prop key="mail.defaultEncoding">UTF-8</prop>
+                <prop key="mail.smtp.starttls.required">true</prop>
+                <prop key="mail.smtp.socketFactory.class">javax.net.ssl.SSLSocketFactory</prop>
+                <prop key="mail.smtp.socketFactory.fallback">false</prop>
+                <prop key="mail.smtp.port">465</prop>
+                <prop key="mail.smtp.socketFactory.port">465</prop>
             </props>
         </property>
     </bean>
