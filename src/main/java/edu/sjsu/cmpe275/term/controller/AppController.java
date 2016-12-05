@@ -1,5 +1,7 @@
 package edu.sjsu.cmpe275.term.controller;
 
+import java.util.Date;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -35,7 +37,7 @@ public class AppController {
 	private PatronService patronService;
 	
 	@Autowired
-	private MailSender activationMailSender;
+	private static MailSender activationMailSender;
 	
 	public void setBookService(BookService bookService) {
 		this.bookService = bookService;
@@ -53,7 +55,7 @@ public class AppController {
      * This method will send compose and send the message 
      * @author Pratik
      */
-    public void sendMail(String to, int activationCode) 
+    public static void sendMail(String to, int activationCode) 
     {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(to);
@@ -62,6 +64,18 @@ public class AppController {
         		+ "Please activate your account using your activation code = "+activationCode);
         activationMailSender.send(message);
     }
+    
+    /**
+	 * ATTACH CURRENT DATE AND TIME TO ALL PAGES
+	 * @author Pratik
+	 *
+	 */
+    @ModelAttribute
+	public void attachCurrentDateAndTime(Date currentdate, Model model){
+    	model.addAttribute("currentDate", currentdate);
+	}
+    
+    
 	
 	/**
 	 * GET GO TO WELCOME PAGE

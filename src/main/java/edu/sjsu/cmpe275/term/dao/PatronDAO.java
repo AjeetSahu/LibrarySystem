@@ -10,5 +10,5 @@ public interface PatronDAO {
 	 *
 	 */
 	public Patron findPatronById(String id);
-	
+	public Patron findPatronByUniversityId(String id);
 }

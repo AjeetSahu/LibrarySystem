@@ -14,5 +14,6 @@ public interface LibrarianService {
 	 *
 	 */
 	public Librarian findLibrarianById(String id);
+	public Librarian findLibrarianByUniversityId(String id);
 
 }

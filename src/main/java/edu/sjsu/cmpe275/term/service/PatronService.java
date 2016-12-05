@@ -9,4 +9,5 @@ public interface PatronService {
 	 *
 	 */
 	public Patron findPatronById(String id);
+	public Patron findPatronByUniversityId(String id);
 }
