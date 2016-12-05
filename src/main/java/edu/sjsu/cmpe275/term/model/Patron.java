@@ -1,5 +1,8 @@
 package edu.sjsu.cmpe275.term.model;
-
+/**
+ * @author Pratik
+ *
+ */
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.CascadeType;
@@ -14,22 +17,35 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 
 @Entity
-public class Patron implements Serializable {
+public class Patron  implements Serializable {
 	private static final long serialVersionUID = 5865760835716664141L;
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "PATRONID")
 	private int patronId;
-	@Column(unique=true)
+	@Column(name= "UNIVERSITYID", unique=true)
 	private int universityId;
+	@Column(name = "EMAIL")
 	private String email;
+	@Column(name = "FIRSTNAME")
 	private String firstName;
+	@Column(name = "LASTNAME")
 	private String lastName;
+	@Column(name = "PASSWORD")
 	private String password;
+	@Column(name = "TOTALISSUEDCOUNT")
 	private int totalIssuedCount;
+	@Column(name = "DAYISSUEDCOUNT")
 	private int dayIssuedCount;
+	@Column(name = "PENALTY")
 	private int penalty;
+	@Column(name = "PHONENUMBER")
 	private int phoneNumber;
+	@Column(name = "STATUS",  nullable= false, columnDefinition= "boolean default false")
 	private boolean status; //activation
+	@Column(name = "ACTIVATIONCODE", nullable= false, length=5)
+	private int activationCode;
+	
 	@ManyToMany(cascade = {CascadeType.ALL},fetch=FetchType.EAGER)
 	@JoinTable(name="PATRON_BOOKSTATUS", joinColumns={@JoinColumn(name="patronId", referencedColumnName = "patronId")},
 	inverseJoinColumns={@JoinColumn(name="bookStatusId", referencedColumnName= "bookStatusId")})
@@ -41,7 +57,7 @@ public class Patron implements Serializable {
 
 	public Patron(int patronId, int universityId, String email, String firstName, String lastName, String password,
 			int totalIssuedCount, int dayIssuedCount, int penalty, int phoneNumber, boolean status,
-			List<BookStatus> bookStatus) {
+			List<BookStatus> bookStatus, int activationCode) {
 		super();
 		this.patronId = patronId;
 		this.universityId = universityId;
@@ -55,6 +71,7 @@ public class Patron implements Serializable {
 		this.phoneNumber = phoneNumber;
 		this.status = status;
 		this.bookStatus = bookStatus;
+		this.activationCode = activationCode;
 	}
 
 	public int getPatronId() {
@@ -151,5 +168,21 @@ public class Patron implements Serializable {
 
 	public void setBookStatus(List<BookStatus> bookStatus) {
 		this.bookStatus = bookStatus;
+	}
+
+	/**
+	 * @return the activationCode
+	 */
+	public int getActivationCode() {
+		return activationCode;
+	}
+
+	/**
+	 * @param activationCode the activationCode to set
+	 */
+	public void setActivationCode(int activationCode) {
+		this.activationCode = activationCode;
 	}	
+	
+	
 }

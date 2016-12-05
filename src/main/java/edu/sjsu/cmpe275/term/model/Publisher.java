@@ -1,14 +1,22 @@
 package edu.sjsu.cmpe275.term.model;
-
+/**
+ * @author Pratik
+ *
+ */
 import java.io.Serializable;
 import java.util.Date;
+
+import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
 @Embeddable
 public class Publisher implements Serializable {
 	private static final long serialVersionUID = 5865760835716664141L;
+	@Column(name = "PHONENUMBER")
 	private int phoneNumber;
+	@Column(name = "PUBLISHER")
 	private String publisher;
+	@Column(name = "YEAROFPUBLICATION")
 	private Date yearOfPublication;
 	
 	public Publisher() {
