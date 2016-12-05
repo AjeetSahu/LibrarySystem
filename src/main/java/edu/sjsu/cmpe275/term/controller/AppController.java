@@ -1,5 +1,6 @@
 package edu.sjsu.cmpe275.term.controller;
 
+import java.util.Map;
 import java.util.Date;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.UriComponentsBuilder;
 import edu.sjsu.cmpe275.term.model.Book;
@@ -44,6 +46,7 @@ public class AppController {
 	public void setBookService(BookService bookService) {
 		this.bookService = bookService;
 	}
+	
 	/**
 	 * 
 	 * @param librarianService
@@ -51,6 +54,7 @@ public class AppController {
 	public void setLibrarianService(LibrarianService librarianService) {
 		this.librarianService = librarianService;
 	}
+	
 	/**
 	 * 
 	 * @param patronService
@@ -91,11 +95,48 @@ public class AppController {
 	 * @author Pratik
 	 *
 	 */
-	@RequestMapping(value = "/", method = RequestMethod.GET)
+
+	@RequestMapping(value = "/welcome", method = RequestMethod.GET)
 	public ModelAndView goToWelcomePage(ModelMap model) {
 		ModelAndView welcome = new ModelAndView("welcome");
 		return welcome;
 	}
+	
+	/**
+	 * POST AUTHENTICATE USER LOGIN PAGE
+	 * @author Pratik
+	 *
+	 */
+    @RequestMapping(method = RequestMethod.POST)
+    public String authenticateUser(@RequestParam Map<String, String> reqParams, Model model){
+		if(reqParams.get("email").contains("@sjsu.edu")){
+			Librarian librarian = librarianService.findLibrarianByEmailId(reqParams.get("email"));
+			if(librarian != null){
+				if(librarian.isStatus()==true){
+					librarian.setStatus(false);
+					return "homePage";
+				}else{
+					model.addAttribute("message", "Authentication failed, incorrect email or password!");
+					return "login";
+				}
+			}else{
+				return "error";
+			}
+		}else{
+			Patron patron = patronService.findPatronByEmailId(reqParams.get("email"));
+			if(patron != null){
+				if(patron.isStatus()==true){
+					patron.setStatus(false);
+					return "homePage";
+				}else{
+					model.addAttribute("message", "Authentication failed, incorrect email or password!");
+					return "login";
+				}
+			}else{
+				return "error";
+			}		
+		}
+    }
 	
 	/**
 	 * Goto ADDNEWBOOK PAGE and search book by ISBN
@@ -381,4 +422,94 @@ public class AppController {
 		model.addAttribute("httpStatus", HttpStatus.OK);
 		return librarianFound;	
 	}
+
+	/**
+	 * 
+	 * @param reqParams
+	 * @return
+	 */
+	@RequestMapping(value="/newUser", method = RequestMethod.POST)
+	public ModelAndView createNewUser(@RequestParam Map<String, String> reqParams) {
+		ModelAndView userActivation= new ModelAndView("userActivationPage");
+		ModelAndView errorPage= new ModelAndView("errorPage");
+		int randomCode = (int)(Math.random() * 100000);
+		if(reqParams.get("email").contains("@sjsu.edu")){
+			if(librarianService.findLibrarianByUniversityId(reqParams.get("universityId")) == null){
+				Librarian librarian = new Librarian();
+				librarian.setEmail(reqParams.get("email"));
+				librarian.setPassword(reqParams.get("password"));
+				librarian.setUniversityId(Integer.parseInt(reqParams.get("universityId")));
+				librarian.setFirstName(reqParams.get("firstName"));
+				librarian.setLastName(reqParams.get("lastName")); 
+				librarian.setActivationCode(randomCode);
+				librarian = librarianService.saveNewLibrarian(librarian);
+			}
+			else{
+				return errorPage;
+			}
+		}
+		else{
+			if(patronService.findPatronByUniversityId(reqParams.get("universityId")) == null){
+				Patron patron = new Patron();
+				patron.setEmail(reqParams.get("email"));
+				patron.setPassword(reqParams.get("password"));
+				patron.setUniversityId(Integer.parseInt(reqParams.get("universityId")));
+				patron.setFirstName(reqParams.get("firstName"));
+				patron.setLastName(reqParams.get("lastName")); 
+				patron.setActivationCode(randomCode);
+				patron = patronService.saveNewPatron(patron);
+			}
+			else{
+				return errorPage;
+			}
+		}
+		sendMail(reqParams.get("email"), randomCode);
+		userActivation.addObject("universityId", reqParams.get("universityId"));
+		userActivation.addObject("email", reqParams.get("email"));
+		return userActivation;
+		}
+	
+	/**
+	 * 
+	 * @param reqParams
+	 * @param ucBuilder
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value="/completeRegistration", method = RequestMethod.POST)
+	public String completeUserRegistration(@RequestParam Map<String, String> reqParams,
+			UriComponentsBuilder ucBuilder, Model model) {
+		String email = reqParams.get("email");
+		String universityId = reqParams.get("universityId");
+		if(email.contains("@sjsu.edu")){
+			Librarian librarian = librarianService.findLibrarianByUniversityId(universityId);
+			if(librarian.getActivationCode() == Integer.parseInt(reqParams.get("activationCode"))){
+				librarian.setStatus(true);
+				librarianService.updateLibrarian(librarian);
+				HttpHeaders headers = new HttpHeaders();
+			    headers.setLocation(ucBuilder.path("/librarian/{id}").buildAndExpand(librarian.getLibrarianId()).toUri());
+				model.addAttribute("headers", headers);
+				model.addAttribute("httpStatus", HttpStatus.OK);
+				return "userCreationSuccess";
+			}
+			else{
+				return "wrongActivationCode";
+			}
+		}
+		else{
+			Patron patron = patronService.findPatronByUniversityId(universityId);
+				if(patron.getActivationCode() == Integer.parseInt(reqParams.get("activationCode"))){
+					patron.setStatus(true);
+					patronService.updatePatron(patron);
+					HttpHeaders headers = new HttpHeaders();
+					headers.setLocation(ucBuilder.path("/patron/{id}").buildAndExpand(patron.getPatronId()).toUri());
+					model.addAttribute("headers", headers);
+					model.addAttribute("httpStatus", HttpStatus.CREATED);
+					return "userCreationSuccess";
+				}
+				else{
+					return "wrongActivationCode";
+				}
+		}	
+	}	
 }

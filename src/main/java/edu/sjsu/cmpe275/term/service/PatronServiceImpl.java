@@ -38,4 +38,9 @@ public class PatronServiceImpl implements PatronService {
 		public void updatePatron(Patron patron) {
 			patronDAO.updatePatron(patron);
 		}
+
+		@Override
+		public Patron findPatronByEmailId(String id) {
+			return patronDAO.findPatronByEmailId(id);
+		}
 }
