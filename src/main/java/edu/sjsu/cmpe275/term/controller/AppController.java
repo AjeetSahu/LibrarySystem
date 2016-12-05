@@ -1,5 +1,6 @@
 package edu.sjsu.cmpe275.term.controller;
 
+import java.util.Date;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -35,25 +36,36 @@ public class AppController {
 	private PatronService patronService;
 	
 	@Autowired
-	private MailSender activationMailSender;
-	
+	private static MailSender activationMailSender;
+	/**
+	 * 
+	 * @param bookService
+	 */
 	public void setBookService(BookService bookService) {
 		this.bookService = bookService;
 	}
-	
+	/**
+	 * 
+	 * @param librarianService
+	 */
 	public void setLibrarianService(LibrarianService librarianService) {
 		this.librarianService = librarianService;
 	}
-	
+	/**
+	 * 
+	 * @param patronService
+	 */
 	public void setPatronService(PatronService patronService) {
 		this.patronService = patronService;
 	}
 	
 	/**
      * This method will send compose and send the message 
-     * @author Pratik
-     */
-    public void sendMail(String to, int activationCode) 
+     * @author Pratik 
+	 * @param to
+	 * @param activationCode
+	 */
+    public static void sendMail(String to, int activationCode) 
     {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(to);
@@ -62,13 +74,25 @@ public class AppController {
         		+ "Please activate your account using your activation code = "+activationCode);
         activationMailSender.send(message);
     }
+    
+    /**
+	 * ATTACH CURRENT DATE AND TIME TO ALL PAGES
+	 * @author Pratik 
+     * @param currentdate
+     * @param model
+     */
+    @ModelAttribute
+	public void attachCurrentDateAndTime(Date currentdate, Model model){
+    	model.addAttribute("currentDate", currentdate);
+	}   
 	
 	/**
 	 * GET GO TO WELCOME PAGE
 	 * @author Pratik
 	 *
 	 */
-	@RequestMapping(value = "/", method = RequestMethod.GET)
+
+	@RequestMapping(value = "/welcome", method = RequestMethod.GET)
 	public ModelAndView goToWelcomePage(ModelMap model) {
 		ModelAndView welcome = new ModelAndView("welcome");
 		return welcome;
@@ -121,7 +145,10 @@ public class AppController {
 	/**
 	 * CREATE NEW BOOK ON CLICKING ADD BOOK IN ADDNEWBOOK PAGE
 	 * @author Pratik
-	 *
+	 * @param book
+	 * @param ucBuilder
+	 * @param model
+	 * @return
 	 */
 	@RequestMapping(value="/newBook", method = RequestMethod.POST)
 	public String createNewBook(@ModelAttribute("book") Book book,
@@ -141,8 +168,10 @@ public class AppController {
 	
 	/**
 	 * GET BOOK BY ISBN
-	 * @author Pratik
-	 *
+	 * @author Pratik 
+	 * @param isbn
+	 * @param model
+	 * @return
 	 */
 	@RequestMapping(value="/book/{bookISBN}", method = RequestMethod.GET)
 	public ModelAndView getBookByISBN(@PathVariable("bookISBN") String isbn, Model model) {
@@ -163,7 +192,9 @@ public class AppController {
 	/**
 	 * DELETE AN EXISTING BOOK
 	 * @author Pratik
-	 *
+	 * @param isbn
+	 * @param model
+	 * @return
 	 */
 	@RequestMapping(value="/book/{bookISBN}", method = RequestMethod.DELETE)
 	public String deleteBook(@PathVariable("bookISBN") String isbn, Model model) {
@@ -180,7 +211,9 @@ public class AppController {
 	/**
 	 * UPDATE Book ON CLICKING UPDATE IN UPDATEBOOK PAGE
 	 * @author Pratik
-	 *
+	 * @param book
+	 * @param model
+	 * @return
 	 */
 	@RequestMapping(value="/book/{bookISBN}", method = RequestMethod.POST)
 	public String updateBook(@ModelAttribute("book") Book book,
@@ -200,7 +233,10 @@ public class AppController {
 	/**
 	 * CREATE NEW PATRON ON CLICKING CREATE PATRON IN SIGNUP PAGE
 	 * @author Pratik
-	 *
+	 * @param patron
+	 * @param ucBuilder
+	 * @param model
+	 * @return
 	 */
 	@RequestMapping(value="/newPatron", method = RequestMethod.POST)
 	public String createNewPatron(@ModelAttribute("patron") Patron patron,
@@ -232,7 +268,9 @@ public class AppController {
 	/**
 	 * GET PATRON BY ID
 	 * @author Pratik
-	 *
+	 * @param patronID
+	 * @param model
+	 * @return
 	 */
 	@RequestMapping(value="/patron/{patronID}", method = RequestMethod.GET)
 	public ModelAndView getPatronByID(@PathVariable("patronID") String patronID, Model model) {
@@ -252,8 +290,11 @@ public class AppController {
 	
 	/**
 	 * CREATE NEW LIBRARIAN ON CLICKING CREATE LIBRARIAN IN SIGNUP PAGE
-	 * @author Pratik
-	 *
+	 * @author Pratik 
+	 * @param librarian
+	 * @param ucBuilder
+	 * @param model
+	 * @return
 	 */
 	@RequestMapping(value="/newLibrarian", method = RequestMethod.POST)
 	public String createNewLibrarian(@ModelAttribute("librarian") Librarian librarian,
@@ -277,7 +318,9 @@ public class AppController {
 	/**
 	 * GET LIBRARIAN BY ID
 	 * @author Pratik
-	 *
+	 * @param librarianID
+	 * @param model
+	 * @return
 	 */
 	@RequestMapping(value="/librarian/{librarianID}", method = RequestMethod.GET)
 	public ModelAndView getLibrarianByID(@PathVariable("librarianID") String librarianID, Model model) {
