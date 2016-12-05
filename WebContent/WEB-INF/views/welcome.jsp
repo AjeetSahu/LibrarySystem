@@ -75,10 +75,11 @@
                         <ul id="nav" class="nav navbar-nav">
                             <li class="scroll"><a href="#home" data-section="#home">Home</a></li>
                             <li class="scroll"><a href="#about" data-section="#about">About</a></li>
-                            <li class="scroll"><a href="#features" data-section="features">Feature</a></li>
                             <li class="scroll"><a href="#services" data-section="#services">Services</a></li>
                             <li class="scroll"><a href="#portfolio" data-section="#portfolio">Portfolio</a></li>
-                            <li class="scroll"><a href="#contact-area" data-section="#contact-area">Contact</a></li>   
+                            <li class="scroll"><a href="#contact-area" data-section="#contact-area">Contact</a></li>
+                            <a href="<%=request.getContextPath() %>/registration">SignUp</a>
+                            <a href="<%=request.getContextPath() %>/login">LogIn</a>
                         </ul>
                     </div>
                 </nav>
@@ -89,14 +90,14 @@
 
     <section id="main-slider">
         <div class="owl-carousel">
-            <div class="item" style="background-image: url(http://www.planwallpaper.com/static/images/stunning-images-of-the-space.jpg);">
+            <div class="item" style="background-image: url(https://i.ytimg.com/vi/hDWbxhiSQ20/maxresdefault.jpg);">
                 <div class="slider-inner">
                     <div class="container">
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="carousel-content text-center">
-                                    <h2>Accessible design is good design. Only with <span>Color</span>.</h2>
-                                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et  dolore magna incididunt ut labore aliqua. </p>
+                                    <h2>I have always imagined that Paradise will be a kind of library <span>Color</span>.</h2>
+                                    <p>Any book that helps a child to form a habit of reading, to make reading one of his deep and continuing needs, is good for him.</p>
                                     <a class="btn btn-primary btn-lg" href="#">Read More</a>
                                 </div>
                             </div>
@@ -104,7 +105,7 @@
                     </div>
                 </div>
             </div><!--/.item-->
-            <div class="item" style="background-image: url(http://www.planwallpaper.com/static/images/stunning-images-of-the-space.jpg);">
+            <div class="item" style="background-image: url(https://images7.alphacoders.com/697/697523.jpg);">
                 <div class="slider-inner">
                     <div class="container">
                         <div class="row">
@@ -120,7 +121,7 @@
                     </div>
                 </div>
             </div><!--/.item-->
-            <div class="item" style="background-image: url(http://www.planwallpaper.com/static/images/stunning-images-of-the-space.jpg);">
+            <div class="item" style="background-image: url(http://blog.hdwallsource.com/wp-content/uploads/2016/03/girl-in-library-wallpaper-44311-45430-hd-wallpapers.jpg);">
                 <div class="slider-inner">
                     <div class="container">
                         <div class="row">
@@ -165,73 +166,6 @@
             </div>
         </div>
     </section><!--/#about-->
-
-
-
-    <section id="features">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="section-title text-center wow fadeInDown">Awesome Features</h2>
-                <p class="text-center wow fadeInDown">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut <br> et dolore magna aliqua. Ut enim ad minim veniam</p>
-            </div>
-            <div class="row">
-                <div class="col-sm-6 wow fadeInLeft">
-                    <img class="img-responsive" src="https://static.pexels.com/photos/8700/wall-animal-dog-pet.jpg" alt="">
-                </div>
-                <div class="col-sm-6">
-                    <div class="media service-box wow fadeInRight">
-                        <div class="pull-left">
-                            <i class="fa fa-line-chart"></i>
-                        </div>
-                        <div class="media-body">
-                            <h4 class="media-heading">UX design</h4>
-                            <p>Backed by some of the biggest names in the industry, Firefox OS is an open platform that fosters greater</p>
-                        </div>
-                    </div>
-
-                    <div class="media service-box wow fadeInRight">
-                        <div class="pull-left">
-                            <i class="fa fa-cubes"></i>
-                        </div>
-                        <div class="media-body">
-                            <h4 class="media-heading">UI design</h4>
-                            <p>Backed by some of the biggest names in the industry, Firefox OS is an open platform that fosters greater</p>
-                        </div>
-                    </div>
-
-                    <div class="media service-box wow fadeInRight">
-                        <div class="pull-left">
-                            <i class="fa fa-pie-chart"></i>
-                        </div>
-                        <div class="media-body">
-                            <h4 class="media-heading">SEO Services</h4>
-                            <p>Backed by some of the biggest names in the industry, Firefox OS is an open platform that fosters greater</p>
-                        </div>
-                    </div>
-
-                    <div class="media service-box wow fadeInRight">
-                        <div class="pull-left">
-                            <i class="fa fa-pie-chart"></i>
-                        </div>
-                        <div class="media-body">
-                            <h4 class="media-heading">SEO Services</h4>
-                            <p>Backed by some of the biggest names in the industry, Firefox OS is an open platform that fosters greater</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section id="cta2">
-        <div class="container">
-            <div class="text-center">
-                <h2 class="wow fadeInUp" data-wow-duration="300ms" data-wow-delay="0ms">YOU'VE MADE A brave DECISION, <span>WELCOME</span></h2>
-                <p class="wow fadeInUp" data-wow-duration="300ms" data-wow-delay="100ms">Mauris pretium auctor quam. Vestibulum et nunc id nisi fringilla <br />iaculis. Mauris pretium auctor quam.</p>
-                <p class="wow fadeInUp" data-wow-duration="300ms" data-wow-delay="200ms"><a class="btn btn-primary btn-lg" href="#">Get It Now</a></p>
-            </div>
-        </div>
-    </section>
 
     <section id="services" >
         <div class="container">
@@ -387,32 +321,6 @@
                     <div class="portfolio-item-inner">
                         <img class="img-responsive" src="http://www.planwallpaper.com/static/images/stunning-images-of-the-space.jpg" alt="">
                         <div class="portfolio-info">
-                            <h3>Portfolio Item 4</h3>
-                            <a class="preview" href="http://www.planwallpaper.com/static/images/stunning-images-of-the-space.jpg" rel="prettyPhoto">
-                                <img src="images/portfolio/expand.png" alt="">
-
-                            </a>
-                        </div>
-                    </div>
-                </div><!--/.portfolio-item-->
-
-                <div class="portfolio-item animation art">
-                    <div class="portfolio-item-inner">
-                        <img class="img-responsive" src="http://www.planwallpaper.com/static/images/stunning-images-of-the-space.jpg" alt="">
-                        <div class="portfolio-info">
-                            <h3>Portfolio Item 5</h3>
-                            <a class="preview" href="http://www.planwallpaper.com/static/images/stunning-images-of-the-space.jpg" rel="prettyPhoto">
-                                <img src="images/portfolio/expand.png" alt="">
-
-                            </a>
-                        </div>
-                    </div>
-                </div><!--/.portfolio-item-->
-
-                <div class="portfolio-item Business">
-                    <div class="portfolio-item-inner">
-                        <img class="img-responsive" src="http://www.planwallpaper.com/static/images/stunning-images-of-the-space.jpg" alt="">
-                        <div class="portfolio-info">
                             <h3>Portfolio Item 5</h3>
                             <a class="preview" href="http://www.planwallpaper.com/static/images/stunning-images-of-the-space.jpg" rel="prettyPhoto">
                                 <img src="images/portfolio/expand.png" alt="">
@@ -450,55 +358,6 @@
             </div>
         </div><!--/.container-->
     </section><!--/#portfolio-->
-
-
-
-
-
-
-
-    <section id="testimonial">
-        <div class="container">
-            <div class="row">
-                <div class="col-sm-8 col-sm-offset-2">
-
-                <div id="carousel-testimonial" class="carousel slide text-center" data-ride="carousel">
-                        <!-- Wrapper for slides -->
-                        <div class="carousel-inner" role="listbox">
-                            <div class="item active">
-                                <p><img class="img-circle img-thumbnail" src="http://www.planwallpaper.com/static/images/stunning-images-of-the-space.jpg" alt=""></p>
-                                <h4>Louise S. Morgan</h4>
-                                <small>Treatment, storage, and disposal (TSD) worker</small>
-                                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut et dolore magna aliqua. Ut enim ad minim veniam</p>
-                            </div>
-                            <div class="item">
-                                <p><img class="img-circle img-thumbnail" src="http://www.planwallpaper.com/static/images/stunning-images-of-the-space.jpg" alt=""></p>
-                                <h4>Louise S. Morgan</h4>
-                                <small>Treatment, storage, and disposal (TSD) worker</small>
-                                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut et dolore magna aliqua. Ut enim ad minim veniam</p>
-                            </div>
-                        </div>
-
-                        <!-- Controls -->
-                        <div class="btns">
-                            <a class="btn btn-primary btn-sm" href="#carousel-testimonial" role="button" data-slide="prev">
-                                <span class="fa fa-angle-left" aria-hidden="true"></span>
-                                <span class="sr-only">Previous</span>
-                            </a>
-                            <a class="btn btn-primary btn-sm" href="#carousel-testimonial" role="button" data-slide="next">
-                                <span class="fa fa-angle-right" aria-hidden="true"></span>
-                                <span class="sr-only">Next</span>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section><!--/#testimonial-->
-
-
-
-
 
     <section id="contact-area">
         <div class="container">
@@ -548,16 +407,8 @@
             <div class="row">
                 <div class="col-sm-12">
                     <p class="text-center">
-                        &copy; 2015 Your Company. Designed and Developed by <a target="_blank" href="http://themeinthebox.com" title="Free Twitter Bootstrap WordPress Themes and HTML templates">themeinthebox.com</a>
+                        @2017 Library Management System
                     </p>
-                    
-                    <ul class="social-icons text-center">
-                        <li><a href="#"><i class="fa fa-facebook"></i></a></li>
-                        <li><a href="#"><i class="fa fa-twitter"></i></a></li>
-                        <li><a href="#"><i class="fa fa-google-plus"></i></a></li>
-                        <li><a href="#"><i class="fa fa-pinterest"></i></a></li>
-                        <li><a href="#"><i class="fa fa-dribbble"></i></a></li>
-                    </ul>
                 </div>
             </div>
         </div>
