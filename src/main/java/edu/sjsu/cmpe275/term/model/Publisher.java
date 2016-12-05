@@ -22,34 +22,58 @@ public class Publisher implements Serializable {
 	public Publisher() {
 		super();
 	}
-
+	/**
+	 * 
+	 * @param phoneNumber
+	 * @param publisher
+	 * @param yearOfPublication
+	 */
 	public Publisher(int phoneNumber, String publisher, Date yearOfPublication) {
 		super();
 		this.phoneNumber = phoneNumber;
 		this.publisher = publisher;
 		this.yearOfPublication = yearOfPublication;
 	}
-
+	
+	/**
+	 * 
+	 * @return
+	 */
 	public int getPhoneNumber() {
 		return phoneNumber;
 	}
-
+	/**
+	 * 
+	 * @param phoneNumber
+	 */
 	public void setPhoneNumber(int phoneNumber) {
 		this.phoneNumber = phoneNumber;
 	}
-
+	/**
+	 * 
+	 * @return
+	 */
 	public String getPublisher() {
 		return publisher;
 	}
-
+	/**
+	 * 
+	 * @param publisher
+	 */
 	public void setPublisher(String publisher) {
 		this.publisher = publisher;
 	}
-
+	/**
+	 * 
+	 * @return
+	 */
 	public Date getYearOfPublication() {
 		return yearOfPublication;
 	}
-
+	/**
+	 * 
+	 * @param yearOfPublication
+	 */
 	public void setYearOfPublication(Date yearOfPublication) {
 		this.yearOfPublication = yearOfPublication;
 	}

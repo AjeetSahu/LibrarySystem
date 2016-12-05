@@ -46,7 +46,19 @@ public class BookStatus implements Serializable {
 	public BookStatus() {
 		super();
 	}
-
+	/**
+	 * 
+	 * @param bookStatusId
+	 * @param issueDate
+	 * @param dueDate
+	 * @param returnDate
+	 * @param requestDate
+	 * @param requestStatus
+	 * @param currentDate
+	 * @param book
+	 * @param patrons
+	 * @param librarians
+	 */
 	public BookStatus(int bookStatusId, Date issueDate, Date dueDate, Date returnDate, Date requestDate,
 			String requestStatus, Date currentDate, Book book, List<Patron> patrons, List<Librarian> librarians) {
 		super();
@@ -60,79 +72,130 @@ public class BookStatus implements Serializable {
 		this.book = book;
 		this.patrons = patrons;
 	}
-
+	/**
+	 * 
+	 * @return
+	 */
 	public Date getIssueDate() {
 		return issueDate;
 	}
-
+	/**
+	 * 
+	 * @param issueDate
+	 */
 	public void setIssueDate(Date issueDate) {
 		this.issueDate = issueDate;
 	}
-
+	/**
+	 * 
+	 * @return
+	 */
 	public Date getReturnDate() {
 		return returnDate;
 	}
-	
-
+	/**
+	 * 
+	 * @return
+	 */
 	public Date getDueDate() {
 		return dueDate;
 	}
-
+	/**
+	 * 
+	 * @param dueDate
+	 */
 	public void setDueDate(Date dueDate) {
 		this.dueDate = dueDate;
 	}
-
+	/**
+	 * 
+	 * @return
+	 */
 	public Date getCurrentDate() {
 		return currentDate;
 	}
-
+	/**
+	 * 
+	 * @param currentDate
+	 */
 	public void setCurrentDate(Date currentDate) {
 		this.currentDate = currentDate;
 	}
-
+	/**
+	 * 
+	 * @param returnDate
+	 */
 	public void setReturnDate(Date returnDate) {
 		this.returnDate = returnDate;
 	}
-
+	/**
+	 * 
+	 * @return
+	 */
 	public Date getRequestDate() {
 		return requestDate;
 	}
-
+	/**
+	 * 
+	 * @param requestDate
+	 */
 	public void setRequestDate(Date requestDate) {
 		this.requestDate = requestDate;
 	}
-
+	/**
+	 * 
+	 * @return
+	 */
 	public String getRequestStatus() {
 		return requestStatus;
 	}
-
+	/**
+	 * 
+	 * @param requestStatus
+	 */
 	public void setRequestStatus(String requestStatus) {
 		this.requestStatus = requestStatus;
 	}
-
+	/**
+	 * 
+	 * @return
+	 */
 	public int getBookStatusId() {
 		return bookStatusId;
 	}
-
+	/**
+	 * 
+	 * @param bookStatusId
+	 */
 	public void setBookStatusId(int bookStatusId) {
 		this.bookStatusId = bookStatusId;
 	}
-
+	/**
+	 * 
+	 * @return
+	 */
 	public Book getBook() {
 		return book;
 	}
-
+	/**
+	 * 
+	 * @param book
+	 */
 	public void setBook(Book book) {
 		this.book = book;
 	}
-
+	/**
+	 * 
+	 * @return
+	 */
 	public List<Patron> getPatrons() {
 		return patrons;
 	}
-
+	/**
+	 * 
+	 * @param patrons
+	 */
 	public void setPatrons(List<Patron> patrons) {
 		this.patrons = patrons;
 	}	
-	
-	
 }

@@ -36,7 +36,7 @@
             <div class="collapse navbar-collapse pull-right" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
                     <li>
-                        <a href="<%=request.getContextPath() %>/patronHome">Home</a>
+                        <a href="#">Home</a>
                     </li>
                     <li>
                         <a href="#">Profile</a>
@@ -53,7 +53,7 @@
         <div class="col-md-3">
 		
 
-    <div id="wrapper">
+     <div id="wrapper">
 
         <!-- Sidebar -->
         <div id="sidebar-wrapper">
@@ -64,19 +64,16 @@
                     </a>
                 </li>
                 <li>
-                    <a href="<%=request.getContextPath() %>/patronHome">Home</a>
+                    <a href="#">Dashboard</a>
                 </li>
                 <li>
                     <a href="#">Search Book</a>
                 </li>
                 <li>
-                    <a href="#">Already Issued Books</a>
+                    <a href="#">Add Book</a>
                 </li>
                 <li>
-                    <a href="#">Issue Book</a>
-                </li>
-                <li>
-                    <a href="#">Return Book</a>
+                    <a href="#">Delete Book</a>
                 </li>
                 <li>
                     <a href="#">Profile</a>
@@ -95,18 +92,47 @@
                      
        </div>
        <div class="row"> 
-       		<div class="col-md-2"></div>
-	       		<div class="col-md-7">
-	             <form id="form1" hidden=true;>
-		            
-	            </form>
+       		<div class="col-md-3"></div>
+	       		<div class="col-md-6" style="padding-top:110px;">
+	             <form action="" method="POST" commandName="fileUploadForm"
+		enctype="multipart/form-data"> 
+			  <label for="ex1">ISBN: </label>
+			  <input class="form-control" type="text" name="id" >
+				<br>
+			  <label for="ex1">Author: </label>
+			  <input class="form-control" type="text" name="author" >
+				<br>
+			  <label for="ex1">Title: </label>
+			  <input class="form-control" type="text" name="title" >
+			  <br>
+			  <label for="ex1">Publisher: </label>
+			  <input class="form-control" type="text" name="publisher" >
+				<br>
+			  <label for="ex1">Year Of Publication: </label>
+			  <input class="form-control" type="text" name="yearOfPublication" >
+			  <br>
+			  <label for="ex1">Location: </label>
+			  <input class="form-control" type="text" name="location" >
+			  <br>
+			  <label for="ex1">Number Of Copies: </label>
+			  <input class="form-control" type="text" name="numberOfCopies" >
+			  <br>
+			  <label for="ex1">Keywords </label>
+			  <input class="form-control" type="text" name="keywords" >
+			  <br>
+			  <label for="ex1">Cover Image </label>
+			  <input class="form-control" type="file" name="file" value="Upload" >
+		<br>
+		
+		<div style="padding-left:300px;">
+			<input class="btn btn-primary btn-lg" type="submit" name="submit" value="  Register  ">
+		</div>
+		</form>
 	        </div>
          <div class="col-md-1"></div>
          </div>
                 		
 	
                 </div>
-            </div>
-        </div>  
 	</body>
 </html>

@@ -18,12 +18,17 @@ public abstract class AbstractDao<PK extends Serializable, T> {
 	
 	@PersistenceContext(unitName = "CMPE275TERM")
 	private EntityManager entityManager;
-	
+
 	@SuppressWarnings("unchecked")
 	public AbstractDao(){
 		this.persistentClass =(Class<T>) ((ParameterizedType) this.getClass().getGenericSuperclass()).getActualTypeArguments()[1];
 	}
 	
+	/**
+	 * @author Pratik
+	 * @param id
+	 * @return
+	 */
 	public T findById(PK id) {
 		int userid=0;
 		try{
@@ -48,6 +53,10 @@ public abstract class AbstractDao<PK extends Serializable, T> {
 		return null;
 	}
 	
+	/**
+	 * @author Pratik
+	 * @return
+	 */
 	@SuppressWarnings("unchecked")
 	public List<T> findAll() {
 		return this.entityManager.createQuery("from "+this.persistentClass.getName()).getResultList();
@@ -65,11 +74,21 @@ public abstract class AbstractDao<PK extends Serializable, T> {
 		}	
 	}
 	
+	/**
+	 * @author Pratik
+	 * @param entity
+	 * @return
+	 */
 	public T update(T entity) {
 		T mergedEntity = this.entityManager.merge(entity);
 		return mergedEntity;
 	}
 	
+	/**
+	 * @author Pratik
+	 * @param id
+	 * @return
+	 */
 	public String deleteById(PK id){
 		try{
 			T entity = this.findById(id);
@@ -81,7 +100,11 @@ public abstract class AbstractDao<PK extends Serializable, T> {
 		    return "Deletion operation failed";
 		}
 	}
-
+	
+	/**
+	 * @author Pratik
+	 * @param entity
+	 */
 	public void delete(T entity){
 		this.entityManager.remove(entity);
     }
@@ -90,6 +113,11 @@ public abstract class AbstractDao<PK extends Serializable, T> {
 		this.entityManager.flush();
 	}
 	
+	/**
+	 * @author Pratik
+	 * @param id
+	 * @return
+	 */
 	public boolean checkById(PK id) {
 		int userid = 0;
 		try{
@@ -119,6 +147,11 @@ public abstract class AbstractDao<PK extends Serializable, T> {
 		}
 	}
 	
+	/**
+	 * @author Pratik
+	 * @param id
+	 * @return
+	 */
 	@SuppressWarnings("unchecked")
 	public List<T> getAllIssuedBookByPatronId(PK id) {
 		//int patronId=0;

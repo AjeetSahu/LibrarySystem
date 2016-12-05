@@ -1,6 +1,6 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
-<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <html>
 	<head>
@@ -17,7 +17,7 @@
 		<title></title>
 	</head>
 	<body>
-		<div class="container">
+	    <div class="container">
         	<div class="row">
         	<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
         
@@ -39,7 +39,7 @@
                         <a href="<%=request.getContextPath() %>/">Home</a>
                     </li>
                     <li>
-						<a href="<%=request.getContextPath() %>/registration">Register</a>
+						<a href="<%=request.getContextPath() %>/login">Login</a>
                     </li>
                 </ul>
             </div>
@@ -47,39 +47,40 @@
     </nav>
     </div>
     </div>
-	    <div class="container">
-        <div class="row" style="padding-top:120px;">
-            <div class="col-md-6 col-md-offset-2" style="position:fixed;">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h3 style="text-align:center">Login Here</h3>
-                    </div>
-                    <div class="panel-body">
-                        <form action='/searchBookDetail' method="post" class="form-horizontal">
-                            <div class="row">
-                            	<div class="col-md-1"></div>
-                            	<div class="col-md-10">
-							  		<input class="form-control" type="email" id="email" name="email" placeholder="Enter Email here" required />
-                            		<br><br>
-							  		<input class="form-control" type="password" id="pwd" name="pwd" placeholder="Enter Password here" required />
-                            	</div>
-							</div>
-							<br>
-                            <div style="padding-left:40%">
-                                <button type="submit" class="btn btn-primary" >Login</button>
-                            </div>
-                            <div class="pull-right">
-                            <a class="pull-right" href="<%=request.getContextPath() %>/registration">New User? Register Here</a>
-                            </div>
-                        </form>
-                        
-                    </div>
-                    
-                 </div>
-                 
-           </div>            
-       </div>
-	</div>
-	</body>
+    <div class="container" style="padding-top:120px">
+       <div class="row"> 
+       		<div class="col-md-3"></div>
+	       		<div class="col-md-7">
+	           <form action="" method="POST"> 
+			  <label for="ex1">UNIVERSITYID: </label>
+			  <input class="form-control" type="text" name="id" >
+				<br>
+			  <label for="ex1">FIRSTNAME: </label>
+			  <input class="form-control" type="text" name="firstname" >
+				<br>
+			  <label for="ex1">LASTNAME: </label>
+			  <input class="form-control" type="text" name="lastname" >
+			  <br>
+			  <label for="ex1">EMAIL: </label>
+			  <input class="form-control" type="text" name="email" >
+			<br>
+			  <label for="ex1">PASSWORD: </label>
+			  <input class="form-control" type="text" name="password" >
+		<br>
+		
+		
+		<div style="padding-left:300px;">
+			<input class="btn btn-primary btn-lg" type="submit" name="submit" value="  Register  ">
+			<br>
+			<a class="pull-right" href="<%=request.getContextPath() %>/login">Existing User? Login Here</a>
+			
+		</div>
+		</form>
+	        </div>
+         <div class="col-md-1"></div>
+         </div>
+                		
 	
+                </div> 
+	</body>
 </html>
