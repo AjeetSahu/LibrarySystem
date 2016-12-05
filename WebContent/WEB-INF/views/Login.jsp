@@ -17,6 +17,36 @@
 		<title></title>
 	</head>
 	<body>
+		<div class="container">
+        	<div class="row">
+        	<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+            	<h4 style="color:white; padding-top:6px; padding-left:20px;">Library Management System</h4>
+            	
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+            </div>
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse pull-right" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav">
+                    <li>
+                        <a href="<%=request.getContextPath() %>/">Home</a>
+                    </li>
+                    <li>
+						<a href="<%=request.getContextPath() %>/registration">Register</a>
+                    </li>
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+    </nav>
+    </div>
+    </div>
 	    <div class="container">
         <div class="row" style="padding-top:120px;">
             <div class="col-md-6 col-md-offset-2" style="position:fixed;">
@@ -39,7 +69,7 @@
                                 <button type="submit" class="btn btn-primary" >Login</button>
                             </div>
                             <div class="pull-right">
-                            <a href="#">New User? Register Here</a>
+                            <a class="pull-right" href="<%=request.getContextPath() %>/registration">New User? Register Here</a>
                             </div>
                         </form>
                         

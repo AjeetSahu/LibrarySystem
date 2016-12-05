@@ -68,9 +68,9 @@ public class AppController {
 	 * @author Pratik
 	 *
 	 */
-	@RequestMapping(value = "/welcome", method = RequestMethod.GET)
+	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public ModelAndView goToWelcomePage(ModelMap model) {
-		ModelAndView welcome = new ModelAndView("PatronRegistration");
+		ModelAndView welcome = new ModelAndView("welcome");
 		return welcome;
 	}
 	
@@ -92,8 +92,30 @@ public class AppController {
 	 */
 	@RequestMapping(value = "/newBookManually", method = RequestMethod.GET)
 	public ModelAndView goToAddNewBookManualPage(ModelMap model) {
-		ModelAndView welcome = new ModelAndView("AddNewBookManually");
-		return welcome;
+		ModelAndView register = new ModelAndView("AddNewBookManually");
+		return register;
+	}
+	
+	/**
+	 * Goto Registration PAGE to add new Patron/Librarian 
+	 * @author Amitesh
+	 *
+	 */
+	@RequestMapping(value = "/registration", method = RequestMethod.GET)
+	public ModelAndView registration(ModelMap model) {
+		ModelAndView register = new ModelAndView("Registration");
+		return register;
+	}
+	
+	/**
+	 * Goto Login PAGE to to access Patron/Librarian account 
+	 * @author Amitesh
+	 *
+	 */
+	@RequestMapping(value = "/login", method = RequestMethod.GET)
+	public ModelAndView login(ModelMap model) {
+		ModelAndView login = new ModelAndView("Login");
+		return login;
 	}
 	
 	/**
@@ -194,6 +216,17 @@ public class AppController {
 			model.addAttribute("httpStatus", HttpStatus.CONFLICT);
 			return "Conflict";
 		}
+	}
+	
+	/**
+	 * Goto Patron Home page 
+	 * @author Amitesh
+	 *
+	 */
+	@RequestMapping(value = "/patronHome", method = RequestMethod.GET)
+	public ModelAndView patronHome(ModelMap model) {
+		ModelAndView patron = new ModelAndView("PatronHome");
+		return patron;
 	}
 	
 	/**
