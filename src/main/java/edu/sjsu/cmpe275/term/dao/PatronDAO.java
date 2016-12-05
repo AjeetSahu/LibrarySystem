@@ -19,6 +19,12 @@ public interface PatronDAO {
 	public Patron findPatronByUniversityId(String id);
 	/**
 	 * @author Pratik
+	 * @param id
+	 * @return
+	 */
+	public Patron findPatronByEmailId(String id);
+	/**
+	 * @author Pratik
 	 * @param patron
 	 */
 	public void updatePatron(Patron patron);

@@ -49,4 +49,9 @@ public class LibrarianServiceImpl implements LibrarianService{
 		librarianDAO.updateLibrarian(librarian);
 	}
 
+	@Override
+	public Librarian findLibrarianByEmailId(String id) {
+		return librarianDAO.findLibrarianByEmailId(id);
+	}
+
 }

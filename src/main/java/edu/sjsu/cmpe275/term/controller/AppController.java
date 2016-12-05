@@ -46,6 +46,7 @@ public class AppController {
 	public void setBookService(BookService bookService) {
 		this.bookService = bookService;
 	}
+	
 	/**
 	 * 
 	 * @param librarianService
@@ -53,6 +54,7 @@ public class AppController {
 	public void setLibrarianService(LibrarianService librarianService) {
 		this.librarianService = librarianService;
 	}
+	
 	/**
 	 * 
 	 * @param patronService
@@ -93,11 +95,48 @@ public class AppController {
 	 * @author Pratik
 	 *
 	 */
-	@RequestMapping(value = "/", method = RequestMethod.GET)
+
+	@RequestMapping(value = "/welcome", method = RequestMethod.GET)
 	public ModelAndView goToWelcomePage(ModelMap model) {
 		ModelAndView welcome = new ModelAndView("welcome");
 		return welcome;
 	}
+	
+	/**
+	 * POST AUTHENTICATE USER LOGIN PAGE
+	 * @author Pratik
+	 *
+	 */
+    @RequestMapping(method = RequestMethod.POST)
+    public String authenticateUser(@RequestParam Map<String, String> reqParams, Model model){
+		if(reqParams.get("email").contains("@sjsu.edu")){
+			Librarian librarian = librarianService.findLibrarianByEmailId(reqParams.get("email"));
+			if(librarian != null){
+				if(librarian.isStatus()==true){
+					librarian.setStatus(false);
+					return "homePage";
+				}else{
+					model.addAttribute("message", "Authentication failed, incorrect email or password!");
+					return "login";
+				}
+			}else{
+				return "error";
+			}
+		}else{
+			Patron patron = patronService.findPatronByEmailId(reqParams.get("email"));
+			if(patron != null){
+				if(patron.isStatus()==true){
+					patron.setStatus(false);
+					return "homePage";
+				}else{
+					model.addAttribute("message", "Authentication failed, incorrect email or password!");
+					return "login";
+				}
+			}else{
+				return "error";
+			}		
+		}
+    }
 	
 	/**
 	 * Goto ADDNEWBOOK PAGE and search book by ISBN
@@ -361,8 +400,6 @@ public class AppController {
 		return librarianFound;	
 	}
 
-
-
 	/**
 	 * 
 	 * @param reqParams
@@ -452,5 +489,4 @@ public class AppController {
 				}
 		}	
 	}	
-
 }
