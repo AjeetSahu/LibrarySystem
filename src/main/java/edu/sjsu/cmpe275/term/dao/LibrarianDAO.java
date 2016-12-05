@@ -14,4 +14,5 @@ public interface LibrarianDAO {
 	 *
 	 */
 	public Librarian findLibrarianById(String id);
+	public Librarian findLibrarianByUniversityId(String id);
 }
