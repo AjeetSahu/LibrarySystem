@@ -39,7 +39,7 @@
                         <a href="<%=request.getContextPath() %>/patronHome">Home</a>
                     </li>
                     <li>
-                        <a href="<%=request.getContextPath() %>/patronProfile">Profile</a>
+                        <a href="#">Profile</a>
                     </li>
                     <li>
                         <a href="<%=request.getContextPath() %>/">Signout</a>
@@ -67,7 +67,7 @@
                     <a href="<%=request.getContextPath() %>/patronHome">Home</a>
                 </li>
                 <li>
-                    <a href="<%=request.getContextPath() %>">Search Book</a>
+                    <a href="#">Search Book</a>
                 </li>
                 <li>
                     <a href="#">Already Issued Books</a>
@@ -93,15 +93,30 @@
 </div>
 		  
                      
-       </div>
-       <div class="row"> 
-       		<div class="col-md-2"></div>
-	       		<div class="col-md-7">
-	             <form id="form1" hidden=true;>
-		            
-	            </form>
-	        </div>
-         <div class="col-md-1"></div>
+       	</div>
+       	<div class="row"> 
+       		<div class="col-md-3"></div>
+	       		<div class="col-md-7" style="padding-top:110px;">
+	            	<form>
+		            	<label for="ex1">UNIVERSITYID: </label>
+						<input class="form-control" type="text" name="id" value="123" disabled>
+						<br>
+						<label for="ex1">FIRSTNAME: </label>
+					    <input class="form-control" type="text" name="firstname" value="abc">
+						<br>
+					    <label for="ex1">LASTNAME: </label>
+					    <input class="form-control" type="text" name="lastname" value="abc">
+					    <br>
+					    <label for="ex1">EMAIL: </label>
+					    <input class="form-control" type="text" name="email" value="abc">
+					    <br>
+					    <label for="ex1">PASSWORD: </label>
+					    <input class="form-control" type="text" name="password" value="abc">
+					    <br>
+					    <input type="button" class="btn btn-primary btn-lg" value="Update Details"></button>
+	            	</form>
+	        	</div>
+         	<div class="col-md-1"></div>
          </div>
                 		
 	
