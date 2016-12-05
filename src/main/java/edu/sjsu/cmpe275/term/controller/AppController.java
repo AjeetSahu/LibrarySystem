@@ -70,8 +70,7 @@ public class AppController {
 	 */
 	@RequestMapping(value = "/welcome", method = RequestMethod.GET)
 	public ModelAndView goToWelcomePage(ModelMap model) {
-		ModelAndView welcome = new ModelAndView("welcome");
-		System.out.println("HI There");
+		ModelAndView welcome = new ModelAndView("PatronHome");
 		return welcome;
 	}
 	
@@ -240,7 +239,4 @@ public class AppController {
 		model.addAttribute("httpStatus", HttpStatus.OK);
 		return librarianFound;	
 	}
-	
-
-	
 }
