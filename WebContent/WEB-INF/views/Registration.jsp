@@ -36,10 +36,10 @@
             <div class="collapse navbar-collapse pull-right" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
                     <li>
-                        <a href="#">Home</a>
+                        <a href="<%=request.getContextPath() %>/">Home</a>
                     </li>
                     <li>
-                        <a href="#">SignIn</a>
+						<a href="<%=request.getContextPath() %>/login">Login</a>
                     </li>
                 </ul>
             </div>
@@ -55,13 +55,13 @@
 			  <label for="ex1">UNIVERSITYID: </label>
 			  <input class="form-control" type="text" name="id" >
 				<br>
-			  <label for="ex1">Firstname: </label>
+			  <label for="ex1">FIRSTNAME: </label>
 			  <input class="form-control" type="text" name="firstname" >
 				<br>
-			  <label for="ex1">Lastname: </label>
+			  <label for="ex1">LASTNAME: </label>
 			  <input class="form-control" type="text" name="lastname" >
 			  <br>
-			  <label for="ex1">Email: </label>
+			  <label for="ex1">EMAIL: </label>
 			  <input class="form-control" type="text" name="email" >
 			<br>
 			  <label for="ex1">PASSWORD: </label>
@@ -71,6 +71,9 @@
 		
 		<div style="padding-left:300px;">
 			<input class="btn btn-primary btn-lg" type="submit" name="submit" value="  Register  ">
+			<br>
+			<a class="pull-right" href="<%=request.getContextPath() %>/login">Existing User? Login Here</a>
+			
 		</div>
 		</form>
 	        </div>

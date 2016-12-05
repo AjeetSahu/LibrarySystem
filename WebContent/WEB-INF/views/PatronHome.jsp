@@ -36,7 +36,7 @@
             <div class="collapse navbar-collapse pull-right" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
                     <li>
-                        <a href="#">Home</a>
+                        <a href="<%=request.getContextPath() %>/patronHome">Home</a>
                     </li>
                     <li>
                         <a href="#">Profile</a>
@@ -64,7 +64,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="#">Dashboard</a>
+                    <a href="<%=request.getContextPath() %>/patronHome">Home</a>
                 </li>
                 <li>
                     <a href="#">Search Book</a>
