@@ -51,7 +51,21 @@ public class Book implements Serializable {
 	public Book() {
 		super();
 	}
-
+	/**
+	 * 
+	 * @param bookId
+	 * @param isbn
+	 * @param author
+	 * @param title
+	 * @param publisher
+	 * @param location
+	 * @param numberOfCopies
+	 * @param availableCopies
+	 * @param currentStatus
+	 * @param keywords
+	 * @param coverImage
+	 * @param bookStatus
+	 */
 	public Book(int bookId, String isbn, String author, String title, Publisher publisher, String location,
 			int numberOfCopies, int availableCopies, boolean currentStatus, String[] keywords, Picture coverImage,
 			List<BookStatus> bookStatus) {
@@ -69,107 +83,185 @@ public class Book implements Serializable {
 		this.coverImage = coverImage;
 		this.bookStatus = bookStatus;
 	}
-
+	/**
+	 * 
+	 * @return
+	 */
 	public String getIsbn() {
 		return isbn;
 	}
-
+	/**
+	 * 
+	 * @param isbn
+	 */
 	public void setIsbn(String isbn) {
 		this.isbn = isbn;
 	}
-
+	/**
+	 * 
+	 * @return
+	 */
 	public String getAuthor() {
 		return author;
 	}
-
+	/**
+	 * 
+	 * @param author
+	 */
 	public void setAuthor(String author) {
 		this.author = author;
 	}
-
+	/**
+	 * 
+	 * @return
+	 */
 	public String getTitle() {
 		return title;
 	}
-
+	/**
+	 * 
+	 * @param title
+	 */
 	public void setTitle(String title) {
 		this.title = title;
 	}
-
+	/**
+	 * 
+	 * @return
+	 */
 	public Publisher getPublisher() {
 		return publisher;
 	}
-
+	/**
+	 * 
+	 * @param publisher
+	 */
 	public void setPublisher(Publisher publisher) {
 		this.publisher = publisher;
 	}
-
+	/**
+	 * 
+	 * @return
+	 */
 	public String getLocation() {
 		return location;
 	}
-
+	/**
+	 * 
+	 * @param location
+	 */
 	public void setLocation(String location) {
 		this.location = location;
 	}
-	
+	/**
+	 * 
+	 * @return
+	 */
 	public int getAvailableCopies() {
 		return availableCopies;
 	}
-
+	/**
+	 * 
+	 * @param availableCopies
+	 */
 	public void setAvailableCopies(int availableCopies) {
 		this.availableCopies = availableCopies;
 	}
-
+	/**
+	 * 
+	 * @return
+	 */
 	public int getNumberOfCopies() {
 		return numberOfCopies;
 	}
-
+	/**
+	 * 
+	 * @param numberOfCopies
+	 */
 	public void setNumberOfCopies(int numberOfCopies) {
 		this.numberOfCopies = numberOfCopies;
 	}
-
+	/**
+	 * 
+	 * @return
+	 */
 	public boolean isCurrentStatus() {
 		return currentStatus;
 	}
-
+	/**
+	 * 
+	 * @param currentStatus
+	 */
 	public void setCurrentStatus(boolean currentStatus) {
 		this.currentStatus = currentStatus;
 	}
-
+	/**
+	 * 
+	 * @return
+	 */
 	public String[] getKeywords() {
 		return keywords;
 	}
-
+	/**
+	 * 
+	 * @param keywords
+	 */
 	public void setKeywords(String[] keywords) {
 		this.keywords = keywords;
 	}
-
+	/**
+	 * 
+	 * @return
+	 */
 	public Picture getCoverageImage() {
 		return coverImage;
 	}
-
+	/**
+	 * 
+	 * @param coverageImage
+	 */
 	public void setCoverageImage(Picture coverageImage) {
 		this.coverImage = coverageImage;
 	}
-	
+	/**
+	 * 
+	 * @return
+	 */
 	public int getBookId() {
 		return bookId;
 	}
-
+	/**
+	 * 
+	 * @param bookId
+	 */
 	public void setBookId(int bookId) {
 		this.bookId = bookId;
 	}
-
+	/**
+	 * 
+	 * @return
+	 */
 	public Picture getCoverImage() {
 		return coverImage;
 	}
-
+	/**
+	 * 
+	 * @param coverImage
+	 */
 	public void setCoverImage(Picture coverImage) {
 		this.coverImage = coverImage;
 	}
-
+	/**
+	 * 
+	 * @return
+	 */
 	public List<BookStatus> getBookStatus() {
 		return bookStatus;
 	}
-
+	/**
+	 * 
+	 * @param bookStatus
+	 */
 	public void setBookStatus(List<BookStatus> bookStatus) {
 		this.bookStatus = bookStatus;
 	}

@@ -45,7 +45,6 @@ public class Patron  implements Serializable {
 	private boolean status; //activation
 	@Column(name = "ACTIVATIONCODE", nullable= false, length=5)
 	private int activationCode;
-	
 	@ManyToMany(cascade = {CascadeType.ALL},fetch=FetchType.EAGER)
 	@JoinTable(name="PATRON_BOOKSTATUS", joinColumns={@JoinColumn(name="patronId", referencedColumnName = "patronId")},
 	inverseJoinColumns={@JoinColumn(name="bookStatusId", referencedColumnName= "bookStatusId")})
@@ -54,7 +53,22 @@ public class Patron  implements Serializable {
 	public Patron() {
 		super();
 	}
-
+	/**
+	 * 
+	 * @param patronId
+	 * @param universityId
+	 * @param email
+	 * @param firstName
+	 * @param lastName
+	 * @param password
+	 * @param totalIssuedCount
+	 * @param dayIssuedCount
+	 * @param penalty
+	 * @param phoneNumber
+	 * @param status
+	 * @param bookStatus
+	 * @param activationCode
+	 */
 	public Patron(int patronId, int universityId, String email, String firstName, String lastName, String password,
 			int totalIssuedCount, int dayIssuedCount, int penalty, int phoneNumber, boolean status,
 			List<BookStatus> bookStatus, int activationCode) {
@@ -73,99 +87,167 @@ public class Patron  implements Serializable {
 		this.bookStatus = bookStatus;
 		this.activationCode = activationCode;
 	}
-
+	/**
+	 * 
+	 * @return
+	 */
 	public int getPatronId() {
 		return patronId;
 	}
-
+	/**
+	 * 
+	 * @param patronId
+	 */
 	public void setPatronId(int patronId) {
 		this.patronId = patronId;
 	}
-
+	/**
+	 * 
+	 * @return
+	 */
 	public int getUniversityId() {
 		return universityId;
 	}
-
+	/**
+	 * 
+	 * @param universityId
+	 */
 	public void setUniversityId(int universityId) {
 		this.universityId = universityId;
 	}
-
+	/**
+	 * 
+	 * @return
+	 */
 	public String getEmail() {
 		return email;
 	}
-
+	/**
+	 * 
+	 * @param email
+	 */
 	public void setEmail(String email) {
 		this.email = email;
 	}
-	
+	/**
+	 * 
+	 * @return
+	 */
 	public String getPassword() {
 		return password;
 	}
-
+	/**
+	 * 
+	 * @param password
+	 */
 	public void setPassword(String password) {
 		this.password = password;
 	}
-
+	/**
+	 * 
+	 * @return
+	 */
 	public String getFirstName() {
 		return firstName;
 	}
-
+	/**
+	 * 
+	 * @param firstName
+	 */
 	public void setFirstName(String firstName) {
 		this.firstName = firstName;
 	}
-
+	/**
+	 * 
+	 * @return
+	 */
 	public String getLastName() {
 		return lastName;
 	}
-
+	/**
+	 * 
+	 * @param lastName
+	 */
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
 	}
-
+	/**
+	 * 
+	 * @return
+	 */
 	public int getTotalIssuedCount() {
 		return totalIssuedCount;
 	}
-
+	/**
+	 * 
+	 * @param totalIssuedCount
+	 */
 	public void setTotalIssuedCount(int totalIssuedCount) {
 		this.totalIssuedCount = totalIssuedCount;
 	}
-
+	/**
+	 * 
+	 * @return
+	 */
 	public int getDayIssuedCount() {
 		return dayIssuedCount;
 	}
-
+	/**
+	 * 
+	 * @param dayIssuedCount
+	 */
 	public void setDayIssuedCount(int dayIssuedCount) {
 		this.dayIssuedCount = dayIssuedCount;
 	}
-
+	/**
+	 * 
+	 * @return
+	 */
 	public int getPenalty() {
 		return penalty;
 	}
-
+	/**
+	 * 
+	 * @param penalty
+	 */
 	public void setPenalty(int penalty) {
 		this.penalty = penalty;
 	}
-
+	/**
+	 * 
+	 * @return
+	 */
 	public int getPhoneNumber() {
 		return phoneNumber;
 	}
-
+	/**
+	 * 
+	 * @param phoneNumber
+	 */
 	public void setPhoneNumber(int phoneNumber) {
 		this.phoneNumber = phoneNumber;
 	}
-
+	/**
+	 * @return
+	 */
 	public boolean isStatus() {
 		return status;
 	}
-
+	/**
+	 * @param status
+	 */
 	public void setStatus(boolean status) {
 		this.status = status;
 	}
-
+	/**
+	 * @return
+	 */
 	public List<BookStatus> getBookStatus() {
 		return bookStatus;
 	}
-
+	/**
+	 * @param bookStatus
+	 */
 	public void setBookStatus(List<BookStatus> bookStatus) {
 		this.bookStatus = bookStatus;
 	}
@@ -183,6 +265,4 @@ public class Patron  implements Serializable {
 	public void setActivationCode(int activationCode) {
 		this.activationCode = activationCode;
 	}	
-	
-	
 }
