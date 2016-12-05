@@ -70,7 +70,7 @@ public class AppController {
 	 */
 	@RequestMapping(value = "/welcome", method = RequestMethod.GET)
 	public ModelAndView goToWelcomePage(ModelMap model) {
-		ModelAndView welcome = new ModelAndView("PatronHome");
+		ModelAndView welcome = new ModelAndView("PatronRegistration");
 		return welcome;
 	}
 	
