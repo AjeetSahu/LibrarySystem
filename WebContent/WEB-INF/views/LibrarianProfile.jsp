@@ -52,6 +52,7 @@
         <div class="row">
         <div class="col-md-3">
 		
+
     <div id="wrapper">
 
         <!-- Sidebar -->
@@ -63,10 +64,10 @@
                     </a>
                 </li>
                 <li>
-                    <a href="<%=request.getContextPath() %>/patronHome">Home</a>
+                    <a href="<%=request.getContextPath()%>/patronHome">Home</a>
                 </li>
                 <li>
-                    <a href="#">Search Book</a>
+                    <a href="<%=request.getContextPath()%>/addNewBook">Search Book</a>
                 </li>
                 <li>
                     <a href="#">Already Issued Books</a>
@@ -86,12 +87,10 @@
             </ul>
         </div>
         <!-- /#sidebar-wrapper -->
-
     </div>
     <!-- /#wrapper -->
 </div>
-		  
-                     
+		             
        	</div>
        	<div class="row"> 
        		<div class="col-md-3"></div>
