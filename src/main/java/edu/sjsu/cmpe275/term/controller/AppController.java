@@ -243,7 +243,102 @@ public class AppController {
 		model.addAttribute("httpStatus", HttpStatus.OK);
 		return librarianFound;	
 	}
-	
 
 	
+	/**
+	 * 
+	 * @param reqParams
+	 * @return
+	 */
+	@RequestMapping(value="/newUser", method = RequestMethod.POST)
+	public ModelAndView createNewUser(@RequestParam Map<String, String> reqParams) {
+		ModelAndView userActivation= new ModelAndView("userActivationPage");
+		ModelAndView errorPage= new ModelAndView("errorPage");
+		int randomCode = (int)(Math.random() * 100000);
+		if(reqParams.get("email").contains("@sjsu.edu")){
+			if(librarianService.findLibrarianByUniversityId(reqParams.get("universityId")) == null){
+				Librarian librarian = new Librarian();
+				librarian.setEmail(reqParams.get("email"));
+				librarian.setPassword(reqParams.get("password"));
+				librarian.setUniversityId(Integer.parseInt(reqParams.get("universityId")));
+				librarian.setFirstName(reqParams.get("firstName"));
+				librarian.setLastName(reqParams.get("lastName")); 
+				librarian.setActivationCode(randomCode);
+				librarian = librarianService.saveNewLibrarian(librarian);
+			}
+			else{
+				return errorPage;
+			}
+		}
+		else{
+			if(patronService.findPatronByUniversityId(reqParams.get("universityId")) == null){
+				Patron patron = new Patron();
+				patron.setEmail(reqParams.get("email"));
+				patron.setPassword(reqParams.get("password"));
+				patron.setUniversityId(Integer.parseInt(reqParams.get("universityId")));
+				patron.setFirstName(reqParams.get("firstName"));
+				patron.setLastName(reqParams.get("lastName")); 
+				patron.setActivationCode(randomCode);
+				patron = patronService.saveNewPatron(patron);
+			}
+			else{
+				return errorPage;
+			}
+		}
+		sendMail(reqParams.get("email"), randomCode);
+		userActivation.addObject("universityId", reqParams.get("universityId"));
+		userActivation.addObject("email", reqParams.get("email"));
+		return userActivation;
+		}
+	
+	/**
+	 * 
+	 * @param reqParams
+	 * @param ucBuilder
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value="/completeRegistration", method = RequestMethod.POST)
+	public String completeUserRegistration(@RequestParam Map<String, String> reqParams,
+			UriComponentsBuilder ucBuilder, Model model) {
+		String email = reqParams.get("email");
+		String universityId = reqParams.get("universityId");
+		if(email.contains("@sjsu.edu")){
+			Librarian librarian = librarianService.findLibrarianByUniversityId(universityId);
+			if(librarian.getActivationCode() == Integer.parseInt(reqParams.get("activationCode"))){
+				librarian.setStatus(true);
+				Librarian librarian1 = librarianService.updateLibrarian(librarian);
+				HttpHeaders headers = new HttpHeaders();
+				if(librarian1 != null){
+					    headers.setLocation(ucBuilder.path("/librarian/{id}").buildAndExpand(librarian1.getLibrarianId()).toUri());
+						model.addAttribute("headers", headers);
+						model.addAttribute("httpStatus", HttpStatus.OK);
+						return "userCreationSuccess";
+				}
+				else{
+					model.addAttribute("httpStatus", HttpStatus.CONFLICT);
+					return "Conflict";
+				}
+			}
+		}
+		else{
+			Patron patron = patronService.findPatronByUniversityId(universityId);
+				if(patron.getActivationCode() == Integer.parseInt(reqParams.get("activationCode"))){
+					patron.setStatus(true);
+					Patron patron1 = patronService.saveNewPatron(patron);
+					HttpHeaders headers = new HttpHeaders();
+					if(patron1 != null){
+						    headers.setLocation(ucBuilder.path("/patron/{id}").buildAndExpand(patron1.getPatronId()).toUri());
+							model.addAttribute("headers", headers);
+							model.addAttribute("httpStatus", HttpStatus.CREATED);
+							return "userCreationSuccess";
+					}
+					else{
+						model.addAttribute("httpStatus", HttpStatus.CONFLICT);
+						return "Conflict";
+					}
+				}
+		}
+
+	}	
 }
