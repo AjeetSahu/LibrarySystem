@@ -39,6 +39,11 @@ public class AppController {
 	
 	@Autowired
 	private static MailSender activationMailSender;
+	
+	public static void setActivationMailSender(MailSender activationMailSender) {
+		AppController.activationMailSender = activationMailSender;
+	}
+
 	/**
 	 * 
 	 * @param bookService
@@ -71,11 +76,14 @@ public class AppController {
 	 */
     public static void sendMail(String to, int activationCode) 
     {
+    	System.out.println("to: "+to+" activationCode: "+activationCode);
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(to);
         message.setSubject("Library Management System Activation Code");
         message.setText("Thank you for creating an account at Library Management System. "
         		+ "Please activate your account using your activation code = "+activationCode);
+        System.out.println("1");
+        System.out.println(activationMailSender);
         activationMailSender.send(message);
     }
     
@@ -107,33 +115,36 @@ public class AppController {
 	 * @author Pratik
 	 *
 	 */
-    @RequestMapping(method = RequestMethod.POST)
+    @RequestMapping(value="/login", method = RequestMethod.POST)
     public String authenticateUser(@RequestParam Map<String, String> reqParams, Model model){
 		if(reqParams.get("email").contains("@sjsu.edu")){
 			Librarian librarian = librarianService.findLibrarianByEmailId(reqParams.get("email"));
 			if(librarian != null){
 				if(librarian.isStatus()==true){
 					librarian.setStatus(false);
-					return "homePage";
+					return "LibraryHome";
 				}else{
 					model.addAttribute("message", "Authentication failed, incorrect email or password!");
 					return "login";
 				}
 			}else{
-				return "error";
+				return "Error";
 			}
 		}else{
+			System.out.println("email: "+reqParams.get("email"));
 			Patron patron = patronService.findPatronByEmailId(reqParams.get("email"));
+			System.out.println(patron);
 			if(patron != null){
+				System.out.println("patron exist");
 				if(patron.isStatus()==true){
 					patron.setStatus(false);
-					return "homePage";
+					return "PatronHome";
 				}else{
 					model.addAttribute("message", "Authentication failed, incorrect email or password!");
 					return "login";
 				}
 			}else{
-				return "error";
+				return "Error";
 			}		
 		}
     }
@@ -430,6 +441,7 @@ public class AppController {
 	 */
 	@RequestMapping(value="/newUser", method = RequestMethod.POST)
 	public ModelAndView createNewUser(@RequestParam Map<String, String> reqParams) {
+		System.out.println("inside createNewUser");
 		ModelAndView userActivation= new ModelAndView("userActivationPage");
 		ModelAndView errorPage= new ModelAndView("errorPage");
 		int randomCode = (int)(Math.random() * 100000);
@@ -442,6 +454,7 @@ public class AppController {
 				librarian.setFirstName(reqParams.get("firstName"));
 				librarian.setLastName(reqParams.get("lastName")); 
 				librarian.setActivationCode(randomCode);
+				System.out.println("after randomCode");
 				librarian = librarianService.saveNewLibrarian(librarian);
 			}
 			else{
@@ -463,6 +476,7 @@ public class AppController {
 				return errorPage;
 			}
 		}
+		System.out.println("Email: "+reqParams.get("email") +"randomCode: "+randomCode);
 		sendMail(reqParams.get("email"), randomCode);
 		userActivation.addObject("universityId", reqParams.get("universityId"));
 		userActivation.addObject("email", reqParams.get("email"));

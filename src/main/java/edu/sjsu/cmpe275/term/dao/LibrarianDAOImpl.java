@@ -39,7 +39,7 @@ public class LibrarianDAOImpl extends AbstractDao<String, Librarian> implements 
 	}
 	@Override
 	public Librarian findLibrarianByEmailId(String id) {
-		return findById(id);
+		return findByEmailId(id);
 	}
 	
 

@@ -29,7 +29,7 @@ public class PatronDAOImpl extends AbstractDao<String, Patron> implements Patron
 	
 	@Override
 	public Patron findPatronByEmailId(String id) {
-		return findById(id);
+		return findByEmailId(id);
 	}
 
 }
