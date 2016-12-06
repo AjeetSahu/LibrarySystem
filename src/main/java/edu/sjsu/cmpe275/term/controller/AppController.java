@@ -1,6 +1,7 @@
 package edu.sjsu.cmpe275.term.controller;
 
 import java.util.Map;
+import javax.validation.Valid;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -13,6 +14,7 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -179,30 +181,33 @@ public class AppController {
 	 * @author Pratik
 	 *
 	 */
-    @RequestMapping(value="/login", method = RequestMethod.POST)
-    public String authenticateUser(@RequestParam Map<String, String> reqParams, Model model){
+    @RequestMapping(value="/home", method = RequestMethod.POST)
+    public ModelAndView authenticateUser(@RequestParam Map<String, String> reqParams, Model model){
+    	ModelAndView modelAndView = null;
     	if(reqParams.get("email").contains("@sjsu.edu")){
+    		modelAndView = new ModelAndView("LibraryHome");
 			Librarian librarian = librarianService.findLibrarianByEmailId(reqParams.get("email"));
 			if(librarian != null && librarian.getPassword().equals(reqParams.get("password"))){
 				librarian.setStatus(false);
 				librarianService.updateLibrarian(librarian);
-				return "LibraryHome";
+				model.addAttribute("message","");
 			}else{
+				modelAndView = new ModelAndView("Login");
 				model.addAttribute("message", "Authentication failed, incorrect email or password!");
-				return "Login";
 			}
 		}else{
 			System.out.println("email: "+reqParams.get("email"));
 			Patron patron = patronService.findPatronByEmailId(reqParams.get("email"));
 			if(patron != null && patron.getPassword().equals(reqParams.get("password"))){
+				modelAndView = new ModelAndView("PatronHome");
 				patron.setStatus(false);
 				patronService.updatePatron(patron);
-				return "PatronHome";
 			}else{
 				model.addAttribute("message", "Authentication failed, incorrect email or password!");
-				return "Login";
+				modelAndView = new ModelAndView("Login");
 			}		
 		}
+    	return modelAndView;
     }
 	
 	/**
@@ -259,15 +264,20 @@ public class AppController {
 	 * @return
 	 */
 	@RequestMapping(value="/newBook", method = RequestMethod.POST)
-	public String createNewBook(@ModelAttribute("book") Book book,
-			UriComponentsBuilder ucBuilder, Model model) {
+	public String createNewBook(@Valid @ModelAttribute("book") Book book,
+			UriComponentsBuilder ucBuilder, Model model, BindingResult result) {
+		if(result.hasErrors()){
+			return "error";
+		}
 		book = bookService.saveNewBook(book);
 		HttpHeaders headers = new HttpHeaders();
 		if(book != null){
 		    headers.setLocation(ucBuilder.path("/book/{id}").buildAndExpand(book.getBookId()).toUri());
 			model.addAttribute("headers", headers);
 			model.addAttribute("httpStatus", HttpStatus.CREATED);
-			return "BookCreationSuccess";
+			model.addAttribute("book",book);
+			model.addAttribute("message", "Book Added Successfully");
+			return "LibraryHome";
 		}else{
 			model.addAttribute("httpStatus", HttpStatus.CONFLICT);
 			return "Conflict";
@@ -381,6 +391,16 @@ public class AppController {
 		return librarian;
 	}
 	
+	/**
+	 * Goto Librarian AddBook Manually Page 
+	 * @author Amitesh
+	 *
+	 */
+	@RequestMapping(value = "/addNewBookManually", method = RequestMethod.GET)
+	public ModelAndView addNewBookManually(ModelMap model) {
+		ModelAndView librarian = new ModelAndView("AddNewBookManually");
+		return librarian;
+	}
 	
 	/**
 	 * Goto Patron profile page to update Patron info 
