@@ -29,6 +29,8 @@
     	<property name="bookService" ref="bookService"></property>
     	<property name="librarianService" ref="librarianService"></property>
     	<property name="patronService" ref="patronService"></property>	
+    	<property name="bookStatusService" ref="bookStatusService"></property>	
+    	
    	</bean>
    	<bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
 	    <property name="staticMethod" value="edu.sjsu.cmpe275.term.controller.AppController.setActivationMailSender"/>
@@ -42,6 +44,14 @@
     	<property name="bookDAO" ref="bookDAO"></property>
     	
     </bean>
+     
+   	 
+   	 	 <bean id ="bookStatusService" class="edu.sjsu.cmpe275.term.service.BookStatusServiceImpl">
+    	<property name="bookStatusDAO" ref="bookStatusDAO"></property>
+    	
+    </bean>
+   	 
+   	 
     <bean id="librarianService" class="edu.sjsu.cmpe275.term.service.LibrarianServiceImpl">
     	<property name="librarianDAO" ref="librarianDAO"></property>
     </bean>
@@ -52,6 +62,8 @@
     <bean id ="patronDAO" class="edu.sjsu.cmpe275.term.dao.PatronDAOImpl"/>
     <bean id ="bookDAO" class="edu.sjsu.cmpe275.term.dao.BookDAOImpl"/>
     <bean id="librarianDAO" class="edu.sjsu.cmpe275.term.dao.LibrarianDAOImpl"/>
+    <bean id="bookStatusDAO" class="edu.sjsu.cmpe275.term.dao.BookStatusDAOImpl"/>
+    
     
     <!-- SET default mail properties -->
     <bean id="activationMailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">

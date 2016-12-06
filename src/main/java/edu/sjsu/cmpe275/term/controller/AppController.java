@@ -1,10 +1,11 @@
 package edu.sjsu.cmpe275.term.controller;
 
 import java.util.Map;
-
 import javax.validation.Valid;
-
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -19,13 +20,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.UriComponentsBuilder;
 import edu.sjsu.cmpe275.term.model.Book;
+import edu.sjsu.cmpe275.term.model.BookStatus;
 import edu.sjsu.cmpe275.term.model.Librarian;
 import edu.sjsu.cmpe275.term.model.Patron;
 import edu.sjsu.cmpe275.term.service.BookService;
+import edu.sjsu.cmpe275.term.service.BookStatusService;
 import edu.sjsu.cmpe275.term.service.LibrarianService;
 import edu.sjsu.cmpe275.term.service.PatronService;
 
@@ -41,6 +43,10 @@ public class AppController {
 	
 	@Autowired
 	private PatronService patronService;
+	
+
+	@Autowired
+	private BookStatusService bookStatusService;
 	
 	@Autowired
 	private static MailSender activationMailSender;
@@ -584,4 +590,64 @@ public class AppController {
 				}
 		}	
 	}	
+	
+	
+	
+	/**
+	 * Search Books 
+	 * Ruchit code strts here
+	 * @param librarianID
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value="/checkout/{patronId}", method = RequestMethod.POST)
+	public void checkout(@PathVariable("patronId") String patronUniversityId, Model model) {
+		String books[]=new String[4];
+		//bookStatusService.issueBooks(books);
+		BookStatus bookStatus;
+		Calendar c=new GregorianCalendar();
+		Date issueDate=c.getTime();
+		c.add(Calendar.DATE, 30);
+		Date dueDate=c.getTime();
+	
+		
+//		Patron patron=patronService.findPatronByUniversityId(patronUniversityId);
+//		if(patron.getDayIssuedCount()>5||patron.getTotalIssuedCount()>10)
+//			return ;
+//		
+		
+		for(int i=0;i<books.length;i++) {
+			bookStatus=new BookStatus();
+		
+			Book book = bookService.findBookByISBN(books[i]);
+			
+			bookStatus.setCurrentDate(issueDate);
+			bookStatus.setDueDate(dueDate);
+			bookStatus.setIssueDate(issueDate);
+		
+			bookStatus.setRequestDate(issueDate);
+			bookStatus.setRequestStatus("done");
+			bookStatus.setBook(book);
+			bookStatusService.issueBooks(bookStatus);
+		
+		}
+		
+		
+		
+		
+			
+	}
+
+	public BookStatusService getBookStatusService() {
+		return bookStatusService;
+	}
+
+	public void setBookStatusService(BookStatusService bookStatusService) {
+		this.bookStatusService = bookStatusService;
+	}
+	
+	
+	
+	
+	
 }
