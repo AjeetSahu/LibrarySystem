@@ -1,15 +1,12 @@
 package edu.sjsu.cmpe275.term.controller;
 
 import java.util.Map;
-import javax.validation.Valid;
-
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -18,13 +15,11 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.UriComponentsBuilder;
 import edu.sjsu.cmpe275.term.model.Book;
@@ -295,7 +290,7 @@ public class AppController {
 				e1.printStackTrace();
 			}
 			publisher.setYearOfPublication(date);
-			//Picture picture = new Picture();
+			Picture picture = new Picture();
 			//MultipartFile multipartFile = (MultipartFile)reqParams.get("file");
 			//book.setCoverImage(
 			//picture.setImage(reqParams.get("coverImage"));
@@ -307,6 +302,8 @@ public class AppController {
 			catch(Exception e){
 				System.out.println(e);
 			}
+			book.setCoverImage(picture);
+			book.setPublisher(publisher);
 			book.setLocation(reqParams.get("location")); 
 			book.setKeywords(reqParams.get("keywords").split(","));
 			book = bookService.saveNewBook(book);
