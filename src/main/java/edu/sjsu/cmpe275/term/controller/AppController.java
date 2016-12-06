@@ -1,7 +1,10 @@
 package edu.sjsu.cmpe275.term.controller;
 
 import java.util.Map;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -572,30 +575,37 @@ public class AppController {
 	
 	/**
 	 * Search Books 
-	 * @author Pratik
+	 * Ruchit code strts here
 	 * @param librarianID
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping(value="/checkout/{patronId}", method = RequestMethod.GET)
-	public void checkout(@PathVariable("patronId") String librarianUniversityID, Model model) {
+	@RequestMapping(value="/checkout/{patronId}", method = RequestMethod.POST)
+	public void checkout(@PathVariable("patronId") String patronUniversityId, Model model) {
 		String books[]=new String[4];
 		//bookStatusService.issueBooks(books);
 		BookStatus bookStatus;
-		Date d=new Date();
+		Calendar c=new GregorianCalendar();
+		Date issueDate=c.getTime();
+		c.add(Calendar.DATE, 30);
+		Date dueDate=c.getTime();
+	
 		
-		
+//		Patron patron=patronService.findPatronByUniversityId(patronUniversityId);
+//		if(patron.getDayIssuedCount()>5||patron.getTotalIssuedCount()>10)
+//			return ;
+//		
 		
 		for(int i=0;i<books.length;i++) {
 			bookStatus=new BookStatus();
 		
 			Book book = bookService.findBookByISBN(books[i]);
 			
-			bookStatus.setCurrentDate(d);
-			bookStatus.setDueDate(d);
-			bookStatus.setIssueDate(d);
-			bookStatus.setDueDate(d);
-			bookStatus.setRequestDate(d);
+			bookStatus.setCurrentDate(issueDate);
+			bookStatus.setDueDate(dueDate);
+			bookStatus.setIssueDate(issueDate);
+		
+			bookStatus.setRequestDate(issueDate);
 			bookStatus.setRequestStatus("done");
 			bookStatus.setBook(book);
 			bookStatusService.issueBooks(bookStatus);
@@ -604,7 +614,16 @@ public class AppController {
 		
 		
 		
+		
 			
+	}
+
+	public BookStatusService getBookStatusService() {
+		return bookStatusService;
+	}
+
+	public void setBookStatusService(BookStatusService bookStatusService) {
+		this.bookStatusService = bookStatusService;
 	}
 	
 	
