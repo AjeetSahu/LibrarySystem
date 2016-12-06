@@ -67,7 +67,7 @@
                     <a href="<%=request.getContextPath() %>/libraryHome">Dashboard</a>
                 </li>
                 <li>
-                    <a href="<%=request.getContextPath() %>/newBook">Search Book</a>
+                    <a href="<%=request.getContextPath() %>/#">Search Book</a>
                 </li>
                 <li>
                     <a href="<%=request.getContextPath() %>/addNewBookManually">Add Book</a>
@@ -84,16 +84,96 @@
             </ul>
         </div>
         <!-- /#sidebar-wrapper -->
-	
+
     </div>
     <!-- /#wrapper -->
-</div>     
-	
+</div>
+		
+            <div class="col-md-7"  style="padding-top:120px;">
+            <div class="row">
+            <div class="col-md-1"></div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 style="text-align:center">Search Book To Delete</h3>
+                    </div>
+                    <div class="panel-body">
+                        <form action='/LibrarySystem/searchBookDetail' method="post" class="form-horizontal">
+                            <div class="row">
+                            	<div class="col-md-1"></div>
+                            	<div class="col-md-10">
+                            		<label for="ex1">Search Book By ISBN: </label>
+							  		<input class="form-control" type="text" id="isbn1" name="isbn1" placeholder="Enter ISBN to delete Book" required />
+                            	</div>
+							</div>
+							<br>
+                            <div style="padding-left:40%">
+                                <button type="button" class="btn btn-primary" id="getData">Search Book</button>
+                            </div>
+                        </form>
+                        
+                    </div>
+                    
+                 </div>
+                 </div>
+                 <div class="row">
+                 <div id="tab" hidden="true">
+                  <table class="table" border=2px id="tab1">
+             <thead>
+             	<th>Author</th>
+             	<th>Title</th>
+             	<th>Call Number</th>
+             	<th>Publisher</th>
+             	<th>Year of Publication</th>
+             	<th>Cover Image</th>
+             </thead>
+             <tr>
+             	
+             </tr>
+          		</table>
+          		<form action="" method="post">
+          			<input type="hidden" name="isbn" id="isbn">
+          			<input class="btn btn-primary" type="submit" value="Delete Book"/>
+          		</form>
+         		</div>
+         		<div class="col-md-1"></div>
+           </div>
+           </div>  
+           <div class="col-md-1"></div>          
        </div>
-			<div style="padding-top:100px; padding-left:450px;">
-            	<h3><mark>${message}</mark></h3>
-			</div>
-                </div>
+       
+      </div>
+         
 	</body>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+	<script>
+	$("#getData").click(function(){
+			var isbnVal = document.getElementById('isbn1').value;
+			//alert("isbnVal: "+isbnVal);
+			var url = "https://www.googleapis.com/books/v1/volumes?q=isbn:"+isbnVal;
+			//alert(url)
+	        $.get(url, function(data, status){
+	            alert("Data: " + JSON.stringify(data, null, 2) + "\nStatus: " + status);
+				document.getElementById("tab").hidden=false;
+				document.getElementById("isbn").value=isbnVal;
+			 var table = document.getElementById("tab1");
+			    var row = table.insertRow(-1);
+			    var cell1 = row.insertCell(0);
+			    var cell2 = row.insertCell(1);
+			    var cell3 = row.insertCell(2);
+			    var cell4 = row.insertCell(3);
+			    var cell5 = row.insertCell(4);
+			    var cell6 = row.insertCell(5);
+	    
+	    
+	    
+	    cell1.innerHTML = data.items[0].volumeInfo.authors.toString();
+	    cell2.innerHTML = data.items[0].volumeInfo.title;
+	    cell3.innerHTML = data.items[0].volumeInfo.publisher;
+	    cell4.innerHTML = data.items[0].volumeInfo.publisher;
+	    cell5.innerHTML = data.items[0].volumeInfo.publishedDate;
+	    cell6.innerHTML = data.items[0].volumeInfo.imageLinks.thumbnail;
+	        });
+	    });
 	
+	</script>
 </html>

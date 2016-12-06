@@ -605,6 +605,22 @@ public class AppController {
 	}
 
 	/**
+	 * Goto Patron Home page 
+	 * @author Amitesh
+	 *
+	 */
+	@RequestMapping(value = "/deleteSearch", method = RequestMethod.GET)
+	public ModelAndView deleteSearch(ModelMap model, HttpServletRequest request) {
+		if(request.getSession().getAttribute("loggedIn") == null){
+			ModelAndView delete = new ModelAndView("login");
+			return delete;
+		}
+		ModelAndView delete = new ModelAndView("DeleteSearch");
+		return delete;
+	}
+	
+	
+	/**
 	 * 
 	 * @param reqParams
 	 * @return
