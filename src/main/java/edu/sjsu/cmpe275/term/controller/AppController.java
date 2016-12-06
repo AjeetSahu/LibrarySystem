@@ -265,6 +265,7 @@ public class AppController {
 		return login;
 	}
 	
+	
 	/**
 	 * CREATE NEW BOOK ON CLICKING ADD BOOK IN ADDNEWBOOK PAGE
 	 * @author Pratik
@@ -274,10 +275,10 @@ public class AppController {
 	 * @return
 	 */
 	@RequestMapping(value="/newBook", method = RequestMethod.POST)
-	public String createNewBook(@RequestParam Map<String, String> reqParams,
-			UriComponentsBuilder ucBuilder, Model model) {
+	public ModelAndView createNewBook(@RequestParam Map<String, String> reqParams) {
 			Book book = new Book();
 			book.setIsbn(reqParams.get("isbn"));
+			System.out.println("isbn: "+reqParams.get("isbn"));
 			book.setAuthor(reqParams.get("author"));
 			book.setTitle(reqParams.get("title"));
 			Publisher publisher = new Publisher();
@@ -285,7 +286,8 @@ public class AppController {
 			DateFormat format = new SimpleDateFormat("yyyy");
 			Date date = null;
 			try {
-				date = format.parse(reqParams.get("yearOfPublication"));
+				System.out.println("date: "+reqParams.get("yearOfPublication"));
+				date = format.parse(reqParams.get("yearOfPublication").toString());
 			} catch (ParseException e1) {
 				e1.printStackTrace();
 			}
@@ -304,16 +306,15 @@ public class AppController {
 			}
 			book.setCoverImage(picture);
 			book.setPublisher(publisher);
-			book.setLocation(reqParams.get("location")); 
-			book.setKeywords(reqParams.get("keywords").split(","));
+			book.setLocation(reqParams.get("location"));
+			if(reqParams.get("keywords").length()>0)
+				book.setKeywords(reqParams.get("keywords").toString().trim().split(","));
 			book = bookService.saveNewBook(book);
-			HttpHeaders headers = new HttpHeaders();
-		    headers.setLocation(ucBuilder.path("/book/{id}").buildAndExpand(book.getBookId()).toUri());
-			model.addAttribute("headers", headers);
-			model.addAttribute("httpStatus", HttpStatus.CREATED);
-			model.addAttribute("book",book);
-			model.addAttribute("message", "Book Added Successfully");
-			return "LibraryHome";
+			ModelAndView model = new ModelAndView("LibraryHome");
+			model.addObject("httpStatus", HttpStatus.CREATED);
+			model.addObject("book",book);
+			model.addObject("message", "Book Added Successfully");
+			return model;
 	}
 	
 	/**

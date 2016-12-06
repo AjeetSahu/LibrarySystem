@@ -103,7 +103,6 @@
                             	<div class="col-md-10">
                             		<label for="ex1">Search Book By ISBN: </label>
 							  		<input class="form-control" type="text" id="isbn" name="isbn" placeholder="Enter ISBN here" required />
-							  		<input type="hidden" name="isbnData" id="isbnData">
                             	</div>
 							</div>
 							<br>
@@ -140,23 +139,33 @@
        <div class="row"> 
        		<div class="col-md-2"></div>
        		<div class="col-md-7">
-             <form id="form1" hidden=true;>
+             <form action="/LibrarySystem/newBook" method="post" id="form1" hidden=true;>
 	            <div class="row">
-	            	<div class="col-md-4"></div>
-	            	<div class="col-md-4">
+	            	<div class="col-md-2"></div>
+	            	<div class="col-md-3">
 	            	<div class="form-group">
 					    <label>Number Of Copies</label>
 					    <input type="number" class="form-control" name="numberOfCopies" placeholder="Enter Number Of Copies">
 					  </div>
 	            	</div>
-	            	<div class="col-md-4">
+	            	<div class="col-md-3">
 	            	<div class="form-group">
 					    <label>Location In Library</label>
 					    <input type="text" class="form-control" name="location" placeholder="Enter Location In Library">
 					  </div>
 	            	</div>
-	            	
+	            	<div class="col-md-3">
+	            	<div class="form-group">
+					    <label>Keywords</label>
+					    <input type="text" class="form-control" name="keywords" placeholder="Enter Keywords">
+					  </div>
+	            	</div>
 	            </div><br>
+	            <input type="hidden" name="isbn" id="isbn">
+	            <input type="hidden" name="author" id="author">
+		  		<input type="hidden" name="title" id="title">
+		  		<input type="hidden" name="yearOfPublication" id="yearOfPublication">
+		  		<input type="hidden" name="publisher" id="publisher">
 	            <div class="row">
 		            <div style="padding-left:365px;">
 		            	<input type="submit" class="btn btn-primary" value="Add Book to Library">
@@ -176,16 +185,13 @@
 	<script>
 	$("#getData").click(function(){
 			var isbnVal = document.getElementById('isbn').value;
-			alert("isbnVal: "+isbnVal);
-			var url = "https://www.googleapis.com/books/v1/volumes?q=isbn:8179923274";
-			alert(url)
+			//alert("isbnVal: "+isbnVal);
+			var url = "https://www.googleapis.com/books/v1/volumes?q=isbn:"+isbnVal;
+			//alert(url)
 	        $.get(url, function(data, status){
 	            alert("Data: " + JSON.stringify(data, null, 2) + "\nStatus: " + status);
-				document.getElementById("getData").value = data;
-				//alert("getData: "+document.getElementById("getData").value);
 				document.getElementById("tab").hidden=false;
 				document.getElementById("form1").hidden=false;
-	            data1 = data;
 			 var table = document.getElementById("tab1");
 			    var row = table.insertRow(-1);
 			    var cell1 = row.insertCell(0);
@@ -204,14 +210,12 @@
 	    cell5.innerHTML = data.items[0].volumeInfo.publishedDate;
 	    cell6.innerHTML = data.items[0].volumeInfo.imageLinks.thumbnail;
 	    
-	    
-	            /* alert(data.items[0].id);
-	            alert(data.items[0].volumeInfo.title);
-	            alert(data.items[0].volumeInfo.authors.toString());
-	            alert(data.items[0].volumeInfo.publisher);
-	            alert(data.items[0].volumeInfo.publishedDate);
-	            alert(data.items[0].volumeInfo.imageLinks.thumbnail);
-	            alert(data.items[0].volumeInfo.categories.toString()); */
+	    document.getElementById("isbn").value = isbnVal;
+	    document.getElementById("author").value = data.items[0].volumeInfo.authors.toString();
+	    document.getElementById("title").value = data.items[0].volumeInfo.title;
+	    document.getElementById("publisher").value = data.items[0].volumeInfo.publisher;
+	    document.getElementById("yearOfPublication").value = data.items[0].volumeInfo.publishedDate;
+
 	        });
 	    });
 	
