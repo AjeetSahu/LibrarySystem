@@ -535,7 +535,12 @@ public class AppController {
 	 * @return
 	 */
 	@RequestMapping(value="/patron/{patronUniversityID}", method = RequestMethod.GET)
-	public ModelAndView getPatronByID(@PathVariable("patronUniversityID") String patronUniversityID, Model model) {
+	public ModelAndView getPatronByID(@PathVariable("patronUniversityID") String patronUniversityID,
+			Model model, HttpServletRequest request) {
+		if(request.getSession().getAttribute("loggedIn") == null){
+			ModelAndView login = new ModelAndView("login");
+			return login;
+		}
 		ModelAndView patronFound= new ModelAndView("PatronFound");
 		ModelAndView patronNotFound= new ModelAndView("PatronNotFound");
 		Patron patron = patronService.findPatronByUniversityId(patronUniversityID);
@@ -581,7 +586,12 @@ public class AppController {
 	 * @return
 	 */
 	@RequestMapping(value="/librarian/{librarianUniversityID}", method = RequestMethod.GET)
-	public ModelAndView getLibrarianByID(@PathVariable("librarianUniversityID") String librarianUniversityID, Model model) {
+	public ModelAndView getLibrarianByID(@PathVariable("librarianUniversityID") String librarianUniversityID,
+			Model model, HttpServletRequest request) {
+		if(request.getSession().getAttribute("loggedIn") == null){
+			ModelAndView login = new ModelAndView("login");
+			return login;
+		}
 		ModelAndView librarianFound= new ModelAndView("LibrarianFound");
 		ModelAndView librarianNotFound= new ModelAndView("LibrarianNotFound");
 		Librarian librarian = librarianService.findLibrarianByUniversityId(librarianUniversityID);
