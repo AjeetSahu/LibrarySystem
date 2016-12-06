@@ -94,8 +94,7 @@
        <div class="row"> 
        		<div class="col-md-3"></div>
 	       		<div class="col-md-6" style="padding-top:110px;">
-	             <form action="/LibrarySystem/newBook" method="POST" modelAttribute="book" commandName="fileUploadForm"
-		enctype="multipart/form-data"> 
+	             <form action="/LibrarySystem/newBook" method="post"> 
 			  <label for="ex1">ISBN: </label>
 			  <input class="form-control" type="text" name="isbn" >
 				<br>
