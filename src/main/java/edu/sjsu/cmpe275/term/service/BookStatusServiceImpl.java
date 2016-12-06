@@ -19,7 +19,7 @@ public class BookStatusServiceImpl implements BookStatusService {
 	}
 	
 	@Override
-	public String returnBooks(int bookStatusId) {
+	public String returnBooks(String bookStatusId) {
 		return bookStatusDAO.returnBooks(bookStatusId);
 	}
 }
