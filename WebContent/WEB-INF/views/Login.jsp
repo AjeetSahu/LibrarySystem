@@ -60,14 +60,15 @@
                             	<div class="col-md-1"></div>
                             	<div class="col-md-10">
 							  		<input class="form-control" type="email" id="email" name="email" placeholder="Enter Email here" required />
-                            		<br><br>
-							  		<input class="form-control" type="password" id="pwd" name="pwd" placeholder="Enter Password here" required />
+                            		<br>
+							  		<input class="form-control" type="password" id="password" name="password" placeholder="Enter Password here" required />
                             	</div>
 							</div>
 							<br>
                             <div style="padding-left:40%">
-                                <button type="submit" class="btn btn-primary" >Login</button>
+                                <button type="submit" class="btn btn-primary" >Login</button><br>
                             </div>
+                            <p style="color:red; text-align:center;">${message}</p>
                             <div class="pull-right">
                             <a class="pull-right" href="<%=request.getContextPath() %>/registration">New User? Register Here</a>
                             </div>

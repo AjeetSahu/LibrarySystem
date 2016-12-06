@@ -48,7 +48,7 @@
           <br />
           <p>The page you requested could not be found, please try again. Use your browsers <b>Back</b> button to navigate to the page you have prevously come from</p>
           <p><b>Or you could just press this button below:</b></p>
-          <a href="<%=request.getContextPath() %>/" class="btn btn-large btn-info"><i class="icon-home icon-white"></i> Take Me Home</a>
+          <a href="<%=request.getContextPath() %>/welcome" class="btn btn-large btn-info"><i class="icon-home icon-white"></i> Take Me Home</a>
         </div>
         <br/>
         
