@@ -37,9 +37,11 @@ public class BookStatus implements Serializable {
 	private String requestStatus;
 	@Column(name = "CURRENTDATE")
 	private Date currentDate;
+	
 	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name="BOOKID")
 	private Book book;
+	
 	@ManyToMany(mappedBy="bookStatus")
 	private List<Patron> patrons;
 	

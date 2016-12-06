@@ -22,7 +22,7 @@ public class LibrarianDAOImpl extends AbstractDao<String, Librarian> implements 
 	 */	
 	@Override
 	public Librarian findLibrarianByUniversityId(String id) {
-		return findByIdOfTypeString(id);
+		return findById(id);
 	}
 	
 	@Override
@@ -31,7 +31,7 @@ public class LibrarianDAOImpl extends AbstractDao<String, Librarian> implements 
 	}
 	@Override
 	public Librarian findLibrarianByEmailId(String id) {
-		return findByIdOfTypeString(id);
+		return findById(id);
 	}
 	
 

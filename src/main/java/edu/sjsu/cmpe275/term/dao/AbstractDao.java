@@ -24,40 +24,12 @@ public abstract class AbstractDao<PK extends Serializable, T> {
 		this.persistentClass =(Class<T>) ((ParameterizedType) this.getClass().getGenericSuperclass()).getActualTypeArguments()[1];
 	}
 	
-	/**
-	 * @author Pratik
-	 * @param id
-	 * @return
-	 */
-	
-	public T findByIdOfTypeInt(PK id) {
+	public T findById(String id) {
 		try{
-			int userid= Integer.parseInt(id.toString());
-			if(this.entityManager.find(this.persistentClass, userid) != null){
-				T entity = (T) this.entityManager.find(this.persistentClass, userid);
-				return entity;	
-			}
-		}
-		catch (NumberFormatException e) {
-		    System.out.println("Exception while parsing id to string: "+e);
-		}
-		catch(RollbackException e)
-		{	
-			System.out.println("Rollback Exception in findById");
-			return null;
-		}
-		catch(Exception e){
-			System.out.println(this.persistentClass.getName()+" not found!");
-			return null;
-		}
-		return null;
-	}
-	
-	
-	public T findByIdOfTypeString(String id) {
-		try{
+			System.out.println("in abstract DAO+"+id);
 			if(this.entityManager.find(this.persistentClass, id) != null){
 				T entity = (T) this.entityManager.find(this.persistentClass, id);
+				System.out.println("in abstract DAO+"+entity);	
 				return entity;	
 			}
 		}
@@ -111,12 +83,7 @@ public abstract class AbstractDao<PK extends Serializable, T> {
 	 */
 	public String deleteById(PK id){
 		try{
-			T entity;
-			if(id.getClass().equals("class java.lang.String")){
-				entity = this.findByIdOfTypeString(id.toString());
-			}else{
-				entity = this.findByIdOfTypeInt(id);
-			}
+			T entity = this.findById(id.toString());
 			if(entity != null){
 				this.delete(entity);
 				return "Deletion operation successfully performed";
