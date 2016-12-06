@@ -446,7 +446,11 @@ public class AppController {
 	 *
 	 */
 	@RequestMapping(value = "/patronHome", method = RequestMethod.GET)
-	public ModelAndView patronHome(ModelMap model) {
+	public ModelAndView patronHome(ModelMap model, HttpServletRequest request) {
+		if(request.getSession().getAttribute("loggedIn") == null){
+			ModelAndView login = new ModelAndView("login");
+			return login;
+		}
 		ModelAndView patron = new ModelAndView("PatronHome");
 		return patron;
 	}
@@ -457,7 +461,11 @@ public class AppController {
 	 *
 	 */
 	@RequestMapping(value = "/libraryHome", method = RequestMethod.GET)
-	public ModelAndView libraryHome(ModelMap model) {
+	public ModelAndView libraryHome(ModelMap model, HttpServletRequest request) {
+		if(request.getSession().getAttribute("loggedIn") == null){
+			ModelAndView login = new ModelAndView("login");
+			return login;
+		}
 		ModelAndView librarian = new ModelAndView("LibraryHome");
 		return librarian;
 	}
@@ -468,7 +476,11 @@ public class AppController {
 	 *
 	 */
 	@RequestMapping(value = "/addNewBookManually", method = RequestMethod.GET)
-	public ModelAndView addNewBookManually(ModelMap model) {
+	public ModelAndView addNewBookManually(ModelMap model, HttpServletRequest request) {
+		if(request.getSession().getAttribute("loggedIn") == null){
+			ModelAndView login = new ModelAndView("login");
+			return login;
+		}
 		ModelAndView librarian = new ModelAndView("AddNewBookManually");
 		return librarian;
 	}
@@ -479,7 +491,11 @@ public class AppController {
 	 *
 	 */
 	@RequestMapping(value = "/patronProfile", method = RequestMethod.GET)
-	public ModelAndView patronProfile(ModelMap model) {
+	public ModelAndView patronProfile(ModelMap model, HttpServletRequest request) {
+		if(request.getSession().getAttribute("loggedIn") == null){
+			ModelAndView login = new ModelAndView("login");
+			return login;
+		}
 		ModelAndView patronProfile = new ModelAndView("PatronProfile");
 		return patronProfile;
 	}
@@ -490,7 +506,12 @@ public class AppController {
 	 *
 	 */
 	@RequestMapping(value = "/libraryProfile", method = RequestMethod.GET)
-	public ModelAndView libraryProfile(ModelMap model) {
+	public ModelAndView libraryProfile(ModelMap model, HttpServletRequest request) {
+		if(request.getSession().getAttribute("loggedIn") == null){
+			ModelAndView login = new ModelAndView("login");
+			return login;
+		}
+
 		ModelAndView libraryProfile = new ModelAndView("LibrarianProfile");
 		return libraryProfile;
 	}
