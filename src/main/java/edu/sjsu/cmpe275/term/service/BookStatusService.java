@@ -1,5 +1,8 @@
 package edu.sjsu.cmpe275.term.service;
 
+import edu.sjsu.cmpe275.term.model.BookStatus;
+
 public interface BookStatusService {
-	public String returnBooks(String bookStatusId);
+	public void issueBooks(BookStatus bookStatus);
+	public String returnBooks(int bookStatusId);
 }

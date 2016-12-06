@@ -42,7 +42,7 @@
                         <a href="#">Profile</a>
                     </li>
                     <li>
-                        <a href="<%=request.getContextPath() %>/">Signout</a>
+                        <a href="<%=request.getContextPath() %>/welcome">Signout</a>
                     </li>
                 </ul>
             </div>
@@ -81,7 +81,7 @@
                     <a href="<%=request.getContextPath() %>/patronProfile">Profile</a>
                 </li>
                 <li>
-                    <a href="<%=request.getContextPath() %>/">Signout</a>
+                    <a href="<%=request.getContextPath() %>/welcome">Signout</a>
                 </li>
             </ul>
         </div>
