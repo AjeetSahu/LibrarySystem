@@ -1,10 +1,8 @@
 package edu.sjsu.cmpe275.term.controller;
 
 import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -86,14 +84,6 @@ public class AppController {
 	 */
 	public void setPatronService(PatronService patronService) {
 		this.patronService = patronService;
-	}
-	
-	/**
-	 * 
-	 * @param bookStatusService
-	 */
-	public void setBookStatusService(BookStatusService bookStatusService) {
-		this.bookStatusService = bookStatusService;
 	}
 	
 	/**
@@ -205,7 +195,6 @@ public class AppController {
 			if(librarian != null && librarian.getPassword().equals(reqParams.get("password"))){
 				librarian.setStatus(false);
 				librarianService.updateLibrarian(librarian);
-				model.addAttribute("message","");
 				request.getSession().setAttribute("loggedIn", librarian);
 			}else{
 				modelAndView = new ModelAndView("Login");
@@ -215,7 +204,6 @@ public class AppController {
 			System.out.println("email: "+reqParams.get("email"));
 			Patron patron = patronService.findPatronByEmailId(reqParams.get("email"));
 			if(patron != null && patron.getPassword().equals(reqParams.get("password"))){
-				modelAndView = new ModelAndView("PatronHome");
 				patron.setStatus(false);
 				patronService.updatePatron(patron);
 				request.getSession().setAttribute("loggedIn", patron);
@@ -300,7 +288,6 @@ public class AppController {
 	 * @param model
 	 * @return
 	 */
-	
 	public ModelAndView createNewBook(@RequestParam Map<String, String> reqParams, HttpServletRequest request) {
 			Book book = new Book();
 			book.setIsbn(reqParams.get("isbn"));
@@ -716,9 +703,12 @@ public class AppController {
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping(value="/checkout/{patronId}", method = RequestMethod.POST)
-	public void checkout(@PathVariable("patronId") String patronUniversityId, Model model) {
-		String books[]=new String[4];
+	@RequestMapping(value="/checkout", method = RequestMethod.POST)
+	public void checkout( Model model) {
+		System.out.println("challa ");
+		String books[]=new String[2];
+		books[0]="1234";
+		books[1]="12345";
 		//bookStatusService.issueBooks(books);
 		BookStatus bookStatus;
 		Calendar c=new GregorianCalendar();
@@ -727,15 +717,18 @@ public class AppController {
 		Date dueDate=c.getTime();
 	
 		
-//		Patron patron=patronService.findPatronByUniversityId(patronUniversityId);
-//		if(patron.getDayIssuedCount()>5||patron.getTotalIssuedCount()>10)
-//			return ;
-//		
+	Patron patron=patronService.findPatronByEmailId("kadakiaruchit@gmail.com");
+	System.out.println("challa 1"+patron);
+	
+		if(patron.getDayIssuedCount()>5||patron.getTotalIssuedCount()>10)
+		return ;
+		
 		
 		for(int i=0;i<books.length;i++) {
 			bookStatus=new BookStatus();
 		
 			Book book = bookService.findBookByISBN(books[i]);
+			System.out.println("book bhai wala is "+book);
 			
 			bookStatus.setCurrentDate(issueDate);
 			bookStatus.setDueDate(dueDate);
@@ -746,6 +739,31 @@ public class AppController {
 			bookStatus.setBook(book);
 			bookStatusService.issueBooks(bookStatus);
 		
-		}			
+		}
+		
+		System.out.println("Hi You have just checked out following items");
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo("kadakiaruchit@gmail.com");
+        message.setSubject("SJSU Library Checkout on "+c.getTime());
+        message.setText("Hi You have just checked out following items "
+        		+ "\n = "+c.getTime()
+        		+"\n Please don't reply on this email.");
+        System.out.println("1");
+        System.out.println(activationMailSender);
+        activationMailSender.send(message);
+		
+		}
+
+	public BookStatusService getBookStatusService() {
+		return bookStatusService;
 	}
+
+	public void setBookStatusService(BookStatusService bookStatusService) {
+		this.bookStatusService = bookStatusService;
+	}
+	
+	
+	
+	
+	
 }
