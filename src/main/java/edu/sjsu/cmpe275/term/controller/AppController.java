@@ -18,9 +18,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.UriComponentsBuilder;
 import edu.sjsu.cmpe275.term.model.Book;
+import edu.sjsu.cmpe275.term.model.BookStatus;
 import edu.sjsu.cmpe275.term.model.Librarian;
 import edu.sjsu.cmpe275.term.model.Patron;
 import edu.sjsu.cmpe275.term.service.BookService;
+import edu.sjsu.cmpe275.term.service.BookStatusService;
 import edu.sjsu.cmpe275.term.service.LibrarianService;
 import edu.sjsu.cmpe275.term.service.PatronService;
 
@@ -36,6 +38,10 @@ public class AppController {
 	
 	@Autowired
 	private PatronService patronService;
+	
+
+	@Autowired
+	private BookStatusService bookStatusService;
 	
 	@Autowired
 	private static MailSender activationMailSender;
@@ -561,4 +567,48 @@ public class AppController {
 				}
 		}	
 	}	
+	
+	
+	
+	/**
+	 * Search Books 
+	 * @author Pratik
+	 * @param librarianID
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value="/checkout/{patronId}", method = RequestMethod.GET)
+	public void checkout(@PathVariable("patronId") String librarianUniversityID, Model model) {
+		String books[]=new String[4];
+		//bookStatusService.issueBooks(books);
+		BookStatus bookStatus;
+		Date d=new Date();
+		
+		
+		
+		for(int i=0;i<books.length;i++) {
+			bookStatus=new BookStatus();
+		
+			Book book = bookService.findBookByISBN(books[i]);
+			
+			bookStatus.setCurrentDate(d);
+			bookStatus.setDueDate(d);
+			bookStatus.setIssueDate(d);
+			bookStatus.setDueDate(d);
+			bookStatus.setRequestDate(d);
+			bookStatus.setRequestStatus("done");
+			bookStatus.setBook(book);
+			bookStatusService.issueBooks(bookStatus);
+		
+		}
+		
+		
+		
+			
+	}
+	
+	
+	
+	
+	
 }
