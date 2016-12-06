@@ -591,9 +591,9 @@ public class AppController {
 		Date dueDate=c.getTime();
 	
 		
-		Patron patron=patronService.findPatronByUniversityId(patronUniversityId);
+	Patron patron=patronService.findPatronByUniversityId(patronUniversityId);
 		if(patron.getDayIssuedCount()>5||patron.getTotalIssuedCount()>10)
-			return ;
+		return ;
 		
 		
 		for(int i=0;i<books.length;i++) {
@@ -611,9 +611,6 @@ public class AppController {
 			bookStatusService.issueBooks(bookStatus);
 		
 		}
-		
-	
-		
 		
 		
 		
