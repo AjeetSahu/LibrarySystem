@@ -36,13 +36,13 @@
             <div class="collapse navbar-collapse pull-right" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
                     <li>
-                        <a href="#">Home</a>
+                        <a href="<%=request.getContextPath() %>/libraryHome">Home</a>
                     </li>
                     <li>
-                        <a href="#">Profile</a>
+                        <a href="<%=request.getContextPath() %>/libraryProfile">Profile</a>
                     </li>
                     <li>
-                        <a href="#">Signout</a>
+                        <a href="<%=request.getContextPath() %>/welcome">SignOut</a>
                     </li>
                 </ul>
             </div>
@@ -64,22 +64,22 @@
                     </a>
                 </li>
                 <li>
-                    <a href="#">Dashboard</a>
+                    <a href="<%=request.getContextPath() %>/libraryHome">Dashboard</a>
                 </li>
                 <li>
-                    <a href="#">Search Book</a>
+                    <a href="<%=request.getContextPath() %>/#">Search Book</a>
                 </li>
                 <li>
-                    <a href="#">Add Book</a>
+                    <a href="<%=request.getContextPath() %>/addNewBookManually">Add Book</a>
                 </li>
                 <li>
                     <a href="#">Delete Book</a>
                 </li>
                 <li>
-                    <a href="#">Profile</a>
+                    <a href="<%=request.getContextPath() %>/libraryProfile">Profile</a>
                 </li>
                 <li>
-                    <a href="#">Sign Out</a>
+                    <a href="<%=request.getContextPath() %>/welcome">Signout</a>
                 </li>
             </ul>
         </div>
