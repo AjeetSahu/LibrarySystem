@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
-    <title>themeinthebox.com</title>
+    <title>LibraryManagement</title>
 	<!-- core CSS -->
 	<spring:url value="/resources/css/bootstrap.min.css" var="bootstrap" />
 		<link href="${bootstrap}" rel="stylesheet">
@@ -72,11 +72,7 @@
                 <!-- main nav -->
                 <nav class="collapse navbar-collapse navbar-right" role="navigation">
                     <div class="main-menu">
-                        <ul id="nav" class="nav navbar-nav">
-                            <li><a href="<%=request.getContextPath() %>/welcome">Home</a></li>
-                            <a href="<%=request.getContextPath() %>/registration">SignUp</a>
-                            <a href="<%=request.getContextPath() %>/login">LogIn</a>
-                        </ul>
+                    	<a href="<%=request.getContextPath() %>/welcome">Home</a>
                     </div>
                 </nav>
                 <!-- /main nav -->
@@ -91,17 +87,18 @@
                         <h3 style="text-align:center">Activate Your Account</h3>
                     </div>
                     <div class="panel-body">
-                        <form action='/login' method="post" class="form-horizontal">
+                        <form action='/LibrarySystem/activate' method="post" class="form-horizontal">
                             <div class="row">
                             	<div class="col-md-1"></div>
                             	<div class="col-md-10">
                             		<label for="ex1">Enter Activation Record: </label>
 							  		<input class="form-control" type="text" id="activate" name="activate" placeholder="Enter activation code here" required />
+							  		<input type="hidden" name="email" id="email" value="${email}">
                             	</div>
 							</div>
 							<br>
                             <div style="padding-left:40%">
-                                <button type="button" class="btn btn-primary" id="getData">Activate Me</button>
+                                <button type="submit" class="btn btn-primary" id="getData">Activate Me</button>
                             </div>
                         </form>
                         
