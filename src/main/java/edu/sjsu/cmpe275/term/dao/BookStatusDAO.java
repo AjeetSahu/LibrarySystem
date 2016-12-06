@@ -5,6 +5,6 @@ import edu.sjsu.cmpe275.term.model.BookStatus;
 public interface BookStatusDAO {
 
 	public BookStatus issueBooks(BookStatus bookStatus);
-	public String returnBooks(int bookStatusId);
+	public String returnBooks(String bookStatusId);
 	
 }
