@@ -42,7 +42,7 @@
                         <a href="<%=request.getContextPath() %>/libraryProfile">Profile</a>
                     </li>
                     <li>
-                        <a href="<%=request.getContextPath() %>/">SignOut</a>
+                        <a href="<%=request.getContextPath() %>/welcome">SignOut</a>
                     </li>
                 </ul>
             </div>
@@ -79,7 +79,7 @@
                     <a href="<%=request.getContextPath() %>/libraryProfile">Profile</a>
                 </li>
                 <li>
-                    <a href="<%=request.getContextPath() %>/">Signout</a>
+                    <a href="<%=request.getContextPath() %>/welcome">Signout</a>
                 </li>
             </ul>
         </div>
@@ -88,9 +88,11 @@
     </div>
     <!-- /#wrapper -->
 </div>     
-       </div>
-                		
 	
+       </div>
+			<div style="padding-top:100px; padding-left:450px;">
+            	<h3><mark>${message}</mark></h3>
+			</div>
                 </div>
 	</body>
 	
