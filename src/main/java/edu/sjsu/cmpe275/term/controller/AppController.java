@@ -1,6 +1,10 @@
 package edu.sjsu.cmpe275.term.controller;
 
 import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -192,7 +196,8 @@ public class AppController {
 	 *
 	 */
     @RequestMapping(value="/home", method = RequestMethod.POST)
-    public ModelAndView authenticateUser(@RequestParam Map<String, String> reqParams, Model model){
+    public ModelAndView authenticateUser(@RequestParam Map<String, String> reqParams,
+    		Model model, HttpServletRequest request){
     	ModelAndView modelAndView = null;
     	if(reqParams.get("email").contains("@sjsu.edu")){
     		modelAndView = new ModelAndView("LibraryHome");
@@ -201,6 +206,7 @@ public class AppController {
 				librarian.setStatus(false);
 				librarianService.updateLibrarian(librarian);
 				model.addAttribute("message","");
+				request.getSession().setAttribute("loggedIn", librarian);
 			}else{
 				modelAndView = new ModelAndView("Login");
 				model.addAttribute("message", "Authentication failed, incorrect email or password!");
@@ -212,12 +218,24 @@ public class AppController {
 				modelAndView = new ModelAndView("PatronHome");
 				patron.setStatus(false);
 				patronService.updatePatron(patron);
+				request.getSession().setAttribute("loggedIn", patron);
 			}else{
 				model.addAttribute("message", "Authentication failed, incorrect email or password!");
 				modelAndView = new ModelAndView("Login");
 			}		
 		}
     	return modelAndView;
+    }
+    
+    /**
+     * 
+     * @param request
+     * @return
+     */
+    @RequestMapping(value="/logout", method=RequestMethod.POST)
+    public String signout(HttpServletRequest request){
+        request.getSession().setAttribute("loggedIn", null);
+      	return "login";
     }
 	
 	/**
