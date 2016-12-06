@@ -121,41 +121,83 @@ public class AppController {
 	}
 	
 	/**
-	 * POST AUTHENTICATE USER LOGIN PAGE
-	 * @author Pratik
+	 * GET GO TO Activate User Page
+	 * @author Amitesh
 	 *
 	 */
-    @RequestMapping(value="/login", method = RequestMethod.POST)
-    public String authenticateUser(@RequestParam Map<String, String> reqParams, Model model){
-		if(reqParams.get("email").contains("@sjsu.edu")){
+
+	@RequestMapping(value = "/activationPage", method = RequestMethod.GET)
+	public ModelAndView activateUser(ModelMap model) {
+		ModelAndView activation = new ModelAndView("ActivationPage");
+		return activation;
+	}
+	
+	@RequestMapping(value="/activate", method = RequestMethod.POST)
+    public String activateUser(@RequestParam Map<String, String> reqParams, Model model){
+    	boolean bool = false;
+    	if(reqParams.get("email").contains("@sjsu.edu")){
 			Librarian librarian = librarianService.findLibrarianByEmailId(reqParams.get("email"));
-			if(librarian != null){
-				if(librarian.isStatus()==true){
-					librarian.setStatus(false);
-					librarianService.updateLibrarian(librarian);
-					return "LibraryHome";
-				}else{
-					model.addAttribute("message", "Authentication failed, incorrect email or password!");
-					return "login";
-				}
+			try{
+				bool = (Integer.parseInt(reqParams.get("activate")) == librarian.getActivationCode()) ? true : false;
+			}
+			catch(NumberFormatException e ){
+				System.out.println(e);
+			}
+			if(librarian != null && bool){
+				librarian.setStatus(true);
+				librarianService.updateLibrarian(librarian);
+				model.addAttribute("message", "Account created Successfully");
+				return "Login";
 			}else{
 				return "Error";
 			}
 		}else{
 			System.out.println("email: "+reqParams.get("email"));
 			Patron patron = patronService.findPatronByEmailId(reqParams.get("email"));
-			System.out.println(patron);
-			if(patron != null){
-				System.out.println("patron exist");
-				if(patron.isStatus()==true){
-					patron.setStatus(false);
-					return "PatronHome";
-				}else{
-					model.addAttribute("message", "Authentication failed, incorrect email or password!");
-					return "login";
-				}
+			try{
+				bool = (Integer.parseInt(reqParams.get("activate")) == patron.getActivationCode()) ? true : false;
+			}
+			catch(NumberFormatException e ){
+				System.out.println(e);
+			}
+			if(patron != null && bool){
+				patron.setStatus(true);
+				patronService.updatePatron(patron);
+				model.addAttribute("message", "Account created Successfully");
+				return "Login";
 			}else{
 				return "Error";
+			}		
+		}
+    }
+	
+	/**
+	 * POST AUTHENTICATE USER LOGIN PAGE
+	 * @author Pratik
+	 *
+	 */
+    @RequestMapping(value="/login", method = RequestMethod.POST)
+    public String authenticateUser(@RequestParam Map<String, String> reqParams, Model model){
+    	if(reqParams.get("email").contains("@sjsu.edu")){
+			Librarian librarian = librarianService.findLibrarianByEmailId(reqParams.get("email"));
+			if(librarian != null && librarian.getPassword().equals(reqParams.get("password"))){
+				librarian.setStatus(false);
+				librarianService.updateLibrarian(librarian);
+				return "LibraryHome";
+			}else{
+				model.addAttribute("message", "Authentication failed, incorrect email or password!");
+				return "Login";
+			}
+		}else{
+			System.out.println("email: "+reqParams.get("email"));
+			Patron patron = patronService.findPatronByEmailId(reqParams.get("email"));
+			if(patron != null && patron.getPassword().equals(reqParams.get("password"))){
+				patron.setStatus(false);
+				patronService.updatePatron(patron);
+				return "PatronHome";
+			}else{
+				model.addAttribute("message", "Authentication failed, incorrect email or password!");
+				return "Login";
 			}		
 		}
     }
@@ -201,6 +243,7 @@ public class AppController {
 	@RequestMapping(value = "/login", method = RequestMethod.GET)
 	public ModelAndView login(ModelMap model) {
 		ModelAndView login = new ModelAndView("Login");
+		model.addAttribute("message", "");
 		return login;
 	}
 	
@@ -446,7 +489,7 @@ public class AppController {
 	@RequestMapping(value="/newUser", method = RequestMethod.POST)
 	public ModelAndView createNewUser(@RequestParam Map<String, String> reqParams) {
 		System.out.println("inside createNewUser");
-		ModelAndView userActivation= new ModelAndView("userActivationPage");
+		ModelAndView userActivation= new ModelAndView("ActivationPage");
 		ModelAndView errorPage= new ModelAndView("Error");
 		int randomCode = (int)(Math.random() * 100000);
 		if(reqParams.get("email").contains("@sjsu.edu")){
