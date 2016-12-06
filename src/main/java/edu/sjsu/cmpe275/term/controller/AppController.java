@@ -2,6 +2,10 @@ package edu.sjsu.cmpe275.term.controller;
 
 import java.util.Map;
 import javax.validation.Valid;
+
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -20,12 +24,15 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.UriComponentsBuilder;
 import edu.sjsu.cmpe275.term.model.Book;
 import edu.sjsu.cmpe275.term.model.BookStatus;
 import edu.sjsu.cmpe275.term.model.Librarian;
 import edu.sjsu.cmpe275.term.model.Patron;
+import edu.sjsu.cmpe275.term.model.Picture;
+import edu.sjsu.cmpe275.term.model.Publisher;
 import edu.sjsu.cmpe275.term.service.BookService;
 import edu.sjsu.cmpe275.term.service.BookStatusService;
 import edu.sjsu.cmpe275.term.service.LibrarianService;
@@ -44,12 +51,12 @@ public class AppController {
 	@Autowired
 	private PatronService patronService;
 	
-
 	@Autowired
 	private BookStatusService bookStatusService;
 	
 	@Autowired
 	private static MailSender activationMailSender;
+	
 	/**
 	 * 
 	 * @param activationMailSender
@@ -272,24 +279,44 @@ public class AppController {
 	 * @return
 	 */
 	@RequestMapping(value="/newBook", method = RequestMethod.POST)
-	public String createNewBook(@Valid @ModelAttribute("book") Book book,
-			UriComponentsBuilder ucBuilder, Model model, BindingResult result) {
-		if(result.hasErrors()){
-			return "error";
-		}
-		book = bookService.saveNewBook(book);
-		HttpHeaders headers = new HttpHeaders();
-		if(book != null){
+	public String createNewBook(@RequestParam Map<String, String> reqParams,
+			UriComponentsBuilder ucBuilder, Model model) {
+			Book book = new Book();
+			book.setIsbn(reqParams.get("isbn"));
+			book.setAuthor(reqParams.get("author"));
+			book.setTitle(reqParams.get("title"));
+			Publisher publisher = new Publisher();
+			publisher.setPublisher(reqParams.get("publisher"));
+			DateFormat format = new SimpleDateFormat("yyyy");
+			Date date = null;
+			try {
+				date = format.parse(reqParams.get("yearOfPublication"));
+			} catch (ParseException e1) {
+				e1.printStackTrace();
+			}
+			publisher.setYearOfPublication(date);
+			//Picture picture = new Picture();
+			//MultipartFile multipartFile = (MultipartFile)reqParams.get("file");
+			//book.setCoverImage(
+			//picture.setImage(reqParams.get("coverImage"));
+			//book.setCoverImage();
+			try{
+				publisher.setPhoneNumber(Integer.parseInt(reqParams.get("phoneNumber")));
+				book.setNumberOfCopies(Integer.parseInt(reqParams.get("numberOfCopies")));
+			}
+			catch(Exception e){
+				System.out.println(e);
+			}
+			book.setLocation(reqParams.get("location")); 
+			book.setKeywords(reqParams.get("keywords").split(","));
+			book = bookService.saveNewBook(book);
+			HttpHeaders headers = new HttpHeaders();
 		    headers.setLocation(ucBuilder.path("/book/{id}").buildAndExpand(book.getBookId()).toUri());
 			model.addAttribute("headers", headers);
 			model.addAttribute("httpStatus", HttpStatus.CREATED);
 			model.addAttribute("book",book);
 			model.addAttribute("message", "Book Added Successfully");
 			return "LibraryHome";
-		}else{
-			model.addAttribute("httpStatus", HttpStatus.CONFLICT);
-			return "Conflict";
-		}
 	}
 	
 	/**

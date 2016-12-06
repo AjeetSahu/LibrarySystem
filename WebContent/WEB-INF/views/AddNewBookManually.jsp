@@ -94,7 +94,7 @@
        <div class="row"> 
        		<div class="col-md-3"></div>
 	       		<div class="col-md-6" style="padding-top:110px;">
-	             <form action="/LibrarySystem/newBook" method="POST" commandName="book"
+	             <form action="/LibrarySystem/newBook" method="POST" modelAttribute="book" commandName="fileUploadForm"
 		enctype="multipart/form-data"> 
 			  <label for="ex1">ISBN: </label>
 			  <input class="form-control" type="text" name="isbn" >
@@ -107,7 +107,10 @@
 			  <br>
 			  <label for="ex1">Publisher: </label>
 			  <input class="form-control" type="text" name="publisher" >
-				<br>
+			  <br>
+			  <label for="ex1">Phone Number: </label>
+			  <input class="form-control" type="text" name="phoneNumber" >
+			  <br>
 			  <label for="ex1">Year Of Publication: </label>
 			  <input class="form-control" type="text" name="yearOfPublication" >
 			  <br>
@@ -121,7 +124,7 @@
 			  <input class="form-control" type="text" name="keywords" >
 			  <br>
 			  <label for="ex1">Cover Image </label>
-			  <input class="form-control" type="file" name="coverImage" value="Upload" >
+			  <input class="form-control" type="file" name="file" value="Upload" >
 		<br>
 		
 		<div style="padding-left:300px;">
