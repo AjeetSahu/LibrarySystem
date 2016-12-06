@@ -214,20 +214,6 @@ public class Book implements Serializable {
 	 * 
 	 * @return
 	 */
-	public Picture getCoverageImage() {
-		return coverImage;
-	}
-	/**
-	 * 
-	 * @param coverageImage
-	 */
-	public void setCoverageImage(Picture coverageImage) {
-		this.coverImage = coverageImage;
-	}
-	/**
-	 * 
-	 * @return
-	 */
 	public int getBookId() {
 		return bookId;
 	}

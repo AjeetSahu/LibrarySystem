@@ -29,7 +29,7 @@
     	<property name="bookService" ref="bookService"></property>
     	<property name="librarianService" ref="librarianService"></property>
     	<property name="patronService" ref="patronService"></property>	
-    	<property name="bookStatusService" ref="bookStatusService"></property>		
+    	<property name="bookStatusService" ref="bookStatusService"></property>
    	</bean>
    	<bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
 	    <property name="staticMethod" value="edu.sjsu.cmpe275.term.controller.AppController.setActivationMailSender"/>

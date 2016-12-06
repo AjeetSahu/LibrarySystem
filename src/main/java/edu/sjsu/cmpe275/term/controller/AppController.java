@@ -1,10 +1,14 @@
 package edu.sjsu.cmpe275.term.controller;
 
 import java.util.Map;
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -24,6 +28,8 @@ import edu.sjsu.cmpe275.term.model.Book;
 import edu.sjsu.cmpe275.term.model.BookStatus;
 import edu.sjsu.cmpe275.term.model.Librarian;
 import edu.sjsu.cmpe275.term.model.Patron;
+import edu.sjsu.cmpe275.term.model.Picture;
+import edu.sjsu.cmpe275.term.model.Publisher;
 import edu.sjsu.cmpe275.term.service.BookService;
 import edu.sjsu.cmpe275.term.service.BookStatusService;
 import edu.sjsu.cmpe275.term.service.LibrarianService;
@@ -42,12 +48,12 @@ public class AppController {
 	@Autowired
 	private PatronService patronService;
 	
-
 	@Autowired
 	private BookStatusService bookStatusService;
 	
 	@Autowired
 	private static MailSender activationMailSender;
+	
 	/**
 	 * 
 	 * @param activationMailSender
@@ -179,17 +185,20 @@ public class AppController {
 	 * @author Pratik
 	 *
 	 */
-    @RequestMapping(value="/login", method = RequestMethod.POST)
-    public String authenticateUser(@RequestParam Map<String, String> reqParams, Model model){
+    @RequestMapping(value="/home", method = RequestMethod.POST)
+    public ModelAndView authenticateUser(@RequestParam Map<String, String> reqParams,
+    		Model model, HttpServletRequest request){
+    	ModelAndView modelAndView = null;
     	if(reqParams.get("email").contains("@sjsu.edu")){
+    		modelAndView = new ModelAndView("LibraryHome");
 			Librarian librarian = librarianService.findLibrarianByEmailId(reqParams.get("email"));
 			if(librarian != null && librarian.getPassword().equals(reqParams.get("password"))){
 				librarian.setStatus(false);
 				librarianService.updateLibrarian(librarian);
-				return "LibraryHome";
+				request.getSession().setAttribute("loggedIn", librarian);
 			}else{
+				modelAndView = new ModelAndView("Login");
 				model.addAttribute("message", "Authentication failed, incorrect email or password!");
-				return "Login";
 			}
 		}else{
 			System.out.println("email: "+reqParams.get("email"));
@@ -197,12 +206,24 @@ public class AppController {
 			if(patron != null && patron.getPassword().equals(reqParams.get("password"))){
 				patron.setStatus(false);
 				patronService.updatePatron(patron);
-				return "PatronHome";
+				request.getSession().setAttribute("loggedIn", patron);
 			}else{
 				model.addAttribute("message", "Authentication failed, incorrect email or password!");
-				return "Login";
+				modelAndView = new ModelAndView("Login");
 			}		
 		}
+    	return modelAndView;
+    }
+    
+    /**
+     * LOGOUT A LOGGED IN USER
+     * @param request
+     * @return
+     */
+    @RequestMapping(value="/logout", method=RequestMethod.POST)
+    public String signout(HttpServletRequest request){
+        request.getSession().setAttribute("loggedIn", null);
+      	return "login";
     }
 	
 	/**
@@ -211,7 +232,11 @@ public class AppController {
 	 *
 	 */
 	@RequestMapping(value = "/newBook", method = RequestMethod.GET)
-	public ModelAndView goToAddNewBookPage(ModelMap model) {
+	public ModelAndView goToAddNewBookPage(ModelMap model, HttpServletRequest request) {
+		if(request.getSession().getAttribute("loggedIn") == null){
+			ModelAndView login = new ModelAndView("login");
+			return login;
+		}
 		ModelAndView welcome = new ModelAndView("AddNewBook");
 		return welcome;
 	}
@@ -222,7 +247,11 @@ public class AppController {
 	 *
 	 */
 	@RequestMapping(value = "/newBookManually", method = RequestMethod.GET)
-	public ModelAndView goToAddNewBookManualPage(ModelMap model) {
+	public ModelAndView goToAddNewBookManualPage(ModelMap model, HttpServletRequest request) {
+		if(request.getSession().getAttribute("loggedIn") == null){
+			ModelAndView login = new ModelAndView("login");
+			return login;
+		}
 		ModelAndView register = new ModelAndView("AddNewBookManually");
 		return register;
 	}
@@ -250,6 +279,7 @@ public class AppController {
 		return login;
 	}
 	
+	
 	/**
 	 * CREATE NEW BOOK ON CLICKING ADD BOOK IN ADDNEWBOOK PAGE
 	 * @author Pratik
@@ -258,20 +288,46 @@ public class AppController {
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping(value="/newBook", method = RequestMethod.POST)
-	public String createNewBook(@ModelAttribute("book") Book book,
-			UriComponentsBuilder ucBuilder, Model model) {
-		book = bookService.saveNewBook(book);
-		HttpHeaders headers = new HttpHeaders();
-		if(book != null){
-		    headers.setLocation(ucBuilder.path("/book/{id}").buildAndExpand(book.getBookId()).toUri());
-			model.addAttribute("headers", headers);
-			model.addAttribute("httpStatus", HttpStatus.CREATED);
-			return "BookCreationSuccess";
-		}else{
-			model.addAttribute("httpStatus", HttpStatus.CONFLICT);
-			return "Conflict";
-		}
+	public ModelAndView createNewBook(@RequestParam Map<String, String> reqParams, HttpServletRequest request) {
+			Book book = new Book();
+			book.setIsbn(reqParams.get("isbn"));
+			System.out.println("isbn: "+reqParams.get("isbn"));
+			book.setAuthor(reqParams.get("author"));
+			book.setTitle(reqParams.get("title"));
+			Publisher publisher = new Publisher();
+			publisher.setPublisher(reqParams.get("publisher"));
+			DateFormat format = new SimpleDateFormat("yyyy");
+			Date date = null;
+			try {
+				System.out.println("date: "+reqParams.get("yearOfPublication"));
+				date = format.parse(reqParams.get("yearOfPublication").toString());
+			} catch (ParseException e1) {
+				e1.printStackTrace();
+			}
+			publisher.setYearOfPublication(date);
+			Picture picture = new Picture();
+			//MultipartFile multipartFile = (MultipartFile)reqParams.get("file");
+			//book.setCoverImage(
+			//picture.setImage(reqParams.get("coverImage"));
+			//book.setCoverImage();
+			try{
+				publisher.setPhoneNumber(Integer.parseInt(reqParams.get("phoneNumber")));
+				book.setNumberOfCopies(Integer.parseInt(reqParams.get("numberOfCopies")));
+			}
+			catch(Exception e){
+				System.out.println(e);
+			}
+			book.setCoverImage(picture);
+			book.setPublisher(publisher);
+			book.setLocation(reqParams.get("location"));
+			if(reqParams.get("keywords").length()>0)
+				book.setKeywords(reqParams.get("keywords").toString().trim().split(","));
+			book = bookService.saveNewBook(book);
+			ModelAndView model = new ModelAndView("LibraryHome");
+			model.addObject("httpStatus", HttpStatus.CREATED);
+			model.addObject("book",book);
+			model.addObject("message", "Book Added Successfully");
+			return model;
 	}
 	
 	/**
@@ -282,7 +338,11 @@ public class AppController {
 	 * @return
 	 */
 	@RequestMapping(value="/book/{bookISBN}", method = RequestMethod.GET)
-	public ModelAndView getBookByISBN(@PathVariable("bookISBN") String isbn, Model model) {
+	public ModelAndView getBookByISBN(@PathVariable("bookISBN") String isbn, Model model, HttpServletRequest request) {
+		if(request.getSession().getAttribute("loggedIn") == null){
+			ModelAndView login = new ModelAndView("login");
+			return login;
+		}
 		ModelAndView bookFound= new ModelAndView("BookFound");
 		ModelAndView bookNotFound= new ModelAndView("BookNotFound");
 		Book book = bookService.findBookByISBN(isbn);
@@ -305,7 +365,10 @@ public class AppController {
 	 * @return
 	 */
 	@RequestMapping(value="/book/{bookISBN}", method = RequestMethod.DELETE)
-	public String deleteBook(@PathVariable("bookISBN") String isbn, Model model) {
+	public String deleteBook(@PathVariable("bookISBN") String isbn, Model model, HttpServletRequest request) {
+		if(request.getSession().getAttribute("loggedIn") == null){
+			return "login";
+		}
 		if(bookService.findBookByISBN(isbn)==null){
 	        System.out.println("A book with ISBN "+isbn+" doesnot exist");
 	        model.addAttribute("httpStatus", HttpStatus.NOT_FOUND);
@@ -325,7 +388,10 @@ public class AppController {
 	 */
 	@RequestMapping(value="/book/{bookISBN}", method = RequestMethod.POST)
 	public String updateBook(@ModelAttribute("book") Book book,
-			Model model) {
+			Model model, HttpServletRequest request) {
+		if(request.getSession().getAttribute("loggedIn") == null){
+			return "login";
+		}
 		System.out.println("IN UPDATE METHOD");
 		Book book1 = bookService.findBookByISBN(book.getIsbn());
 		if(book1 == null){
@@ -365,7 +431,11 @@ public class AppController {
 	 *
 	 */
 	@RequestMapping(value = "/patronHome", method = RequestMethod.GET)
-	public ModelAndView patronHome(ModelMap model) {
+	public ModelAndView patronHome(ModelMap model, HttpServletRequest request) {
+		if(request.getSession().getAttribute("loggedIn") == null){
+			ModelAndView login = new ModelAndView("login");
+			return login;
+		}
 		ModelAndView patron = new ModelAndView("PatronHome");
 		return patron;
 	}
@@ -376,11 +446,29 @@ public class AppController {
 	 *
 	 */
 	@RequestMapping(value = "/libraryHome", method = RequestMethod.GET)
-	public ModelAndView libraryHome(ModelMap model) {
+	public ModelAndView libraryHome(ModelMap model, HttpServletRequest request) {
+		if(request.getSession().getAttribute("loggedIn") == null){
+			ModelAndView login = new ModelAndView("login");
+			return login;
+		}
 		ModelAndView librarian = new ModelAndView("LibraryHome");
 		return librarian;
 	}
 	
+	/**
+	 * Goto Librarian AddBook Manually Page 
+	 * @author Amitesh
+	 *
+	 */
+	@RequestMapping(value = "/addNewBookManually", method = RequestMethod.GET)
+	public ModelAndView addNewBookManually(ModelMap model, HttpServletRequest request) {
+		if(request.getSession().getAttribute("loggedIn") == null){
+			ModelAndView login = new ModelAndView("login");
+			return login;
+		}
+		ModelAndView librarian = new ModelAndView("AddNewBookManually");
+		return librarian;
+	}
 	
 	/**
 	 * Goto Patron profile page to update Patron info 
@@ -388,7 +476,11 @@ public class AppController {
 	 *
 	 */
 	@RequestMapping(value = "/patronProfile", method = RequestMethod.GET)
-	public ModelAndView patronProfile(ModelMap model) {
+	public ModelAndView patronProfile(ModelMap model, HttpServletRequest request) {
+		if(request.getSession().getAttribute("loggedIn") == null){
+			ModelAndView login = new ModelAndView("login");
+			return login;
+		}
 		ModelAndView patronProfile = new ModelAndView("PatronProfile");
 		return patronProfile;
 	}
@@ -399,8 +491,13 @@ public class AppController {
 	 *
 	 */
 	@RequestMapping(value = "/libraryProfile", method = RequestMethod.GET)
-	public ModelAndView libraryProfile(ModelMap model) {
-		ModelAndView libraryProfile = new ModelAndView("LibraryProfile");
+	public ModelAndView libraryProfile(ModelMap model, HttpServletRequest request) {
+		if(request.getSession().getAttribute("loggedIn") == null){
+			ModelAndView login = new ModelAndView("login");
+			return login;
+		}
+
+		ModelAndView libraryProfile = new ModelAndView("LibrarianProfile");
 		return libraryProfile;
 	}
 	
@@ -423,7 +520,12 @@ public class AppController {
 	 * @return
 	 */
 	@RequestMapping(value="/patron/{patronUniversityID}", method = RequestMethod.GET)
-	public ModelAndView getPatronByID(@PathVariable("patronUniversityID") String patronUniversityID, Model model) {
+	public ModelAndView getPatronByID(@PathVariable("patronUniversityID") String patronUniversityID,
+			Model model, HttpServletRequest request) {
+		if(request.getSession().getAttribute("loggedIn") == null){
+			ModelAndView login = new ModelAndView("login");
+			return login;
+		}
 		ModelAndView patronFound= new ModelAndView("PatronFound");
 		ModelAndView patronNotFound= new ModelAndView("PatronNotFound");
 		Patron patron = patronService.findPatronByUniversityId(patronUniversityID);
@@ -469,7 +571,12 @@ public class AppController {
 	 * @return
 	 */
 	@RequestMapping(value="/librarian/{librarianUniversityID}", method = RequestMethod.GET)
-	public ModelAndView getLibrarianByID(@PathVariable("librarianUniversityID") String librarianUniversityID, Model model) {
+	public ModelAndView getLibrarianByID(@PathVariable("librarianUniversityID") String librarianUniversityID,
+			Model model, HttpServletRequest request) {
+		if(request.getSession().getAttribute("loggedIn") == null){
+			ModelAndView login = new ModelAndView("login");
+			return login;
+		}
 		ModelAndView librarianFound= new ModelAndView("LibrarianFound");
 		ModelAndView librarianNotFound= new ModelAndView("LibrarianNotFound");
 		Librarian librarian = librarianService.findLibrarianByUniversityId(librarianUniversityID);
@@ -484,6 +591,22 @@ public class AppController {
 		return librarianFound;	
 	}
 
+	/**
+	 * Goto Patron Home page 
+	 * @author Amitesh
+	 *
+	 */
+	@RequestMapping(value = "/deleteSearch", method = RequestMethod.GET)
+	public ModelAndView deleteSearch(ModelMap model, HttpServletRequest request) {
+		if(request.getSession().getAttribute("loggedIn") == null){
+			ModelAndView delete = new ModelAndView("login");
+			return delete;
+		}
+		ModelAndView delete = new ModelAndView("DeleteSearch");
+		return delete;
+	}
+	
+	
 	/**
 	 * 
 	 * @param reqParams

@@ -36,13 +36,13 @@
             <div class="collapse navbar-collapse pull-right" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
                     <li>
-                        <a href="#">Home</a>
+                        <a href="<%=request.getContextPath() %>/libraryHome">Home</a>
                     </li>
                     <li>
-                        <a href="#">Profile</a>
+                        <a href="<%=request.getContextPath() %>/libraryProfile">Profile</a>
                     </li>
                     <li>
-                        <a href="#">Signout</a>
+                        <a href="<%=request.getContextPath() %>/welcome">Signout</a>
                     </li>
                 </ul>
             </div>
@@ -64,22 +64,22 @@
                     </a>
                 </li>
                 <li>
-                    <a href="#">Dashboard</a>
+                    <a href="<%=request.getContextPath() %>/libraryHome">Dashboard</a>
                 </li>
                 <li>
-                    <a href="#">Search Book</a>
+                    <a href="<%=request.getContextPath() %>/newBook">Search Book</a>
                 </li>
                 <li>
-                    <a href="#">Add Book</a>
+                    <a href="<%=request.getContextPath() %>/addNewBookManually">Add Book</a>
                 </li>
                 <li>
-                    <a href="#">Delete Book</a>
+                    <a href="<%=request.getContextPath() %>/deleteSearch">Delete Book</a>
                 </li>
                 <li>
-                    <a href="#">Profile</a>
+                    <a href="<%=request.getContextPath() %>/libraryProfile">Profile</a>
                 </li>
                 <li>
-                    <a href="#">Sign Out</a>
+                    <a href="<%=request.getContextPath() %>/welcome">Sign Out</a>
                 </li>
             </ul>
         </div>
@@ -94,8 +94,7 @@
        <div class="row"> 
        		<div class="col-md-3"></div>
 	       		<div class="col-md-6" style="padding-top:110px;">
-	             <form action="/LibrarySystem/newBook" method="POST" commandName="book"
-		enctype="multipart/form-data"> 
+	             <form action="/LibrarySystem/newBook" method="post"> 
 			  <label for="ex1">ISBN: </label>
 			  <input class="form-control" type="text" name="isbn" >
 				<br>
@@ -107,7 +106,10 @@
 			  <br>
 			  <label for="ex1">Publisher: </label>
 			  <input class="form-control" type="text" name="publisher" >
-				<br>
+			  <br>
+			  <label for="ex1">Phone Number: </label>
+			  <input class="form-control" type="text" name="phoneNumber" >
+			  <br>
 			  <label for="ex1">Year Of Publication: </label>
 			  <input class="form-control" type="text" name="yearOfPublication" >
 			  <br>
@@ -121,7 +123,7 @@
 			  <input class="form-control" type="text" name="keywords" >
 			  <br>
 			  <label for="ex1">Cover Image </label>
-			  <input class="form-control" type="file" name="coverImage" value="Upload" >
+			  <input class="form-control" type="file" name="file" value="Upload" >
 		<br>
 		
 		<div style="padding-left:300px;">

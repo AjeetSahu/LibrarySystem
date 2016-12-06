@@ -11,7 +11,7 @@ public class PatronDAOImpl extends AbstractDao<String, Patron> implements Patron
 	
 	@Override
 	public Patron findPatronByUniversityId(String id) {
-		return findByIdOfTypeString(id);
+		return findById(id);
 	}
 	
 	@Override
@@ -21,7 +21,7 @@ public class PatronDAOImpl extends AbstractDao<String, Patron> implements Patron
 	
 	@Override
 	public Patron findPatronByEmailId(String id) {
-		return findByIdOfTypeString(id);
+		return findById(id);
 	}
 
 }
