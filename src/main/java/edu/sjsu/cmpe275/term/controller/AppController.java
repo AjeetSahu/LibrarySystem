@@ -455,7 +455,7 @@ public class AppController {
 	 */
 	@RequestMapping(value = "/libraryProfile", method = RequestMethod.GET)
 	public ModelAndView libraryProfile(ModelMap model) {
-		ModelAndView libraryProfile = new ModelAndView("LibraryProfile");
+		ModelAndView libraryProfile = new ModelAndView("LibrarianProfile");
 		return libraryProfile;
 	}
 	
