@@ -228,7 +228,7 @@ public class AppController {
     }
     
     /**
-     * 
+     * LOGOUT A LOGGED IN USER
      * @param request
      * @return
      */
@@ -244,7 +244,11 @@ public class AppController {
 	 *
 	 */
 	@RequestMapping(value = "/newBook", method = RequestMethod.GET)
-	public ModelAndView goToAddNewBookPage(ModelMap model) {
+	public ModelAndView goToAddNewBookPage(ModelMap model, HttpServletRequest request) {
+		if(request.getSession().getAttribute("loggedIn") == null){
+			ModelAndView login = new ModelAndView("login");
+			return login;
+		}
 		ModelAndView welcome = new ModelAndView("AddNewBook");
 		return welcome;
 	}
@@ -255,7 +259,11 @@ public class AppController {
 	 *
 	 */
 	@RequestMapping(value = "/newBookManually", method = RequestMethod.GET)
-	public ModelAndView goToAddNewBookManualPage(ModelMap model) {
+	public ModelAndView goToAddNewBookManualPage(ModelMap model, HttpServletRequest request) {
+		if(request.getSession().getAttribute("loggedIn") == null){
+			ModelAndView login = new ModelAndView("login");
+			return login;
+		}
 		ModelAndView register = new ModelAndView("AddNewBookManually");
 		return register;
 	}
