@@ -141,22 +141,4 @@ public abstract class AbstractDao<PK extends Serializable, T> {
 	public void flush() {
 		this.entityManager.flush();
 	}
-	
-	/**
-	 * @author Pratik
-	 * @param id
-	 * @return
-	 */
-	@SuppressWarnings("unchecked")
-	public List<T> getAllIssuedBookByPatronId(PK id) {
-		//int patronId=0;
-		try{
-			//patronId= Integer.parseInt(id.toString());
-			 return this.entityManager.createNativeQuery("").getResultList();
-		}
-		catch (NumberFormatException e) {
-		    System.out.println("Exception while parsing id to string: "+e);
-		    return null;
-		}
-	}
 }

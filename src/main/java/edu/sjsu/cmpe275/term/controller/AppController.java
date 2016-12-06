@@ -83,6 +83,14 @@ public class AppController {
 	}
 	
 	/**
+	 * 
+	 * @param bookStatusService
+	 */
+	public void setBookStatusService(BookStatusService bookStatusService) {
+		this.bookStatusService = bookStatusService;
+	}
+	
+	/**
      * This method will send compose and send the message 
      * @author Pratik 
 	 * @param to
@@ -630,24 +638,6 @@ public class AppController {
 			bookStatus.setBook(book);
 			bookStatusService.issueBooks(bookStatus);
 		
-		}
-		
-		
-		
-		
-			
+		}			
 	}
-
-	public BookStatusService getBookStatusService() {
-		return bookStatusService;
-	}
-
-	public void setBookStatusService(BookStatusService bookStatusService) {
-		this.bookStatusService = bookStatusService;
-	}
-	
-	
-	
-	
-	
 }
