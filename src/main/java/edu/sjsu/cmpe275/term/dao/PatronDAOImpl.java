@@ -8,18 +8,10 @@ public class PatronDAOImpl extends AbstractDao<String, Patron> implements Patron
 	public Patron saveNewPatron(Patron patron) {
 		return save(patron);
 	}
-	/**
-	 * @author Pratik
-	 *
-	 */
-	@Override
-	public Patron findPatronById(String id) {
-		return findById(id);
-	}
 	
 	@Override
 	public Patron findPatronByUniversityId(String id) {
-		return findById(id);
+		return findByIdOfTypeString(id);
 	}
 	
 	@Override
@@ -29,7 +21,7 @@ public class PatronDAOImpl extends AbstractDao<String, Patron> implements Patron
 	
 	@Override
 	public Patron findPatronByEmailId(String id) {
-		return findByEmailId(id);
+		return findByIdOfTypeString(id);
 	}
 
 }

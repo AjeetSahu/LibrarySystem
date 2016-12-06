@@ -30,9 +30,8 @@ public abstract class AbstractDao<PK extends Serializable, T> {
 	 * @return
 	 */
 	
-	public T findById(PK id) {
+	public T findByIdOfTypeInt(PK id) {
 		try{
-			System.out.println("inside findById");
 			int userid= Integer.parseInt(id.toString());
 			if(this.entityManager.find(this.persistentClass, userid) != null){
 				T entity = (T) this.entityManager.find(this.persistentClass, userid);
@@ -55,18 +54,12 @@ public abstract class AbstractDao<PK extends Serializable, T> {
 	}
 	
 	
-	public T findByEmailId(PK id) {
+	public T findByIdOfTypeString(String id) {
 		try{
-			System.out.println(this.persistentClass);
-			System.out.println("Here");
-			System.out.println(this.entityManager.find(this.persistentClass, id));
 			if(this.entityManager.find(this.persistentClass, id) != null){
 				T entity = (T) this.entityManager.find(this.persistentClass, id);
 				return entity;	
 			}
-		}
-		catch (NumberFormatException e) {
-		    System.out.println("Exception while parsing id to string: "+e);
 		}
 		catch(RollbackException e)
 		{	
@@ -118,9 +111,18 @@ public abstract class AbstractDao<PK extends Serializable, T> {
 	 */
 	public String deleteById(PK id){
 		try{
-			T entity = this.findById(id);
-	      	this.delete(entity);
-	      	return "Deletion operation successfully performed";
+			T entity;
+			if(id.getClass().equals("class java.lang.String")){
+				entity = this.findByIdOfTypeString(id.toString());
+			}else{
+				entity = this.findByIdOfTypeInt(id);
+			}
+			if(entity != null){
+				this.delete(entity);
+				return "Deletion operation successfully performed";
+			}else{
+				return "Deletion operation failed";
+			}
 		}
 		catch (NumberFormatException e) {
 		    System.out.println("Exception while parsing id to string: "+e);
@@ -138,40 +140,6 @@ public abstract class AbstractDao<PK extends Serializable, T> {
 	
 	public void flush() {
 		this.entityManager.flush();
-	}
-	
-	/**
-	 * @author Pratik
-	 * @param id
-	 * @return
-	 */
-	public boolean checkById(PK id) {
-		int userid = 0;
-		try{
-			userid= Integer.parseInt(id.toString());
-			if(this.entityManager.find(this.persistentClass, userid) != null){
-					return true;	
-			}else{
-				System.out.println("");
-				System.out.println(this.persistentClass.getName()+" not found!");
-				return false;
-			}
-		}
-		catch (NumberFormatException e) {
-		    System.out.println("Exception while parsing string to id: "+e);
-		    return false;
-		}
-		catch(RollbackException e)
-		{
-			System.out.println("Rollback Exception in checkById");
-			System.out.println(this.persistentClass.getName()+" not found!");
-			return false;
-		}
-		catch(Exception e){
-			e.printStackTrace();
-			System.out.println(this.persistentClass.getName()+" not found!");
-			return false;
-		}
 	}
 	
 	/**

@@ -39,7 +39,10 @@ public class AppController {
 	
 	@Autowired
 	private static MailSender activationMailSender;
-	
+	/**
+	 * 
+	 * @param activationMailSender
+	 */
 	public static void setActivationMailSender(MailSender activationMailSender) {
 		AppController.activationMailSender = activationMailSender;
 	}
@@ -81,7 +84,8 @@ public class AppController {
         message.setTo(to);
         message.setSubject("Library Management System Activation Code");
         message.setText("Thank you for creating an account at Library Management System. "
-        		+ "Please activate your account using your activation code = "+activationCode);
+        		+ "\n Please activate your account using your activation code = "+activationCode
+        		+"\n Please don't reply on this email.");
         System.out.println("1");
         System.out.println(activationMailSender);
         activationMailSender.send(message);
@@ -122,6 +126,7 @@ public class AppController {
 			if(librarian != null){
 				if(librarian.isStatus()==true){
 					librarian.setStatus(false);
+					librarianService.updateLibrarian(librarian);
 					return "LibraryHome";
 				}else{
 					model.addAttribute("message", "Authentication failed, incorrect email or password!");
@@ -293,10 +298,7 @@ public class AppController {
 	public String createNewPatron(@ModelAttribute("patron") Patron patron,
 			UriComponentsBuilder ucBuilder, Model model) {
 		patron = patronService.saveNewPatron(patron);
-		HttpHeaders headers = new HttpHeaders();
 		if(patron != null){
-		    headers.setLocation(ucBuilder.path("/patron/{id}").buildAndExpand(patron.getPatronId()).toUri());
-			model.addAttribute("headers", headers);
 			model.addAttribute("httpStatus", HttpStatus.CREATED);
 			return "PatronCreationSuccess";
 		}else{
@@ -368,11 +370,11 @@ public class AppController {
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping(value="/patron/{patronID}", method = RequestMethod.GET)
-	public ModelAndView getPatronByID(@PathVariable("patronID") String patronID, Model model) {
+	@RequestMapping(value="/patron/{patronUniversityID}", method = RequestMethod.GET)
+	public ModelAndView getPatronByID(@PathVariable("patronUniversityID") String patronUniversityID, Model model) {
 		ModelAndView patronFound= new ModelAndView("PatronFound");
 		ModelAndView patronNotFound= new ModelAndView("PatronNotFound");
-		Patron patron = patronService.findPatronById(patronID);
+		Patron patron = patronService.findPatronByUniversityId(patronUniversityID);
 		System.out.println("patron "+patron);
 		if(patron == null){
 	        System.out.println("Unable to find patron as patron with ID "+patron+" doesnot exist");
@@ -398,11 +400,7 @@ public class AppController {
 		int randomCode = (int)(Math.random() * 100000);
 		librarian.setActivationCode(randomCode);
 		librarian = librarianService.saveNewLibrarian(librarian);
-		
-		HttpHeaders headers = new HttpHeaders();
 		if(librarian != null){
-		    headers.setLocation(ucBuilder.path("/librarian/{id}").buildAndExpand(librarian.getLibrarianId()).toUri());
-			model.addAttribute("headers", headers);
 			model.addAttribute("httpStatus", HttpStatus.CREATED);
 			return "LibrarianCreationSuccess";
 		}else{
@@ -418,11 +416,11 @@ public class AppController {
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping(value="/librarian/{librarianID}", method = RequestMethod.GET)
-	public ModelAndView getLibrarianByID(@PathVariable("librarianID") String librarianID, Model model) {
+	@RequestMapping(value="/librarian/{librarianUniversityID}", method = RequestMethod.GET)
+	public ModelAndView getLibrarianByID(@PathVariable("librarianUniversityID") String librarianUniversityID, Model model) {
 		ModelAndView librarianFound= new ModelAndView("LibrarianFound");
 		ModelAndView librarianNotFound= new ModelAndView("LibrarianNotFound");
-		Librarian librarian = librarianService.findLibrarianById(librarianID);
+		Librarian librarian = librarianService.findLibrarianByUniversityId(librarianUniversityID);
 		System.out.println("librarian "+librarian);
 		if(librarian == null){
 	        System.out.println("Unable to find patron as patron with ID "+librarian+" doesnot exist");
@@ -443,14 +441,14 @@ public class AppController {
 	public ModelAndView createNewUser(@RequestParam Map<String, String> reqParams) {
 		System.out.println("inside createNewUser");
 		ModelAndView userActivation= new ModelAndView("userActivationPage");
-		ModelAndView errorPage= new ModelAndView("errorPage");
+		ModelAndView errorPage= new ModelAndView("Error");
 		int randomCode = (int)(Math.random() * 100000);
 		if(reqParams.get("email").contains("@sjsu.edu")){
 			if(librarianService.findLibrarianByUniversityId(reqParams.get("universityId")) == null){
 				Librarian librarian = new Librarian();
 				librarian.setEmail(reqParams.get("email"));
 				librarian.setPassword(reqParams.get("password"));
-				librarian.setUniversityId(Integer.parseInt(reqParams.get("universityId")));
+				librarian.setUniversityId(reqParams.get("universityId"));
 				librarian.setFirstName(reqParams.get("firstName"));
 				librarian.setLastName(reqParams.get("lastName")); 
 				librarian.setActivationCode(randomCode);
@@ -466,7 +464,7 @@ public class AppController {
 				Patron patron = new Patron();
 				patron.setEmail(reqParams.get("email"));
 				patron.setPassword(reqParams.get("password"));
-				patron.setUniversityId(Integer.parseInt(reqParams.get("universityId")));
+				patron.setUniversityId(reqParams.get("universityId"));
 				patron.setFirstName(reqParams.get("firstName"));
 				patron.setLastName(reqParams.get("lastName")); 
 				patron.setActivationCode(randomCode);
@@ -500,9 +498,6 @@ public class AppController {
 			if(librarian.getActivationCode() == Integer.parseInt(reqParams.get("activationCode"))){
 				librarian.setStatus(true);
 				librarianService.updateLibrarian(librarian);
-				HttpHeaders headers = new HttpHeaders();
-			    headers.setLocation(ucBuilder.path("/librarian/{id}").buildAndExpand(librarian.getLibrarianId()).toUri());
-				model.addAttribute("headers", headers);
 				model.addAttribute("httpStatus", HttpStatus.OK);
 				return "userCreationSuccess";
 			}
@@ -515,9 +510,6 @@ public class AppController {
 				if(patron.getActivationCode() == Integer.parseInt(reqParams.get("activationCode"))){
 					patron.setStatus(true);
 					patronService.updatePatron(patron);
-					HttpHeaders headers = new HttpHeaders();
-					headers.setLocation(ucBuilder.path("/patron/{id}").buildAndExpand(patron.getPatronId()).toUri());
-					model.addAttribute("headers", headers);
 					model.addAttribute("httpStatus", HttpStatus.CREATED);
 					return "userCreationSuccess";
 				}

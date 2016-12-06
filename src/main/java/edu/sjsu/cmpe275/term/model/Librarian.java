@@ -6,21 +6,16 @@ package edu.sjsu.cmpe275.term.model;
 import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity
 public class Librarian implements Serializable {
 	private static final long serialVersionUID = 5865760835716664141L;
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "LIBRARIANID")
-	private int librarianId;
-	@Column(name = "UNIVERSITYID", unique = true)
-	private int universityId;
 	@Column(name = "EMAIL", unique=true)
 	private String email;
+	@Column(name = "UNIVERSITYID", unique = true)
+	private String universityId;
 	@Column(name = "FIRSTNAME")
 	private String firstName;
 	@Column(name = "LASTNAME")
@@ -46,10 +41,9 @@ public class Librarian implements Serializable {
 	 * @param status
 	 * @param activationCode
 	 */
-	public Librarian(int librarianId, int universityId, String email, String firstName, String lastName,
+	public Librarian(String universityId, String email, String firstName, String lastName,
 			String password, boolean status, int activationCode) {
 		super();
-		this.librarianId = librarianId;
 		this.universityId = universityId;
 		this.email = email;
 		this.firstName = firstName;
@@ -62,28 +56,14 @@ public class Librarian implements Serializable {
 	 * 
 	 * @return
 	 */
-	public int getLibrarianId() {
-		return librarianId;
-	}
-	/**
-	 * 
-	 * @param librarianId
-	 */
-	public void setLibrarianId(int librarianId) {
-		this.librarianId = librarianId;
-	}
-	/**
-	 * 
-	 * @return
-	 */
-	public int getUniversityId() {
+	public String getUniversityId() {
 		return universityId;
 	}
 	/**
 	 * 
 	 * @param universityId
 	 */
-	public void setUniversityId(int universityId) {
+	public void setUniversityId(String universityId) {
 		this.universityId = universityId;
 	}
 	/**

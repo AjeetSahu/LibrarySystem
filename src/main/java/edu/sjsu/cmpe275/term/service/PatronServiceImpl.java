@@ -25,13 +25,8 @@ public class PatronServiceImpl implements PatronService {
 		 *
 		 */
 		@Override
-		public Patron findPatronById(String id) {
-			return patronDAO.findPatronById(id);
-		}
-
-		@Override
 		public Patron findPatronByUniversityId(String id) {
-			return patronDAO.findPatronById(id);
+			return patronDAO.findPatronByUniversityId(id);
 		}
 
 		@Override

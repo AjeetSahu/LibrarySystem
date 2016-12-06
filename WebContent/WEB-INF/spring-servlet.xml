@@ -28,9 +28,16 @@
     <bean id ="appController" class="edu.sjsu.cmpe275.term.controller.AppController">
     	<property name="bookService" ref="bookService"></property>
     	<property name="librarianService" ref="librarianService"></property>
-    	<property name="patronService" ref="patronService"></property>
-    	<property name="activationMailSender" ref="mailSender"></property> 	
+    	<property name="patronService" ref="patronService"></property>	
    	</bean>
+   	<bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+	    <property name="staticMethod" value="edu.sjsu.cmpe275.term.controller.AppController.setActivationMailSender"/>
+	    <property name="arguments">
+	        <list>
+	            <ref bean="activationMailSender"/>
+	        </list>
+	   </property>
+	</bean>
    	 <bean id ="bookService" class="edu.sjsu.cmpe275.term.service.BookServiceImpl">
     	<property name="bookDAO" ref="bookDAO"></property>
     	
@@ -47,7 +54,7 @@
     <bean id="librarianDAO" class="edu.sjsu.cmpe275.term.dao.LibrarianDAOImpl"/>
     
     <!-- SET default mail properties -->
-    <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+    <bean id="activationMailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
         <property name="host" value="smtp.gmail.com"/>
         
         <property name="username" value="libraryMangementSystem@gmail.com"/>

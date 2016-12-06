@@ -22,10 +22,7 @@ public class LibrarianServiceImpl implements LibrarianService{
 	public void setLibrarianDAO(LibrarianDAO librarianDAO){
 		this.librarianDAO = librarianDAO;
 	}
-
-	/* (non-Javadoc)
-	 * @see edu.sjsu.cmpe275.term.service.LibrarianService#saveNewLibrarian(edu.sjsu.cmpe275.term.model.Librarian)
-	 */
+	
 	@Override
 	public Librarian saveNewLibrarian(Librarian librarian) {
 		return librarianDAO.saveNewLibrarian(librarian);
@@ -35,13 +32,8 @@ public class LibrarianServiceImpl implements LibrarianService{
 	 *
 	 */
 	@Override
-	public Librarian findLibrarianById(String id) {
-		return librarianDAO.findLibrarianById(id);
-	}
-
-	@Override
 	public Librarian findLibrarianByUniversityId(String id) {
-		return librarianDAO.findLibrarianById(id);
+		return librarianDAO.findLibrarianByUniversityId(id);
 	}
 
 	@Override

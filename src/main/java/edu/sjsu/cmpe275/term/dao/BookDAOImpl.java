@@ -13,7 +13,7 @@ public class BookDAOImpl extends AbstractDao<String, Book> implements BookDAO{
 
 	@Override
 	public Book findBookByISBN(String isbn) {
-		return findById(isbn);
+		return findByIdOfTypeInt(isbn);
 	}
 
 	@Override
