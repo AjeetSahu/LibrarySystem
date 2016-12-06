@@ -30,11 +30,7 @@
     	<property name="librarianService" ref="librarianService"></property>
     	<property name="patronService" ref="patronService"></property>	
     	<property name="bookStatusService" ref="bookStatusService"></property>
-    	<property name="formView" value="FileUploadForm" />		
    	</bean>
-   	<bean class="org.springframework.web.servlet.mvc.support.ControllerClassNameHandlerMapping" />
-	<bean id="multipartResolver"
-		class="org.springframework.web.multipart.commons.CommonsMultipartResolver" />
    	<bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
 	    <property name="staticMethod" value="edu.sjsu.cmpe275.term.controller.AppController.setActivationMailSender"/>
 	    <property name="arguments">
