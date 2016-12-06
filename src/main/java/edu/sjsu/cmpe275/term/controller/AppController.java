@@ -301,7 +301,10 @@ public class AppController {
 	 */
 	@RequestMapping(value="/newBook", method = RequestMethod.POST)
 	public String createNewBook(@RequestParam Map<String, String> reqParams,
-			UriComponentsBuilder ucBuilder, Model model) {
+			UriComponentsBuilder ucBuilder, Model model, HttpServletRequest request) {
+			if(request.getSession().getAttribute("loggedIn") == null){
+				return "login";
+			}
 			Book book = new Book();
 			book.setIsbn(reqParams.get("isbn"));
 			book.setAuthor(reqParams.get("author"));
@@ -350,7 +353,11 @@ public class AppController {
 	 * @return
 	 */
 	@RequestMapping(value="/book/{bookISBN}", method = RequestMethod.GET)
-	public ModelAndView getBookByISBN(@PathVariable("bookISBN") String isbn, Model model) {
+	public ModelAndView getBookByISBN(@PathVariable("bookISBN") String isbn, Model model, HttpServletRequest request) {
+		if(request.getSession().getAttribute("loggedIn") == null){
+			ModelAndView login = new ModelAndView("login");
+			return login;
+		}
 		ModelAndView bookFound= new ModelAndView("BookFound");
 		ModelAndView bookNotFound= new ModelAndView("BookNotFound");
 		Book book = bookService.findBookByISBN(isbn);
@@ -373,7 +380,10 @@ public class AppController {
 	 * @return
 	 */
 	@RequestMapping(value="/book/{bookISBN}", method = RequestMethod.DELETE)
-	public String deleteBook(@PathVariable("bookISBN") String isbn, Model model) {
+	public String deleteBook(@PathVariable("bookISBN") String isbn, Model model, HttpServletRequest request) {
+		if(request.getSession().getAttribute("loggedIn") == null){
+			return "login";
+		}
 		if(bookService.findBookByISBN(isbn)==null){
 	        System.out.println("A book with ISBN "+isbn+" doesnot exist");
 	        model.addAttribute("httpStatus", HttpStatus.NOT_FOUND);
@@ -393,7 +403,10 @@ public class AppController {
 	 */
 	@RequestMapping(value="/book/{bookISBN}", method = RequestMethod.POST)
 	public String updateBook(@ModelAttribute("book") Book book,
-			Model model) {
+			Model model, HttpServletRequest request) {
+		if(request.getSession().getAttribute("loggedIn") == null){
+			return "login";
+		}
 		System.out.println("IN UPDATE METHOD");
 		Book book1 = bookService.findBookByISBN(book.getIsbn());
 		if(book1 == null){
