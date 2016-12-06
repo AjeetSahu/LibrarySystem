@@ -20,10 +20,11 @@ import javax.persistence.OneToOne;
 @Entity
 public class Book implements Serializable {
 	private static final long serialVersionUID = 5865760835716664141L;
-	@Id
+
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "BOOKID")
 	private int bookId;
+	@Id
 	@Column(name = "ISBN")
 	private String isbn;
 	@Column(name = "AUTHOR")

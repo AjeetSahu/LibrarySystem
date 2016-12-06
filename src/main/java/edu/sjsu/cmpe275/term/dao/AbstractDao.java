@@ -56,8 +56,10 @@ public abstract class AbstractDao<PK extends Serializable, T> {
 	
 	public T findByIdOfTypeString(String id) {
 		try{
+			System.out.println("in abstract DAO+"+id);
 			if(this.entityManager.find(this.persistentClass, id) != null){
 				T entity = (T) this.entityManager.find(this.persistentClass, id);
+				System.out.println("in abstract DAO+"+entity);	
 				return entity;	
 			}
 		}
