@@ -14,12 +14,6 @@ public interface PatronService {
 	 * @param id
 	 * @return
 	 */
-	public Patron findPatronById(String id);
-	/**
-	 * @author Pratik
-	 * @param id
-	 * @return
-	 */
 	public Patron findPatronByUniversityId(String id);
 	/**
 	 * @author Pratik

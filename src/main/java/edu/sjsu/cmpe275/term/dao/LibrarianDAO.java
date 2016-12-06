@@ -14,12 +14,6 @@ public interface LibrarianDAO {
 	 * @param id
 	 * @return
 	 */
-	public Librarian findLibrarianById(String id);
-	/**
-	 * @author Pratik
-	 * @param id
-	 * @return
-	 */
 	public Librarian findLibrarianByUniversityId(String id);
 	/**
 	 * @author Pratik

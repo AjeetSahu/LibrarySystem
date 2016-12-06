@@ -12,9 +12,6 @@ import edu.sjsu.cmpe275.term.model.Librarian;
 @Repository
 public class LibrarianDAOImpl extends AbstractDao<String, Librarian> implements LibrarianDAO{
 
-	/* (non-Javadoc)
-	 * @see edu.sjsu.cmpe275.term.dao.LibrarianDAO#saveNewLibrarian(edu.sjsu.cmpe275.term.model.Librarian)
-	 */
 	@Override
 	public Librarian saveNewLibrarian(Librarian librarian) {
 		return save(librarian);
@@ -22,15 +19,10 @@ public class LibrarianDAOImpl extends AbstractDao<String, Librarian> implements 
 	/**
 	 * @author Pratik
 	 *
-	 */
-	@Override
-	public Librarian findLibrarianById(String id) {
-		return findById(id);
-	}
-	
+	 */	
 	@Override
 	public Librarian findLibrarianByUniversityId(String id) {
-		return findById(id);
+		return findByIdOfTypeString(id);
 	}
 	
 	@Override
@@ -39,7 +31,7 @@ public class LibrarianDAOImpl extends AbstractDao<String, Librarian> implements 
 	}
 	@Override
 	public Librarian findLibrarianByEmailId(String id) {
-		return findByEmailId(id);
+		return findByIdOfTypeString(id);
 	}
 	
 

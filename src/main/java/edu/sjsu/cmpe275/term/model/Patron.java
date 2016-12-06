@@ -9,8 +9,6 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
@@ -20,13 +18,10 @@ import javax.persistence.ManyToMany;
 public class Patron  implements Serializable {
 	private static final long serialVersionUID = 5865760835716664141L;
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "PATRONID")
-	private int patronId;
-	@Column(name= "UNIVERSITYID", unique=true)
-	private int universityId;
 	@Column(name = "EMAIL", unique=true)
 	private String email;
+	@Column(name= "UNIVERSITYID", unique=true)
+	private String universityId;
 	@Column(name = "FIRSTNAME")
 	private String firstName;
 	@Column(name = "LASTNAME")
@@ -46,7 +41,7 @@ public class Patron  implements Serializable {
 	@Column(name = "ACTIVATIONCODE", nullable= false, length=5)
 	private int activationCode;
 	@ManyToMany(cascade = {CascadeType.ALL},fetch=FetchType.EAGER)
-	@JoinTable(name="PATRON_BOOKSTATUS", joinColumns={@JoinColumn(name="patronId", referencedColumnName = "patronId")},
+	@JoinTable(name="PATRON_BOOKSTATUS", joinColumns={@JoinColumn(name="email", referencedColumnName = "email")},
 	inverseJoinColumns={@JoinColumn(name="bookStatusId", referencedColumnName= "bookStatusId")})
 	private List<BookStatus> bookStatus;
 	
@@ -69,11 +64,10 @@ public class Patron  implements Serializable {
 	 * @param bookStatus
 	 * @param activationCode
 	 */
-	public Patron(int patronId, int universityId, String email, String firstName, String lastName, String password,
+	public Patron(String universityId, String email, String firstName, String lastName, String password,
 			int totalIssuedCount, int dayIssuedCount, int penalty, int phoneNumber, boolean status,
 			List<BookStatus> bookStatus, int activationCode) {
 		super();
-		this.patronId = patronId;
 		this.universityId = universityId;
 		this.email = email;
 		this.firstName = firstName;
@@ -91,28 +85,14 @@ public class Patron  implements Serializable {
 	 * 
 	 * @return
 	 */
-	public int getPatronId() {
-		return patronId;
-	}
-	/**
-	 * 
-	 * @param patronId
-	 */
-	public void setPatronId(int patronId) {
-		this.patronId = patronId;
-	}
-	/**
-	 * 
-	 * @return
-	 */
-	public int getUniversityId() {
+	public String getUniversityId() {
 		return universityId;
 	}
 	/**
 	 * 
 	 * @param universityId
 	 */
-	public void setUniversityId(int universityId) {
+	public void setUniversityId(String universityId) {
 		this.universityId = universityId;
 	}
 	/**
