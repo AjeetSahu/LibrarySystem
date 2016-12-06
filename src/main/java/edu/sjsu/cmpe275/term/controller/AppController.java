@@ -115,6 +115,18 @@ public class AppController {
 	}
 	
 	/**
+	 * GET GO TO Activate User Page
+	 * @author Amitesh
+	 *
+	 */
+
+	@RequestMapping(value = "/activationPage", method = RequestMethod.GET)
+	public ModelAndView activateUser(ModelMap model) {
+		ModelAndView activation = new ModelAndView("ActivationPage");
+		return activation;
+	}
+	
+	/**
 	 * POST AUTHENTICATE USER LOGIN PAGE
 	 * @author Pratik
 	 *
