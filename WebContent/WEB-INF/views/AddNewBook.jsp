@@ -118,14 +118,14 @@
                  <div class="row">
                  <div id="tab" hidden="true">
                   <table class="table" border=2px id="tab1">
-             <thead>
+             <tr>
              	<th>Author</th>
              	<th>Title</th>
              	<th>Call Number</th>
              	<th>Publisher</th>
              	<th>Year of Publication</th>
              	<th>Cover Image</th>
-             </thead>
+             </tr>
              <tr>
              	
              </tr>

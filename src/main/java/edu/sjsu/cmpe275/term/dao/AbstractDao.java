@@ -91,10 +91,17 @@ public abstract class AbstractDao<PK extends Serializable, T> {
 				return "Deletion operation failed";
 			}
 		}
-		catch (NumberFormatException e) {
+		catch (Exception e) {
 		    System.out.println("Exception while parsing id to string: "+e);
 		    return "Deletion operation failed";
 		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<T> getListOfIssuedBooks(PK id){
+		return this.entityManager.createNativeQuery("Select bookstatusid from book_status"
+				+ " where bookstatusid IN (Select book_status_id from patron_bookstatus "
+				+ "where email="+id.toString()+"))").getResultList();
 	}
 	
 	/**
