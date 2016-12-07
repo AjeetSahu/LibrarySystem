@@ -68,6 +68,14 @@ public class AppController {
 	public void setContext(ServletContext context) {
 		this.context = context;
 	}
+	
+	/**
+	 * 
+	 * @param bookStatusService
+	 */
+	public void setBookStatusService(BookStatusService bookStatusService) {
+		this.bookStatusService = bookStatusService;
+	}
 
 	/**
 	 * 
@@ -801,18 +809,5 @@ public class AppController {
         System.out.println(activationMailSender);
         activationMailSender.send(message);
 		
-		}
-
-	public BookStatusService getBookStatusService() {
-		return bookStatusService;
-	}
-
-	public void setBookStatusService(BookStatusService bookStatusService) {
-		this.bookStatusService = bookStatusService;
-	}
-	
-	
-	
-	
-	
+		}	
 }

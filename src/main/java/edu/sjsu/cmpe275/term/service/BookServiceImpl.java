@@ -3,7 +3,7 @@ package edu.sjsu.cmpe275.term.service;
  * @author Pratik
  *
  */
-import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import edu.sjsu.cmpe275.term.dao.BookDAO;
@@ -33,11 +33,6 @@ public class BookServiceImpl implements BookService {
 	@Override
 	public void deleteBookByISBN(String isbn) {
 		bookDAO.deleteBookByISBN(isbn);
-	}
-
-	@Override
-	public List<Book> getAllIssuedBookByPatronId(String patronId) {
-		return bookDAO.getAllIssuedBookByPatronId(patronId);
 	}
 
 	@Override

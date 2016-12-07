@@ -3,7 +3,6 @@ package edu.sjsu.cmpe275.term.dao;
  * @author Pratik
  *
  */
-import java.util.List;
 import edu.sjsu.cmpe275.term.model.Book;
 
 public interface BookDAO {
@@ -17,6 +16,4 @@ public interface BookDAO {
 	public void deleteBookByISBN(String isbn);
 	
 	//public List<Book> findAllBooks();
-	
-	public List<Book> getAllIssuedBookByPatronId(String patronId);
 }

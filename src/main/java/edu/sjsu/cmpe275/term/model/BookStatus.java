@@ -6,25 +6,28 @@ package edu.sjsu.cmpe275.term.model;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.PrePersist;
 
 @Entity
 @Embeddable
 public class BookStatus implements Serializable {
 	private static final long serialVersionUID = 5865760835716664141L;
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "BOOKSTATUSID")
-	private int bookStatusId;
+	private String bookStatusId;
+	@PrePersist
+	private void generateSecret(){
+		this.setBookStatusId(UUID.randomUUID().toString());
+	}
 	@Column(name = "ISUUEDATE")
 	private Date issueDate;
 	@Column(name = "DUEDATE")
@@ -61,7 +64,7 @@ public class BookStatus implements Serializable {
 	 * @param patrons
 	 * @param librarians
 	 */
-	public BookStatus(int bookStatusId, Date issueDate, Date dueDate, Date returnDate, Date requestDate,
+	public BookStatus(String bookStatusId, Date issueDate, Date dueDate, Date returnDate, Date requestDate,
 			String requestStatus, Date currentDate, Book book, List<Patron> patrons, List<Librarian> librarians) {
 		super();
 		this.bookStatusId = bookStatusId;
@@ -162,14 +165,14 @@ public class BookStatus implements Serializable {
 	 * 
 	 * @return
 	 */
-	public int getBookStatusId() {
+	public String getBookStatusId() {
 		return bookStatusId;
 	}
 	/**
 	 * 
 	 * @param bookStatusId
 	 */
-	public void setBookStatusId(int bookStatusId) {
+	public void setBookStatusId(String bookStatusId) {
 		this.bookStatusId = bookStatusId;
 	}
 	/**

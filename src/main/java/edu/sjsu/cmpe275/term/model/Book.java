@@ -10,8 +10,6 @@ import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
@@ -20,10 +18,6 @@ import javax.persistence.OneToOne;
 @Entity
 public class Book implements Serializable {
 	private static final long serialVersionUID = 5865760835716664141L;
-
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "BOOKID")
-	private int bookId;
 	@Id
 	@Column(name = "ISBN")
 	private String isbn;
@@ -67,11 +61,10 @@ public class Book implements Serializable {
 	 * @param coverImage
 	 * @param bookStatus
 	 */
-	public Book(int bookId, String isbn, String author, String title, Publisher publisher, String location,
+	public Book(String isbn, String author, String title, Publisher publisher, String location,
 			int numberOfCopies, int availableCopies, boolean currentStatus, String[] keywords, Picture coverImage,
 			List<BookStatus> bookStatus) {
 		super();
-		this.bookId = bookId;
 		this.isbn = isbn;
 		this.author = author;
 		this.title = title;
@@ -209,20 +202,6 @@ public class Book implements Serializable {
 	 */
 	public void setKeywords(String[] keywords) {
 		this.keywords = keywords;
-	}
-	/**
-	 * 
-	 * @return
-	 */
-	public int getBookId() {
-		return bookId;
-	}
-	/**
-	 * 
-	 * @param bookId
-	 */
-	public void setBookId(int bookId) {
-		this.bookId = bookId;
 	}
 	/**
 	 * 

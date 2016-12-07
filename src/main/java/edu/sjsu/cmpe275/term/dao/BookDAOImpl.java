@@ -3,7 +3,6 @@ package edu.sjsu.cmpe275.term.dao;
  * @author Pratik
  *
  */
-import java.util.List;
 import org.springframework.stereotype.Repository;
 import edu.sjsu.cmpe275.term.dao.AbstractDao;
 import edu.sjsu.cmpe275.term.model.Book;
@@ -24,11 +23,6 @@ public class BookDAOImpl extends AbstractDao<String, Book> implements BookDAO{
 	@Override
 	public void deleteBookByISBN(String isbn) {
 		 deleteById(isbn);
-	}
-
-	@Override
-	public List<Book> getAllIssuedBookByPatronId(String patronId) {
-		return getAllIssuedBookByPatronId(patronId);
 	}
 
 	@Override
