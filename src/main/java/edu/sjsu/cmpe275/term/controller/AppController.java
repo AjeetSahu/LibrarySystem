@@ -1,13 +1,17 @@
 package edu.sjsu.cmpe275.term.controller;
 
 import java.util.Map;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 import java.io.File;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -25,7 +29,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -58,6 +61,9 @@ public class AppController {
 	
 	@Autowired
 	private static MailSender activationMailSender;
+	
+	@PersistenceContext(unitName = "CMPE275TERM")
+	private EntityManager entityManager;
 	
 	@Autowired
     ServletContext context;
@@ -395,7 +401,7 @@ public class AppController {
 			if(reqParams.get("location")!=null && (reqParams.get("location")).isEmpty()==false)
 				book.setLocation(reqParams.get("location"));
 			if(reqParams.get("keywords").length()>0 && reqParams.get("keywords")!=null && (reqParams.get("keywords")).isEmpty()==false)
-				book.setKeywords(reqParams.get("keywords").toString().trim().split(","));
+				book.setKeywords(Arrays.asList(reqParams.get("keywords").split("\\s*,\\s*")));
 			book = bookService.saveNewBook(book);
 			ModelAndView model = new ModelAndView("LibraryHome");
 			model.addObject("httpStatus", HttpStatus.CREATED);
@@ -862,8 +868,6 @@ public class AppController {
 		}	
 	}	
 	
-	
-	
 	/**
 	 * Search Books 
 	 * Ruchit code strts here
@@ -872,46 +876,39 @@ public class AppController {
 	 * @return
 	 */
 	@RequestMapping(value="/checkout", method = RequestMethod.POST)
-	public void checkout( Model model) {
+	@Transactional
+	public void checkout(Model model) {
 		System.out.println("challa ");
 		String books[]=new String[2];
 		books[0]="123";
-		books[1]="123";
-		//bookStatusService.issueBooks(books);
-//		BookStatus bookStatus;
+		books[1]="124";
 		Calendar c=new GregorianCalendar();
 		Date issueDate=c.getTime();
 		c.add(Calendar.DATE, 30);
-		Date dueDate=c.getTime();
-	
-		
-	Patron patron=patronService.findPatronByEmailId("amitesh.jaiswal21@gmail.com");
-	System.out.println("challa 1"+patron);
-	
-		if(patron.getDayIssuedCount()>5||patron.getTotalIssuedCount()>10)
-		return ;
-		
-		
+		Date dueDate=c.getTime();	
+		Patron patron=patronService.findPatronByEmailId("pratikproths04@gmail.com");
+		System.out.println("challa 1"+patron);
 		for(int i=0;i<books.length;i++) {
+			if(patron.getDayIssuedCount()>=5 || patron.getTotalIssuedCount()>=10)
+				return ;
+			patron.setDayIssuedCount(patron.getDayIssuedCount()+1);
+			patron.setTotalIssuedCount(patron.getTotalIssuedCount()+1);
 			BookStatus bookStatus = new BookStatus();
-		
 			Book book = bookService.findBookByISBN(books[i]);
 			System.out.println("book bhai wala is "+book);
-			
 			bookStatus.setCurrentDate(issueDate);
 			bookStatus.setDueDate(dueDate);
 			bookStatus.setIssueDate(issueDate);
-		
 			bookStatus.setRequestDate(issueDate);
 			bookStatus.setRequestStatus("done");
 			bookStatus.setBook(book);
-			bookStatusService.issueBooks(bookStatus);
-		
+			entityManager.persist(bookStatus);
+			entityManager.persist(patron);
+			//bookStatusService.issueBooks(bookStatus);
 		}
-		
 		System.out.println("Hi You have just checked out following items");
         SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo("kadakiaruchit@gmail.com");
+        message.setTo("pratikproths04@gmail.com");
         message.setSubject("SJSU Library Checkout on "+c.getTime());
         message.setText("Hi You have just checked out following items "
         		+ "\n = "+c.getTime()
@@ -919,6 +916,5 @@ public class AppController {
         System.out.println("1");
         System.out.println(activationMailSender);
         activationMailSender.send(message);
-		
 		}	
 }
