@@ -56,12 +56,12 @@ public abstract class AbstractDao<PK extends Serializable, T> {
 
 	public T save(T entity) {
 		try{ 
-			System.out.println("I am in the save method..");
+			System.out.println("I am in the save method.."+entity);
 			this.entityManager.persist(entity);	
 			return entity;
 		}
 		catch(Exception e){
-			System.out.println("Exception occur while saving!");
+			System.out.println("Exception occur while saving!"+e);
 			return null;
 		}	
 	}

@@ -36,24 +36,21 @@
             <div class="collapse navbar-collapse pull-right" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
                     <li>
-                        <a href="<%=request.getContextPath() %>/patronHome">Home</a>
+                        <a href="<%=request.getContextPath() %>/libraryHome">Home</a>
                     </li>
                     <li>
-                        <a href="<%=request.getContextPath() %>/patronProfile">Profile</a>
+                        <a href="<%=request.getContextPath() %>/libraryProfile">Profile</a>
                     </li>
                     <li>
-                        <a href="<%=request.getContextPath() %>/logout">Signout</a>
+                        <a href="<%=request.getContextPath() %>/logout">SignOut</a>
                     </li>
                 </ul>
             </div>
             <!-- /.navbar-collapse -->
     </nav>
-    	<div>
-    		Welcome ${userName}
-    	</div>
     </div>
         <div class="row">
-        <div class="col-md-3">
+        <div class="col-md-2">
 		
 
     <div id="wrapper">
@@ -94,20 +91,27 @@
     </div>
     <!-- /#wrapper -->
 </div>
-		  
+           <div class="col-md-5"  style="padding-top:120px;">
+     	   		<img style="height:360px; width:400px;"alt="book-cover-image" src="https://static.pexels.com/photos/8700/wall-animal-dog-pet.jpg">       
+           </div>
+            
+			<div class="col-md-5">
+            	 <form action="/LibrarySystem/patronHome" method="get">
+		            <div style="padding-top:120px;">
+		            	<h3><mark>ISBN :</mark> <label>${book.isbn}</label></h3><br>
+		            	<h3><mark>Author :</mark> <label>${book.author}</label></h3><br>
+		            	<h3><mark>Title :</mark> <label>${book.title}</label></h3><br>
+	            	 	<h3><mark>Publisher :</mark> <label>${book.publisher.publisher}</label></h3><br>
+	            	 	<h3><mark>Year Of Publication :</mark> <label>${book.publisher.yearOfPublication}</label></h3><br>
+	            	 	<input style="alighn:center" type="submit" value="Issue Book" class="btn btn-primary btn-lg">
+	                 </div>
+				</form>
+			</div>
+            
+           </div>  
                      
        </div>
-       <div class="row"> 
-       		<div class="col-md-2"></div>
-	       		<div class="col-md-7">
-	             <form id="form1" hidden=true;>
-		            
-	            </form>
-	        </div>
-         <div class="col-md-1"></div>
-         </div>
-                		
-	
-                </div>
+       
+       <
 	</body>
 </html>

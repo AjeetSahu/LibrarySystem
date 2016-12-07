@@ -139,7 +139,7 @@
        <div class="row"> 
        		<div class="col-md-2"></div>
        		<div class="col-md-7">
-             <form action="/LibrarySystem/newBook" method="post" id="form1" hidden=true;>
+             <form action="/LibrarySystem/newBook" method="post" id="form1" hidden=true; enctype="multipart/form-data">
 	            <div class="row">
 	            	<div class="col-md-2"></div>
 	            	<div class="col-md-3">
@@ -166,6 +166,7 @@
 		  		<input type="hidden" name="title" id="title">
 		  		<input type="hidden" name="yearOfPublication" id="yearOfPublication">
 		  		<input type="hidden" name="publisher" id="publisher">
+		  		<input type="file" name="file" id="file">
 	            <div class="row">
 		            <div style="padding-left:365px;">
 		            	<input type="submit" class="btn btn-primary" value="Add Book to Library">
@@ -215,7 +216,7 @@
 	    document.getElementById("title").value = data.items[0].volumeInfo.title;
 	    document.getElementById("publisher").value = data.items[0].volumeInfo.publisher;
 	    document.getElementById("yearOfPublication").value = data.items[0].volumeInfo.publishedDate;
-
+	    document.getElementById("file").value = data.items[0].volumeInfo.imageLinks.thumbnail;
 	        });
 	    });
 	

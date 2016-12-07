@@ -36,21 +36,18 @@
             <div class="collapse navbar-collapse pull-right" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
                     <li>
-                        <a href="<%=request.getContextPath() %>/patronHome">Home</a>
+                        <a href="<%=request.getContextPath() %>/libraryHome">Home</a>
                     </li>
                     <li>
-                        <a href="<%=request.getContextPath() %>/patronProfile">Profile</a>
+                        <a href="<%=request.getContextPath() %>/libraryProfile">Profile</a>
                     </li>
                     <li>
-                        <a href="<%=request.getContextPath() %>/logout">Signout</a>
+                        <a href="<%=request.getContextPath() %>/logout">SignOut</a>
                     </li>
                 </ul>
             </div>
             <!-- /.navbar-collapse -->
     </nav>
-    	<div>
-    		Welcome ${userName}
-    	</div>
     </div>
         <div class="row">
         <div class="col-md-3">
@@ -94,20 +91,44 @@
     </div>
     <!-- /#wrapper -->
 </div>
-		  
-                     
+		
+            <div class="col-md-7"  style="padding-top:120px;">
+           <div class="row">
+            <div class="col-md-1"></div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 style="text-align:center">Search Book Here</h3>
+                    </div>
+                    <div class="panel-body">
+                        <form id="myForm" action='/LibrarySystem/book/' onsubmit="func();" method="get" class="form-horizontal">
+                            <div class="row">
+                            	<div class="col-md-1"></div>
+                            	<div class="col-md-10">
+                            		<label for="ex1">Search Book By ISBN: </label>
+							  		<input class="form-control" type="text" id="isbn" name="isbn" placeholder="Enter ISBN here" required />
+                            	</div>
+							</div>
+							<br>
+                            <div style="padding-left:40%">
+                                <input type="submit" class="btn btn-primary btn-lg" value="Search Book">
+                            </div>
+                        </form>
+                        
+                    </div>
+                    
+                 </div>
+                 </div>
+           </div>  
+           <div class="col-md-1"></div>          
        </div>
-       <div class="row"> 
-       		<div class="col-md-2"></div>
-	       		<div class="col-md-7">
-	             <form id="form1" hidden=true;>
-		            
-	            </form>
-	        </div>
-         <div class="col-md-1"></div>
-         </div>
-                		
-	
-                </div>
+       
+       </div>
+       
+       <script>
+       	function func(){
+       		document.getElementById('myForm').action = "/LibrarySystem/book/"+document.getElementById('isbn').value;
+       		alert(document.getElementById('myForm').action);
+       	}
+       </script>
 	</body>
 </html>

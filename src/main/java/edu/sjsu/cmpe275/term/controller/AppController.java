@@ -278,6 +278,21 @@ public class AppController {
 	}
 	
 	/**
+	 * Goto Patron Search Book from Database PAGE and search book by ISBN
+	 * @author Amitesh
+	 *
+	 */
+	@RequestMapping(value = "/patronSearchBook", method = RequestMethod.GET)
+	public ModelAndView patronSearchBook(ModelMap model, HttpServletRequest request) {
+		if(request.getSession().getAttribute("loggedIn") == null){
+			ModelAndView login = new ModelAndView("Login");
+			return login;
+		}
+		ModelAndView patronSearch = new ModelAndView("PatronSearchBook");
+		return patronSearch;
+	}
+	
+	/**
 	 * Goto ADDNEWBOOK PAGE and add book manually
 	 * @author Amitesh
 	 *
@@ -347,6 +362,7 @@ public class AppController {
 				e1.printStackTrace();
 			}
 			Picture picture = new Picture();
+			System.out.println("file: "+file);
 			if(file!=null)
 				picture.setImage(file);
 			if(!picture.getImage().isEmpty()){					
@@ -396,21 +412,24 @@ public class AppController {
 	 */
 	@RequestMapping(value="/book/{bookISBN}", method = RequestMethod.GET)
 	public ModelAndView getBookByISBN(@PathVariable("bookISBN") String isbn, Model model, HttpServletRequest request) {
+		System.out.println("getBookByISBN");
 		if(request.getSession().getAttribute("loggedIn") == null){
 			ModelAndView login = new ModelAndView("Login");
 			return login;
 		}
 		ModelAndView bookFound= new ModelAndView("BookFound");
-		ModelAndView bookNotFound= new ModelAndView("BookNotFound");
+		ModelAndView bookNotFound= new ModelAndView("Error");
 		Book book = bookService.findBookByISBN(isbn);
+		System.out.println("working getBookByISBN"+book);
 		System.out.println("book "+book);
 		if(book == null){
 	        System.out.println("Unable to find book as book with ISBN "+isbn+" doesnot exist");
-	        model.addAttribute("httpStatus", HttpStatus.NOT_FOUND);
+	        bookNotFound.addObject("message","Unable to find book as book with ISBN "+isbn+" doesnot exist");
+	        bookNotFound.addObject("httpStatus", HttpStatus.NOT_FOUND);
 			return bookNotFound;
 	    }
-		model.addAttribute("book", book);
-		model.addAttribute("httpStatus", HttpStatus.OK);
+		bookFound.addObject("book", book);
+		bookFound.addObject("httpStatus", HttpStatus.OK);
 		return bookFound;	
 	}
 	
@@ -778,17 +797,17 @@ public class AppController {
 	public void checkout( Model model) {
 		System.out.println("challa ");
 		String books[]=new String[2];
-		books[0]="1234";
-		books[1]="12345";
+		books[0]="123";
+		books[1]="123";
 		//bookStatusService.issueBooks(books);
-		BookStatus bookStatus;
+//		BookStatus bookStatus;
 		Calendar c=new GregorianCalendar();
 		Date issueDate=c.getTime();
 		c.add(Calendar.DATE, 30);
 		Date dueDate=c.getTime();
 	
 		
-	Patron patron=patronService.findPatronByEmailId("kadakiaruchit@gmail.com");
+	Patron patron=patronService.findPatronByEmailId("amitesh.jaiswal21@gmail.com");
 	System.out.println("challa 1"+patron);
 	
 		if(patron.getDayIssuedCount()>5||patron.getTotalIssuedCount()>10)
@@ -796,7 +815,7 @@ public class AppController {
 		
 		
 		for(int i=0;i<books.length;i++) {
-			bookStatus=new BookStatus();
+			BookStatus bookStatus = new BookStatus();
 		
 			Book book = bookService.findBookByISBN(books[i]);
 			System.out.println("book bhai wala is "+book);
