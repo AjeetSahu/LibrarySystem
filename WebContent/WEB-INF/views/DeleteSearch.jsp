@@ -97,7 +97,7 @@
                         <h3 style="text-align:center">Search Book To Delete</h3>
                     </div>
                     <div class="panel-body">
-                        <form action='/LibrarySystem/searchBookDetail' method="post" class="form-horizontal">
+                        <form action="" method="" class="form-horizontal">
                             <div class="row">
                             	<div class="col-md-1"></div>
                             	<div class="col-md-10">
@@ -107,7 +107,7 @@
 							</div>
 							<br>
                             <div style="padding-left:40%">
-                                <button type="button" class="btn btn-primary" id="getData">Search Book</button>
+                                <button type="button" class="btn btn-primary" onclick="deleteBook();">Delete Book</button>
                             </div>
                         </form>
                         
@@ -115,28 +115,7 @@
                     
                  </div>
                  </div>
-                 <div class="row">
-                 <div id="tab" hidden="true">
-                  <table class="table" border=2px id="tab1">
-             <tr>
-             	<th>Author</th>
-             	<th>Title</th>
-             	<th>Call Number</th>
-             	<th>Publisher</th>
-             	<th>Year of Publication</th>
-             	<th>Cover Image</th>
-             </tr>
-             <tr>
-             	
-             </tr>
-          		</table>
-          		<form action="" method="post">
-          			<input type="hidden" name="isbn" id="isbn">
-          			<input class="btn btn-primary" type="submit" value="Delete Book"/>
-          		</form>
-         		</div>
-         		<div class="col-md-1"></div>
-           </div>
+
            </div>  
            <div class="col-md-1"></div>          
        </div>
@@ -146,34 +125,20 @@
 	</body>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 	<script>
-	$("#getData").click(function(){
-			var isbnVal = document.getElementById('isbn1').value;
-			//alert("isbnVal: "+isbnVal);
-			var url = "https://www.googleapis.com/books/v1/volumes?q=isbn:"+isbnVal;
-			//alert(url)
-	        $.get(url, function(data, status){
-	            alert("Data: " + JSON.stringify(data, null, 2) + "\nStatus: " + status);
-				document.getElementById("tab").hidden=false;
-				document.getElementById("isbn").value=isbnVal;
-			 var table = document.getElementById("tab1");
-			    var row = table.insertRow(-1);
-			    var cell1 = row.insertCell(0);
-			    var cell2 = row.insertCell(1);
-			    var cell3 = row.insertCell(2);
-			    var cell4 = row.insertCell(3);
-			    var cell5 = row.insertCell(4);
-			    var cell6 = row.insertCell(5);
-	    
-	    
-	    
-	    cell1.innerHTML = data.items[0].volumeInfo.authors.toString();
-	    cell2.innerHTML = data.items[0].volumeInfo.title;
-	    cell3.innerHTML = data.items[0].volumeInfo.publisher;
-	    cell4.innerHTML = data.items[0].volumeInfo.publisher;
-	    cell5.innerHTML = data.items[0].volumeInfo.publishedDate;
-	    cell6.innerHTML = data.items[0].volumeInfo.imageLinks.thumbnail;
-	        });
-	    });
+	
+	function deleteBook() {
+		  var xhttp = new XMLHttpRequest();
+		  var url = "/LibrarySystem/book/"+document.getElementById('isbn1').value;
+		  alert(url);
+		  xhttp.onreadystatechange = function() {
+		    if (this.readyState == 4 && this.status == 200) {
+		    	document.getElementById("demo").innerHTML = this.responseText;
+		    }
+		  };
+		  xhttp.open("DELETE", url, true);
+		  xhttp.send();
+		  window.location.assign("/LibrarySystem/libraryHome");
+		} 
 	
 	</script>
 </html>

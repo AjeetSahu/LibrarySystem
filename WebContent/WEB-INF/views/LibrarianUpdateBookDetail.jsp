@@ -76,28 +76,54 @@
                     <a href="<%=request.getContextPath() %>/deleteSearch">Delete Book</a>
                 </li>
                 <li>
-                    <a href="<%=request.getContextPath() %>/updateBook">Update Book</a>
+                    <a href="<%=request.getContextPath() %>/#">Profile</a>
                 </li>
                 <li>
-                    <a href="<%=request.getContextPath() %>/libraryProfile">Profile</a>
-                </li>
-                <li>
-                    <a href="<%=request.getContextPath() %>/logout">Signout</a>
+                    <a href="<%=request.getContextPath() %>/welcome">Signout</a>
                 </li>
             </ul>
         </div>
         <!-- /#sidebar-wrapper -->
-	
     </div>
     <!-- /#wrapper -->
-</div>     
-	
-       </div>
-			<div style="padding-top:100px; padding-left:450px;">
-				<h3>Welcome ${userName}</h3>
-            	<h3><mark>${message}</mark></h3>
-			</div>
-                </div>
+</div>
+		             
+       	</div>
+       	<div class="row"> 
+       		<div class="col-md-3"></div>
+	       		<div class="col-md-7" style="padding-top:110px;">
+	            	<form id="myForm" action="/LibrarySystem/" method="post" onsubmit="setUrl()">
+		            	<label for="ex1">ISBN: </label>
+						<input class="form-control" type="text" id="isbn" name="isbn" value="${book.isbn}" disabled>
+						<br>
+						<label for="ex1">Author: </label>
+					    <input class="form-control" type="text" name="author" value="${book.author}">
+						<br>
+					    <label for="ex1">Title: </label>
+					    <input class="form-control" type="text" name="title" value="${book.title}">
+					    <br>
+					    <label for="ex1">Number Of Copies: </label>
+					    <input class="form-control" type="text" name="numberOfCopies" value="${book.numberOfCopies}">
+					    <br>
+					    <label for="ex1">Publisher: </label>
+					    <input class="form-control" type="text" name="publisher" value="${book.publisher.publisher}">
+					    <br>
+					    <label for="ex1">Location: </label>
+					    <input class="form-control" type="text" name="location" value="${book.location}">
+					    <br>
+					    <input type="submit" class="btn btn-primary btn-lg" value="Update Details">
+					    <a href="<%=request.getContextPath() %>/libraryHome"><input type="button" class="btn btn-danger btn-lg" value="Cancel"></a>
+	            	</form>
+	        	</div>
+         	<div class="col-md-1"></div>
+         </div>    
+     </div>
+     <script>
+		function setUrl(){
+			var url = "/LibrarySystem/book/"+document.getElementById("isbn").value;
+			alert(url);
+			document.getElementById('myForm').action = url;
+		}
+	</script>
 	</body>
-	
 </html>

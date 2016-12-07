@@ -110,7 +110,10 @@
 							</div>
 							<br>
                             <div style="padding-left:40%">
-                                <input type="submit" class="btn btn-primary btn-lg" value="Search Book">
+                                <input type="button" id="issueBook" class="btn btn-primary btn-lg" value="Search Book">
+                            </div>
+                            <div id="submitBtn" hidden="true">
+                            	<input type="submit" class="btn btn-primary btn-lg" value="Submit">
                             </div>
                         </form>
                         
@@ -118,6 +121,30 @@
                     
                  </div>
                  </div>
+                 <div class="row">
+                 <div id="tab" hidden=true>
+                 <c:forEach var="entry" items="${book}">
+					Name:  ${entry.author} <br/>
+					Value: ${entry.value} <br/>
+					</c:forEach>
+                  <table class="table" border=2px id="tab1">
+             <thead>
+             	<th>Author</th>
+             	<th>Title</th>
+             	<th>Call Number</th>
+             	<th>Publisher</th>
+             	<th>Year of Publication</th>
+             	<th>Cover Image</th>
+             </thead>
+             <tr>
+             	
+             </tr>
+          		</table>
+          		<button id="issueBook" class="btn btn-primary btn-lg">Issue</button>
+          		<input type="submit" class="btn btn-danger btn-lg" value="Checkout">
+         		</div>
+         		<div class="col-md-1"></div>
+           </div>
            </div>  
            <div class="col-md-1"></div>          
        </div>
@@ -130,5 +157,50 @@
        		alert(document.getElementById('myForm').action);
        	}
        </script>
+       <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+	<script>
+	$("#issueBook").click(function(){
+		var url = "/LibrarySystem/book/json/"+document.getElementById('isbn').value;
+			
+			alert(document.getElementById("isbn"));
+			alert(url);
+	        $.get(url, function(data, status){
+	            alert("hello");
+				alert(data);
+				
+				console.log(data);
+				
+				document.getElementById("tab").hidden=false;
+				//var paramOne =<c:out value="${test}" />
+				alert("${test}");
+			/*var table = document.getElementById("tab1");
+			    var row = table.insertRow(-1);
+			    var cell1 = row.insertCell(0);
+			    var cell2 = row.insertCell(1);
+			    var cell3 = row.insertCell(2);
+			    var cell4 = row.insertCell(3);
+			    var cell5 = row.insertCell(4);
+			    var cell6 = row.insertCell(5);
+	    
+	    
+	    
+	    cell1.innerHTML = data.items[0].volumeInfo.authors.toString();
+	    cell2.innerHTML = data.items[0].volumeInfo.title;
+	    cell3.innerHTML = data.items[0].volumeInfo.publisher;
+	    cell4.innerHTML = data.items[0].volumeInfo.publisher;
+	    cell5.innerHTML = data.items[0].volumeInfo.publishedDate;
+	    cell6.innerHTML = data.items[0].volumeInfo.imageLinks.thumbnail;
+	    
+	    document.getElementById("isbn").value = isbnVal;
+	    document.getElementById("author").value = data.items[0].volumeInfo.authors.toString();
+	    document.getElementById("title").value = data.items[0].volumeInfo.title;
+	    document.getElementById("publisher").value = data.items[0].volumeInfo.publisher;
+	    document.getElementById("yearOfPublication").value = data.items[0].volumeInfo.publishedDate;
+	    document.getElementById("file").value = data.items[0].volumeInfo.imageLinks.thumbnail; */
+	    
+	        });
+	    });
+	
+	</script>
 	</body>
 </html>
