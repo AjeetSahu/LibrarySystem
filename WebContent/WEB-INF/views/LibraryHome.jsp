@@ -42,7 +42,7 @@
                         <a href="<%=request.getContextPath() %>/libraryProfile">Profile</a>
                     </li>
                     <li>
-                        <a href="<%=request.getContextPath() %>/welcome">SignOut</a>
+                        <a href="<%=request.getContextPath() %>/logout">SignOut</a>
                     </li>
                 </ul>
             </div>
@@ -73,13 +73,13 @@
                     <a href="<%=request.getContextPath() %>/addNewBookManually">Add Book</a>
                 </li>
                 <li>
-                    <a href="#">Delete Book</a>
+                    <a href="<%=request.getContextPath() %>/deleteSearch">Delete Book</a>
                 </li>
                 <li>
                     <a href="<%=request.getContextPath() %>/libraryProfile">Profile</a>
                 </li>
                 <li>
-                    <a href="<%=request.getContextPath() %>/welcome">Signout</a>
+                    <a href="<%=request.getContextPath() %>/logout">Signout</a>
                 </li>
             </ul>
         </div>
