@@ -6,7 +6,9 @@ package edu.sjsu.cmpe275.term.model;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -35,8 +37,10 @@ public class Book implements Serializable {
 	private int availableCopies;
 	@Column(name="CURRENTSTATUS", nullable= false, columnDefinition= "boolean default false")
 	private boolean currentStatus; //available or unavailable
-	@Column(name = "KEYWORDS")
-	private String[] keywords;
+	@ElementCollection
+	@CollectionTable(name="keywords", joinColumns=@JoinColumn(name="ISBN"))
+	@Column(name="keyword")
+	private List<String> keywords;
 	@OneToOne(cascade = CascadeType.ALL, fetch=FetchType.LAZY)
 	@JoinColumn(name="PICTUREID")
 	private Picture coverImage;
@@ -61,8 +65,8 @@ public class Book implements Serializable {
 	 * @param coverImage
 	 * @param bookStatus
 	 */
-	public Book(String isbn, String author, String title, Publisher publisher, String location,
-			int numberOfCopies, int availableCopies, boolean currentStatus, String[] keywords, Picture coverImage,
+	public Book(String isbn, String author, String title, Publisher publisher, String location, int numberOfCopies,
+			int availableCopies, boolean currentStatus, List<String> keywords, Picture coverImage,
 			List<BookStatus> bookStatus) {
 		super();
 		this.isbn = isbn;
@@ -71,12 +75,13 @@ public class Book implements Serializable {
 		this.publisher = publisher;
 		this.location = location;
 		this.numberOfCopies = numberOfCopies;
-		this.availableCopies= availableCopies;
+		this.availableCopies = availableCopies;
 		this.currentStatus = currentStatus;
 		this.keywords = keywords;
 		this.coverImage = coverImage;
 		this.bookStatus = bookStatus;
 	}
+	
 	/**
 	 * 
 	 * @return
@@ -84,6 +89,7 @@ public class Book implements Serializable {
 	public String getIsbn() {
 		return isbn;
 	}
+	
 	/**
 	 * 
 	 * @param isbn
@@ -193,14 +199,14 @@ public class Book implements Serializable {
 	 * 
 	 * @return
 	 */
-	public String[] getKeywords() {
+	public List<String> getKeywords() {
 		return keywords;
 	}
 	/**
 	 * 
 	 * @param keywords
 	 */
-	public void setKeywords(String[] keywords) {
+	public void setKeywords(List<String> keywords) {
 		this.keywords = keywords;
 	}
 	/**

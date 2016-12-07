@@ -101,7 +101,7 @@ public abstract class AbstractDao<PK extends Serializable, T> {
 	public List<T> getListOfIssuedBooks(PK id){
 		return this.entityManager.createNativeQuery("Select bookstatusid from book_status"
 				+ " where bookstatusid IN (Select book_status_id from patron_bookstatus "
-				+ "where email="+id.toString()+"))").getResultList();
+				+ "where email='"+id.toString()+"')").getResultList();
 	}
 	
 	/**
