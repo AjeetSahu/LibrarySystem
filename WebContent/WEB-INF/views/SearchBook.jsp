@@ -42,7 +42,7 @@
                         <a href="#">Profile</a>
                     </li>
                     <li>
-                        <a href="#">Signout</a>
+                        <a href="<%=request.getContextPath() %>/logout">Signout</a>
                     </li>
                 </ul>
             </div>

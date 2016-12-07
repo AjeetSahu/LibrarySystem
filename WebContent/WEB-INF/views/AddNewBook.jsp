@@ -42,7 +42,7 @@
                         <a href="<%=request.getContextPath() %>/libraryProfile">Profile</a>
                     </li>
                     <li>
-                        <a href="<%=request.getContextPath() %>/welcome">SignOut</a>
+                        <a href="<%=request.getContextPath() %>/logout">SignOut</a>
                     </li>
                 </ul>
             </div>
