@@ -44,7 +44,8 @@
   <div class="row" style="padding-top:130px;">
     <div class="span12">
       <div class="hero-unit center">
-          <h1>Page Not Found <small><font face="Tahoma" color="red">Error 404</font></small></h1>
+          <!-- <h1>Page Not Found <small><font face="Tahoma" color="red">Error 404</font></small></h1> -->
+          <h2>${httpStatus} : ${message}</h2>
           <br />
           <p>The page you requested could not be found, please try again. Use your browsers <b>Back</b> button to navigate to the page you have prevously come from</p>
           <p><b>Or you could just press this button below:</b></p>
