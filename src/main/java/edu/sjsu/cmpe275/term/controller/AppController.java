@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -423,9 +424,43 @@ public class AppController {
 			return bookNotFound;
 	    }
 		bookFound.addObject("book", book);
+		bookFound.addObject("test", "test");
 		bookFound.addObject("httpStatus", HttpStatus.OK);
 		return bookFound;	
 	}
+	
+	
+	/**
+	 * GET BOOK BY ISBN
+	 * @author Pratik 
+	 * @param isbn
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value="/book/update/{bookISBN}", method = RequestMethod.GET)
+	public ModelAndView getBookByISBNForUpdate(@PathVariable("bookISBN") String isbn, Model model, HttpServletRequest request) {
+		System.out.println("inside getBookByISBN"+isbn);
+		if(request.getSession().getAttribute("loggedIn") == null){
+			ModelAndView login = new ModelAndView("Login");
+			return login;
+		}
+		ModelAndView bookFound= new ModelAndView("LibrarianUpdateBookDetail");
+		ModelAndView bookNotFound= new ModelAndView("Error");
+		Book book = bookService.findBookByISBN(isbn);
+		System.out.println("working getBookByISBN"+book);
+		System.out.println("book "+book);
+		if(book == null){
+	        System.out.println("Unable to find book as book with ISBN "+isbn+" doesnot exist");
+	        bookNotFound.addObject("message","Unable to find book as book with ISBN "+isbn+" doesnot exist");
+	        bookNotFound.addObject("httpStatus", HttpStatus.NOT_FOUND);
+			return bookNotFound;
+	    }
+		bookFound.addObject("book", book);
+		bookFound.addObject("test", "test");
+		bookFound.addObject("httpStatus", HttpStatus.OK);
+		return bookFound;	
+	}
+	
 	
 	/**
 	 * DELETE AN EXISTING BOOK
@@ -439,6 +474,7 @@ public class AppController {
 		if(request.getSession().getAttribute("loggedIn") == null){
 			return "Login";
 		}
+		System.out.println("inside deleteBook");
 		if(bookService.findBookByISBN(isbn)==null){
 	        System.out.println("A book with ISBN "+isbn+" doesnot exist");
 	        model.addAttribute("httpStatus", HttpStatus.NOT_FOUND);
@@ -456,23 +492,48 @@ public class AppController {
 	 * @param model
 	 * @return
 	 */
+	
 	@RequestMapping(value="/book/{bookISBN}", method = RequestMethod.POST)
-	public String updateBook(@ModelAttribute("book") Book book,
+	public String updateBook(@PathVariable("bookISBN") String isbn,
+			@RequestParam Map<String, String> reqMap,
 			Model model, HttpServletRequest request) {
 		if(request.getSession().getAttribute("loggedIn") == null){
 			return "Login";
 		}
-		System.out.println("IN UPDATE METHOD");
-		Book book1 = bookService.findBookByISBN(book.getIsbn());
-		if(book1 == null){
-	        System.out.println("Unable to update as book with id "+book.getIsbn()+" doesnot exist");
-	        model.addAttribute("httpStatus", HttpStatus.NOT_FOUND);
-			return "BookNotFound";
-	    }
-		bookService.updateBook(book);
+		System.out.println("IN UPDATE METHOD"+reqMap.get("author"));
+		Book book1 = bookService.findBookByISBN(isbn);
+//		if(book1 == null){
+//	        System.out.println("Unable to update as book with id "+book.getIsbn()+" doesnot exist");
+//	        model.addAttribute("httpStatus", HttpStatus.NOT_FOUND);
+//			return "BookNotFound";
+//	    }
+		book1.setAuthor(reqMap.get("author"));
+		book1.setTitle(reqMap.get("title"));
+		book1.setLocation(reqMap.get("location"));
+		book1.setNumberOfCopies(Integer.parseInt(reqMap.get("numberOfCopies")));
+		book1.getPublisher().setPublisher(reqMap.get("publisher"));
+		bookService.updateBook(book1);
 		model.addAttribute("httpStatus", HttpStatus.OK);
-		return "BookUpdatedSuccessfully";
+		return "redirect:/libraryHome";
 	}
+	
+//	@RequestMapping(value="/book/{bookISBN}", method = RequestMethod.POST)
+//	public String updateBook(@ModelAttribute("book") Book book,
+//			Model model, HttpServletRequest request) {
+//		if(request.getSession().getAttribute("loggedIn") == null){
+//			return "Login";
+//		}
+//		System.out.println("IN UPDATE METHOD");
+//		Book book1 = bookService.findBookByISBN(book.getIsbn());
+//		if(book1 == null){
+//	        System.out.println("Unable to update as book with id "+book.getIsbn()+" doesnot exist");
+//	        model.addAttribute("httpStatus", HttpStatus.NOT_FOUND);
+//			return "BookNotFound";
+//	    }
+//		bookService.updateBook(book);
+//		model.addAttribute("httpStatus", HttpStatus.OK);
+//		return "BookUpdatedSuccessfully";
+//	}
 	
 	/**
 	 * CREATE NEW PATRON ON CLICKING CREATE PATRON IN SIGNUP PAGE
@@ -523,6 +584,23 @@ public class AppController {
 			return login;
 		}
 		ModelAndView librarian = new ModelAndView("LibraryHome");
+		return librarian;
+	}
+	
+	
+	/**
+	 * Goto Librarian Home PAGE to access features 
+	 * @author Amitesh
+	 *
+	 */
+	@RequestMapping(value = "/updateBook", method = RequestMethod.GET)
+	public ModelAndView libraryUpdateBook(ModelMap model, HttpServletRequest request) {
+		System.out.println("current value in sesson is " + request.getSession().getAttribute("loggedIn"));
+		if(request.getSession().getAttribute("loggedIn") == null){
+			ModelAndView login = new ModelAndView("Login");
+			return login;
+		}
+		ModelAndView librarian = new ModelAndView("LibrarianUpdateBook");
 		return librarian;
 	}
 	

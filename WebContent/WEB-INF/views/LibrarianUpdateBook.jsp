@@ -67,7 +67,7 @@
                     <a href="<%=request.getContextPath() %>/libraryHome">Dashboard</a>
                 </li>
                 <li>
-                    <a href="<%=request.getContextPath() %>/newBook">Search Book</a>
+                    <a href="<%=request.getContextPath() %>/#">Search Book</a>
                 </li>
                 <li>
                     <a href="<%=request.getContextPath() %>/addNewBookManually">Add Book</a>
@@ -76,28 +76,58 @@
                     <a href="<%=request.getContextPath() %>/deleteSearch">Delete Book</a>
                 </li>
                 <li>
-                    <a href="<%=request.getContextPath() %>/updateBook">Update Book</a>
-                </li>
-                <li>
                     <a href="<%=request.getContextPath() %>/libraryProfile">Profile</a>
                 </li>
                 <li>
-                    <a href="<%=request.getContextPath() %>/logout">Signout</a>
+                    <a href="<%=request.getContextPath() %>/welcome">Signout</a>
                 </li>
             </ul>
         </div>
         <!-- /#sidebar-wrapper -->
-	
+
     </div>
     <!-- /#wrapper -->
-</div>     
-	
+</div>
+		
+            <div class="col-md-7"  style="padding-top:120px;">
+            <div class="row">
+            <div class="col-md-1"></div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 style="text-align:center">Search Book To Update</h3>
+                    </div>
+                    <div class="panel-body">
+                        <form id="myForm" action="" onsubmit="setUrl()" method="get" class="form-horizontal">
+                            <div class="row">
+                            	<div class="col-md-1"></div>
+                            	<div class="col-md-10">
+                            		<label for="ex1">Update Book By ISBN: </label>
+							  		<input class="form-control" type="text" id="book" name="book" placeholder="Enter ISBN to update Book" required />
+                            	</div>
+							</div>
+							<br>
+                            <div style="padding-left:40%">
+                                <input type="submit" class="btn btn-primary" value="Get Book Details">
+                            </div>
+                        </form>
+                        
+                    </div>
+                    
+                 </div>
+                 </div>
+           </div>  
+           <div class="col-md-1"></div>          
        </div>
-			<div style="padding-top:100px; padding-left:450px;">
-				<h3>Welcome ${userName}</h3>
-            	<h3><mark>${message}</mark></h3>
-			</div>
-                </div>
+       
+      </div>
+         
 	</body>
-	
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+	<script>
+		function setUrl(){
+			var url = "/LibrarySystem/book/update/"+document.getElementById("book").value;
+			alert(url);
+			document.getElementById('myForm').action = url;
+		}
+	</script>
 </html>
