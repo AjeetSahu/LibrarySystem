@@ -48,6 +48,9 @@
             </div>
             <!-- /.navbar-collapse -->
     </nav>
+    	<div>
+    		Welcome ${userName}
+    	</div>
     </div>
         <div class="row">
         <div class="col-md-3">

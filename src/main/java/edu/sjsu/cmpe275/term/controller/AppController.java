@@ -219,6 +219,7 @@ public class AppController {
 //				librarian.setStatus(false);
 				librarianService.updateLibrarian(librarian);
 				request.getSession().setAttribute("loggedIn", librarian);
+				request.getSession().setAttribute("userName", librarian.getFirstName());
 				System.out.println(request.getSession().getAttribute("loggedIn"));
 			}else{
 				modelAndView = new ModelAndView("Login");
@@ -233,11 +234,13 @@ public class AppController {
 //				patron.setStatus(false);
 				patronService.updatePatron(patron);
 				request.getSession().setAttribute("loggedIn", patron);
+				request.getSession().setAttribute("userName", patron.getFirstName());
 			}else{
 				model.addAttribute("message", "Authentication failed, incorrect email or password!");
 				modelAndView = new ModelAndView("Login");
 			}		
 		}
+    	modelAndView.addObject("userEmail",request.getSession().getAttribute("userEmail"));
     	return modelAndView;
     }
     
