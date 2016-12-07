@@ -1,17 +1,19 @@
 package edu.sjsu.cmpe275.term.controller;
 
 import java.util.Map;
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
+import java.io.File;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
@@ -23,6 +25,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.UriComponentsBuilder;
 import edu.sjsu.cmpe275.term.model.Book;
@@ -55,6 +58,17 @@ public class AppController {
 	@Autowired
 	private static MailSender activationMailSender;
 	
+	@Autowired
+    ServletContext context;
+	
+	/**
+	 * 
+	 * @param context
+	 */
+	public void setContext(ServletContext context) {
+		this.context = context;
+	}
+
 	/**
 	 * 
 	 * @param activationMailSender
@@ -291,41 +305,60 @@ public class AppController {
 	 * @param model
 	 * @return
 	 */
-
 	@RequestMapping(value = "/newBook", method = RequestMethod.POST)
-	public ModelAndView createNewBook(@RequestParam Map<String, String> reqParams, HttpServletRequest request) {
+	public ModelAndView createNewBook(@RequestParam Map<String, String> reqParams, @RequestParam(value = "file", required = false) MultipartFile file, HttpServletRequest request) {
 			Book book = new Book();
-			book.setIsbn(reqParams.get("isbn"));
-			System.out.println("isbn: "+reqParams.get("isbn"));
-			book.setAuthor(reqParams.get("author"));
-			book.setTitle(reqParams.get("title"));
+			if((reqParams.get("isbn"))!=null && (reqParams.get("isbn")).isEmpty()==false)
+				book.setIsbn(reqParams.get("isbn"));
+			if((reqParams.get("author"))!=null && (reqParams.get("author")).isEmpty()==false)
+				book.setAuthor(reqParams.get("author"));
+			if((reqParams.get("title"))!=null && (reqParams.get("title")).isEmpty()==false)
+				book.setTitle(reqParams.get("title"));
 			Publisher publisher = new Publisher();
-			publisher.setPublisher(reqParams.get("publisher"));
-			DateFormat format = new SimpleDateFormat("yyyy");
+			if(reqParams.get("publisher")!=null && (reqParams.get("publisher")).isEmpty()==false)
+				publisher.setPublisher(reqParams.get("publisher"));
+			DateFormat format = new SimpleDateFormat("y");
 			Date date = null;
 			try {
-				System.out.println("date: "+reqParams.get("yearOfPublication"));
-				date = format.parse(reqParams.get("yearOfPublication").toString());
+				if(reqParams.get("yearOfPublication")!=null && (reqParams.get("yearOfPublication")).isEmpty()==false){
+					date = format.parse(reqParams.get("yearOfPublication").toString());
+					publisher.setYearOfPublication(date);
+				}
 			} catch (ParseException e1) {
 				e1.printStackTrace();
 			}
-			publisher.setYearOfPublication(date);
 			Picture picture = new Picture();
-			//MultipartFile multipartFile = (MultipartFile)reqParams.get("file");
-			//book.setCoverImage(
-			//picture.setImage(reqParams.get("coverImage"));
-			//book.setCoverImage();
+			if(file!=null)
+				picture.setImage(file);
+			if(!picture.getImage().isEmpty()){					
+				try {
+					String webAppPath = context.getRealPath("/");
+					File file1 = new File(webAppPath+"/resources/uploaded_images/" + String.valueOf(book.getIsbn()) + ".jpg");
+					FileUtils.writeByteArrayToFile(file1, picture.getImage().getBytes());
+					picture.setLocation(file1.getAbsolutePath());
+				} catch(IOException e) { 
+					System.out.println("Unable to save image "+e); 
+				}
+				catch (Exception e) {
+					e.printStackTrace();
+				}
+			} else {
+				picture.setLocation("/resources/images/book.png");
+			}
 			try{
-				publisher.setPhoneNumber(Integer.parseInt(reqParams.get("phoneNumber")));
-				book.setNumberOfCopies(Integer.parseInt(reqParams.get("numberOfCopies")));
+				if(reqParams.get("phoneNumber")!=null && (reqParams.get("phoneNumber")).isEmpty()==false)
+					publisher.setPhoneNumber(Integer.parseInt(reqParams.get("phoneNumber")));
+				if(reqParams.get("numberOfCopies")!=null && (reqParams.get("numberOfCopies")).isEmpty()==false)
+					book.setNumberOfCopies(Integer.parseInt(reqParams.get("numberOfCopies")));
 			}
 			catch(Exception e){
 				System.out.println(e);
 			}
 			book.setCoverImage(picture);
 			book.setPublisher(publisher);
-			book.setLocation(reqParams.get("location"));
-			if(reqParams.get("keywords").length()>0)
+			if(reqParams.get("location")!=null && (reqParams.get("location")).isEmpty()==false)
+				book.setLocation(reqParams.get("location"));
+			if(reqParams.get("keywords").length()>0 && reqParams.get("keywords")!=null && (reqParams.get("keywords")).isEmpty()==false)
 				book.setKeywords(reqParams.get("keywords").toString().trim().split(","));
 			book = bookService.saveNewBook(book);
 			ModelAndView model = new ModelAndView("LibraryHome");
