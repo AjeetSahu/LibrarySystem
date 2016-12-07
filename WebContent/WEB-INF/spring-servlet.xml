@@ -55,6 +55,10 @@
     <bean id ="bookDAO" class="edu.sjsu.cmpe275.term.dao.BookDAOImpl"/>
     <bean id="librarianDAO" class="edu.sjsu.cmpe275.term.dao.LibrarianDAOImpl"/>
     <bean id="bookStatusDAO" class="edu.sjsu.cmpe275.term.dao.BookStatusDAOImpl"/> 
+     <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+    	<!-- one of the properties available; the maximum file size in bytes -->
+    	<property name="maxUploadSize" value="900000"/>
+	</bean>
     <!-- SET default mail properties -->
     <bean id="activationMailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
         <property name="host" value="smtp.gmail.com"/>
