@@ -3,7 +3,6 @@ package edu.sjsu.cmpe275.term.service;
  * @author Pratik
  *
  */
-import java.util.List;
 import edu.sjsu.cmpe275.term.model.Book;
 
 public interface BookService {
@@ -31,10 +30,4 @@ public interface BookService {
 	public void deleteBookByISBN(String isbn);
 	
 	//public List<Book> findAllBooks();
-	/**
-	 * 
-	 * @param patronId
-	 * @return
-	 */
-	public List<Book> getAllIssuedBookByPatronId(String patronId);
 }

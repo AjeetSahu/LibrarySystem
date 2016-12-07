@@ -19,17 +19,11 @@ import javax.persistence.Table;
 @Table(name="patron")
 public class Patron  implements Serializable {
 	private static final long serialVersionUID = 5865760835716664141L;
-	
-	
 	@Id
 	@Column(name = "EMAIL", unique=true)
 	private String email;
-	
 	@Column(name= "UNIVERSITYID", unique=true)
 	private String universityId;
-	
-
-	
 	@Column(name = "FIRSTNAME")
 	private String firstName;
 	@Column(name = "LASTNAME")
