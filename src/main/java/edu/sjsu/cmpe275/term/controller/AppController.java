@@ -219,6 +219,7 @@ public class AppController {
 //				librarian.setStatus(false);
 				librarianService.updateLibrarian(librarian);
 				request.getSession().setAttribute("loggedIn", librarian);
+				System.out.println(request.getSession().getAttribute("loggedIn"));
 			}else{
 				modelAndView = new ModelAndView("Login");
 				model.addAttribute("message", "Authentication failed, incorrect email or password!");
@@ -248,6 +249,7 @@ public class AppController {
     @RequestMapping(value="/logout", method=RequestMethod.GET)
     public String signout(HttpServletRequest request){
         request.getSession().setAttribute("loggedIn", null);
+        System.out.println("After logout " + request.getSession().getAttribute("loggedIn"));
       	return "Login";
     }
 	
@@ -493,6 +495,7 @@ public class AppController {
 	 */
 	@RequestMapping(value = "/libraryHome", method = RequestMethod.GET)
 	public ModelAndView libraryHome(ModelMap model, HttpServletRequest request) {
+		System.out.println("current value in sesson is " + request.getSession().getAttribute("loggedIn"));
 		if(request.getSession().getAttribute("loggedIn") == null){
 			ModelAndView login = new ModelAndView("Login");
 			return login;
