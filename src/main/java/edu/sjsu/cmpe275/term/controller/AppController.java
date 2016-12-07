@@ -11,6 +11,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -19,7 +20,6 @@ import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -147,7 +147,7 @@ public class AppController {
 	 */
 
 	@RequestMapping(value = "/welcome", method = RequestMethod.GET)
-	public ModelAndView goToWelcomePage(ModelMap model) {
+	public ModelAndView goToWelcomePage(Model model) {
 		ModelAndView welcome = new ModelAndView("welcome");
 		return welcome;
 	}
@@ -159,7 +159,7 @@ public class AppController {
 	 */
 
 	@RequestMapping(value = "/activationPage", method = RequestMethod.GET)
-	public ModelAndView activateUser(ModelMap model) {
+	public ModelAndView activateUser(Model model) {
 		ModelAndView activation = new ModelAndView("ActivationPage");
 		return activation;
 	}
@@ -219,6 +219,7 @@ public class AppController {
 //				librarian.setStatus(false);
 				librarianService.updateLibrarian(librarian);
 				request.getSession().setAttribute("loggedIn", librarian);
+				request.getSession().setAttribute("email", librarian.getEmail());
 				request.getSession().setAttribute("userName", librarian.getFirstName());
 				System.out.println(request.getSession().getAttribute("loggedIn"));
 			}else{
@@ -233,6 +234,11 @@ public class AppController {
 				modelAndView = new ModelAndView("PatronHome");
 //				patron.setStatus(false);
 				patronService.updatePatron(patron);
+				request.getSession().setAttribute("loggedIn", patron);
+				request.getSession().setAttribute("email", patron.getEmail());
+				request.getSession().setAttribute("userName", patron.getFirstName());
+				List<BookStatus> bookStatus = bookStatusService.getListOfIssuedBooks(reqParams.get("email"));
+				model.addAttribute("bookStatus", bookStatus);
 				request.getSession().setAttribute("loggedIn", patron);
 				request.getSession().setAttribute("userName", patron.getFirstName());
 			}else{
@@ -262,7 +268,7 @@ public class AppController {
 	 *
 	 */
 	@RequestMapping(value = "/newBook", method = RequestMethod.GET)
-	public ModelAndView goToAddNewBookPage(ModelMap model, HttpServletRequest request) {
+	public ModelAndView goToAddNewBookPage(Model model, HttpServletRequest request) {
 		if(request.getSession().getAttribute("loggedIn") == null){
 			ModelAndView login = new ModelAndView("Login");
 			return login;
@@ -292,7 +298,7 @@ public class AppController {
 	 *
 	 */
 	@RequestMapping(value = "/newBookManually", method = RequestMethod.GET)
-	public ModelAndView goToAddNewBookManualPage(ModelMap model, HttpServletRequest request) {
+	public ModelAndView goToAddNewBookManualPage(Model model, HttpServletRequest request) {
 		if(request.getSession().getAttribute("loggedIn") == null){
 			ModelAndView login = new ModelAndView("Login");
 			return login;
@@ -307,7 +313,7 @@ public class AppController {
 	 *
 	 */
 	@RequestMapping(value = "/registration", method = RequestMethod.GET)
-	public ModelAndView registration(ModelMap model) {
+	public ModelAndView registration(Model model) {
 		ModelAndView register = new ModelAndView("Registration");
 		return register;
 	}
@@ -318,7 +324,7 @@ public class AppController {
 	 *
 	 */
 	@RequestMapping(value = "/login", method = RequestMethod.GET)
-	public ModelAndView login(ModelMap model) {
+	public ModelAndView login(Model model) {
 		ModelAndView login = new ModelAndView("Login");
 		model.addAttribute("message", "");
 		return login;
@@ -501,12 +507,14 @@ public class AppController {
 	 *
 	 */
 	@RequestMapping(value = "/patronHome", method = RequestMethod.GET)
-	public ModelAndView patronHome(ModelMap model, HttpServletRequest request) {
+	public ModelAndView patronHome(Model model, HttpServletRequest request) {
 		if(request.getSession().getAttribute("loggedIn") == null){
 			ModelAndView login = new ModelAndView("Login");
 			return login;
 		}
 		ModelAndView patron = new ModelAndView("PatronHome");
+		List<BookStatus> bookStatus = bookStatusService.getListOfIssuedBooks((String)request.getSession().getAttribute("email"));
+		model.addAttribute("bookStatus", bookStatus);
 		return patron;
 	}
 	
@@ -516,7 +524,7 @@ public class AppController {
 	 *
 	 */
 	@RequestMapping(value = "/libraryHome", method = RequestMethod.GET)
-	public ModelAndView libraryHome(ModelMap model, HttpServletRequest request) {
+	public ModelAndView libraryHome(Model model, HttpServletRequest request) {
 		System.out.println("current value in sesson is " + request.getSession().getAttribute("loggedIn"));
 		if(request.getSession().getAttribute("loggedIn") == null){
 			ModelAndView login = new ModelAndView("Login");
@@ -532,7 +540,7 @@ public class AppController {
 	 *
 	 */
 	@RequestMapping(value = "/addNewBookManually", method = RequestMethod.GET)
-	public ModelAndView addNewBookManually(ModelMap model, HttpServletRequest request) {
+	public ModelAndView addNewBookManually(Model model, HttpServletRequest request) {
 		if(request.getSession().getAttribute("loggedIn") == null){
 			ModelAndView login = new ModelAndView("Login");
 			return login;
@@ -547,7 +555,7 @@ public class AppController {
 	 *
 	 */
 	@RequestMapping(value = "/patronProfile", method = RequestMethod.GET)
-	public ModelAndView patronProfile(ModelMap model, HttpServletRequest request) {
+	public ModelAndView patronProfile(Model model, HttpServletRequest request) {
 		if(request.getSession().getAttribute("loggedIn") == null){
 			ModelAndView login = new ModelAndView("Login");
 			return login;
@@ -562,7 +570,7 @@ public class AppController {
 	 *
 	 */
 	@RequestMapping(value = "/libraryProfile", method = RequestMethod.GET)
-	public ModelAndView libraryProfile(ModelMap model, HttpServletRequest request) {
+	public ModelAndView libraryProfile(Model model, HttpServletRequest request) {
 		if(request.getSession().getAttribute("loggedIn") == null){
 			ModelAndView login = new ModelAndView("Login");
 			return login;
@@ -578,7 +586,7 @@ public class AppController {
 	 *
 	 */
 	@RequestMapping(value = "/error", method = RequestMethod.GET)
-	public ModelAndView error(ModelMap model) {
+	public ModelAndView error(Model model) {
 		ModelAndView error = new ModelAndView("Error");
 		return error;
 	}
@@ -668,7 +676,7 @@ public class AppController {
 	 *
 	 */
 	@RequestMapping(value = "/deleteSearch", method = RequestMethod.GET)
-	public ModelAndView deleteSearch(ModelMap model, HttpServletRequest request) {
+	public ModelAndView deleteSearch(Model model, HttpServletRequest request) {
 		if(request.getSession().getAttribute("loggedIn") == null){
 			ModelAndView delete = new ModelAndView("Login");
 			return delete;

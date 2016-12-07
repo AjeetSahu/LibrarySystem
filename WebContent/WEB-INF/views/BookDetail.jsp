@@ -75,9 +75,9 @@
                   <a href="#"><i class="fa fa-globe fa-lg"></i> Manage Book <span class="arrow"></span></a>
                 </li>  
                 <ul class="sub-menu collapse" id="service">
-                  <a href="" style="color:white"><li>Add Book</li></a>
-                  <a href="" style="color:white"><li>Update Book</li></a>
-                  <a href="" style="color:white"><li>Delete Book</li></a>
+                  <li><a href="" style="color:white">Add Book</a></li>
+                  <li><a href="" style="color:white">Update Book</a></li>
+                  <li><a href="" style="color:white">Delete Book</a></li>
                 </ul>
 				
 				<li>
@@ -98,14 +98,14 @@
 </div>
             <div class="col-md-6 col-md-offset-1"  style="padding-top:100px;">
                 <table class="table" border =2px>
-	                <thead>
+	                <tr>
 	                	<th>Author</th>
 	                	<th>Title</th>
 	                	<th>Call Number</th>
 	                	<th>Publisher</th>
 	                	<th>Year of Publication</th>
 	                	<th>Cover Image</th>
-	                </thead>
+	                </tr>
 	                <tr>
 	                	<td>aaaa</td>
 	                	<td>aaaa</td>
