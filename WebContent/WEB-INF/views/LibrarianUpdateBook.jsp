@@ -87,37 +87,50 @@
             </ul>
         </div>
         <!-- /#sidebar-wrapper -->
+
     </div>
     <!-- /#wrapper -->
 </div>
-		             
-       	</div>
-       	<div class="row"> 
-       		<div class="col-md-3"></div>
-	       		<div class="col-md-7" style="padding-top:110px;">
-	            	<form>
-		            	<label for="ex1">UNIVERSITYID: </label>
-						<input class="form-control" type="text" name="id" value="123" disabled>
-						<br>
-						<label for="ex1">FIRSTNAME: </label>
-					    <input class="form-control" type="text" name="firstname" value="abc">
-						<br>
-					    <label for="ex1">LASTNAME: </label>
-					    <input class="form-control" type="text" name="lastname" value="abc">
-					    <br>
-					    <label for="ex1">EMAIL: </label>
-					    <input class="form-control" type="text" name="email" value="abc">
-					    <br>
-					    <label for="ex1">PASSWORD: </label>
-					    <input class="form-control" type="text" name="password" value="abc">
-					    <br>
-					    <input type="button" class="btn btn-primary btn-lg" value="Update Details">
-	            	</form>
-	        	</div>
-         	<div class="col-md-1"></div>
-         </div>
-                		
-	
-                </div>
+		
+            <div class="col-md-7"  style="padding-top:120px;">
+            <div class="row">
+            <div class="col-md-1"></div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 style="text-align:center">Search Book To Update</h3>
+                    </div>
+                    <div class="panel-body">
+                        <form id="myForm" action="" onsubmit="setUrl()" method="get" class="form-horizontal">
+                            <div class="row">
+                            	<div class="col-md-1"></div>
+                            	<div class="col-md-10">
+                            		<label for="ex1">Update Book By ISBN: </label>
+							  		<input class="form-control" type="text" id="book" name="book" placeholder="Enter ISBN to update Book" required />
+                            	</div>
+							</div>
+							<br>
+                            <div style="padding-left:40%">
+                                <input type="submit" class="btn btn-primary" value="Get Book Details">
+                            </div>
+                        </form>
+                        
+                    </div>
+                    
+                 </div>
+                 </div>
+           </div>  
+           <div class="col-md-1"></div>          
+       </div>
+       
+      </div>
+         
 	</body>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+	<script>
+		function setUrl(){
+			var url = "/LibrarySystem/book/update/"+document.getElementById("book").value;
+			alert(url);
+			document.getElementById('myForm').action = url;
+		}
+	</script>
 </html>

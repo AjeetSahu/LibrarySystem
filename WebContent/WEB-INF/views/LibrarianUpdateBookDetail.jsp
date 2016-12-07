@@ -95,29 +95,38 @@
        	<div class="row"> 
        		<div class="col-md-3"></div>
 	       		<div class="col-md-7" style="padding-top:110px;">
-	            	<form>
-		            	<label for="ex1">UNIVERSITYID: </label>
-						<input class="form-control" type="text" name="id" value="123" disabled>
+	            	<form id="myForm" action="/LibrarySystem/" method="post" onsubmit="setUrl()">
+		            	<label for="ex1">ISBN: </label>
+						<input class="form-control" type="text" id="isbn" name="isbn" value="${book.isbn}" disabled>
 						<br>
-						<label for="ex1">FIRSTNAME: </label>
-					    <input class="form-control" type="text" name="firstname" value="abc">
+						<label for="ex1">Author: </label>
+					    <input class="form-control" type="text" name="author" value="${book.author}">
 						<br>
-					    <label for="ex1">LASTNAME: </label>
-					    <input class="form-control" type="text" name="lastname" value="abc">
+					    <label for="ex1">Title: </label>
+					    <input class="form-control" type="text" name="title" value="${book.title}">
 					    <br>
-					    <label for="ex1">EMAIL: </label>
-					    <input class="form-control" type="text" name="email" value="abc">
+					    <label for="ex1">Number Of Copies: </label>
+					    <input class="form-control" type="text" name="numberOfCopies" value="${book.numberOfCopies}">
 					    <br>
-					    <label for="ex1">PASSWORD: </label>
-					    <input class="form-control" type="text" name="password" value="abc">
+					    <label for="ex1">Publisher: </label>
+					    <input class="form-control" type="text" name="publisher" value="${book.publisher.publisher}">
 					    <br>
-					    <input type="button" class="btn btn-primary btn-lg" value="Update Details">
+					    <label for="ex1">Location: </label>
+					    <input class="form-control" type="text" name="location" value="${book.location}">
+					    <br>
+					    <input type="submit" class="btn btn-primary btn-lg" value="Update Details">
+					    <a href="<%=request.getContextPath() %>/libraryHome"><input type="button" class="btn btn-danger btn-lg" value="Cancel"></a>
 	            	</form>
 	        	</div>
          	<div class="col-md-1"></div>
-         </div>
-                		
-	
-                </div>
+         </div>    
+     </div>
+     <script>
+		function setUrl(){
+			var url = "/LibrarySystem/book/"+document.getElementById("isbn").value;
+			alert(url);
+			document.getElementById('myForm').action = url;
+		}
+	</script>
 	</body>
 </html>
