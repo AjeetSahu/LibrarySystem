@@ -75,7 +75,7 @@
                     <a href="<%=request.getContextPath() %>/patronSearchBook">Issue Book</a>
                 </li>
                 <li>
-                    <a href="<%=request.getContextPath() %>/">Return Book</a>
+                    <a href="<%=request.getContextPath() %>/patronReturnSearch">Return Book</a>
                 </li>
                 <li>
                     <a href="<%=request.getContextPath() %>/patronProfile">Profile</a>
