@@ -302,6 +302,21 @@ public class AppController {
 	}
 	
 	/**
+	 * Goto Patron Search Book from Database PAGE and search book by ISBN
+	 * @author Amitesh
+	 *
+	 */
+	@RequestMapping(value = "/patronReturnSearch", method = RequestMethod.GET)
+	public ModelAndView patronReturnSearch(HttpServletRequest request) {
+		if(request.getSession().getAttribute("loggedIn") == null){
+			ModelAndView login = new ModelAndView("Login");
+			return login;
+		}
+		ModelAndView patronSearch = new ModelAndView("PatronReturnSearch");
+		return patronSearch;
+	}
+	
+	/**
 	 * Goto ADDNEWBOOK PAGE and add book manually
 	 * @author Amitesh
 	 *
@@ -488,6 +503,31 @@ public class AppController {
 			return login;
 		}
 		ModelAndView bookFound= new ModelAndView("BookFound");
+		ModelAndView bookNotFound= new ModelAndView("Error");
+		Book book = bookService.findBookByISBN(isbn);
+		System.out.println("working getBookByISBN"+book);
+		System.out.println("book "+book);
+		if(book == null){
+	        System.out.println("Unable to find book as book with ISBN "+isbn+" doesnot exist");
+	        bookNotFound.addObject("message","Unable to find book as book with ISBN "+isbn+" doesnot exist");
+	        bookNotFound.addObject("httpStatus", HttpStatus.NOT_FOUND);
+			return bookNotFound;
+	    }
+		bookFound.addObject("book", book);
+		bookFound.addObject("test", "test");
+		bookFound.addObject("httpStatus", HttpStatus.OK);
+		return bookFound;	
+	}
+	
+	
+	@RequestMapping(value="/book/return/{bookISBN}", method = RequestMethod.GET)
+	public ModelAndView getBookReturnByISBN(@PathVariable("bookISBN") String isbn, Model model, HttpServletRequest request) {
+		System.out.println("getBookByISBN");
+		if(request.getSession().getAttribute("loggedIn") == null){
+			ModelAndView login = new ModelAndView("Login");
+			return login;
+		}
+		ModelAndView bookFound= new ModelAndView("BookReturnFound");
 		ModelAndView bookNotFound= new ModelAndView("Error");
 		Book book = bookService.findBookByISBN(isbn);
 		System.out.println("working getBookByISBN"+book);
@@ -1007,5 +1047,73 @@ public class AppController {
         System.out.println(activationMailSender);
         activationMailSender.send(message);
         return success;
-		}	
+		}
+	
+	/**
+	 * Search Books 
+	 * Ruchit code strts here
+	 * @param librarianID
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value="/checkout/return", method = RequestMethod.POST)
+	@Transactional
+	public ModelAndView checkoutReturn(@RequestParam Map<String, String> reqParams, HttpServletRequest request) {
+		ModelAndView success = new ModelAndView("PatronHome");
+		ModelAndView error = new ModelAndView("Error");
+		System.out.println("inside checkout ");
+		System.out.println(reqParams.get("isbn"));
+		String email = ((Patron)request.getSession().getAttribute("loggedIn")).getEmail();
+		System.out.println(email);
+		Calendar c=new GregorianCalendar();
+		Date issueDate=c.getTime();
+		c.add(Calendar.DATE, 30);
+//		Date dueDate=c.getTime();	
+//		System.out.println();
+		Patron patron=patronService.findPatronByEmailId(email);
+		BookStatus bookStatus = new BookStatus();
+		Book book = bookService.findBookByISBN(reqParams.get("isbn"));
+		System.out.println("challa 1"+patron);
+			if(book== null || patron == null){
+				error.addObject("message","Invalid input");
+				return error;
+			}
+		
+//			if(patron.getDayIssuedCount()>=5 || patron.getTotalIssuedCount()>=10){
+//				error.addObject("message","Sorry, Exceeded issue limit");
+//				return error;
+//			}
+			
+			patron.setDayIssuedCount(patron.getDayIssuedCount()-1);
+			patron.setTotalIssuedCount(patron.getTotalIssuedCount()-1);
+			
+			System.out.println("book bhai wala is "+book);
+//			bookStatus.setCurrentDate(issueDate);
+//			bookStatus.setDueDate(dueDate);
+//			bookStatus.setIssueDate(issueDate);
+//			bookStatus.setRequestDate(issueDate);
+//			bookStatus.setRequestStatus("done");
+			bookStatus.setReturnDate(issueDate);
+			bookStatus.setBook(book);
+			book.setAvailableCopies(book.getAvailableCopies()+1);
+			System.out.println(patron.getEmail()+"test danger");
+//			bookStatus.getPatrons().remove(patron);
+			entityManager.persist(book);
+			
+			entityManager.persist(patron);
+			entityManager.persist(bookStatus);
+			
+			
+		System.out.println("Hi You have just Returned out following item");
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(email);
+        message.setSubject("SJSU Library Return on "+c.getTime());
+        message.setText("Hi You have just return out following items "
+        		+reqParams.get("isbn")+ "\n = "+c.getTime()
+        		+"\n Please don't reply on this email.");
+        System.out.println("1");
+        System.out.println(activationMailSender);
+        activationMailSender.send(message);
+        return success;
+		}
 }
