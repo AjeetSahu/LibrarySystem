@@ -105,7 +105,7 @@
                             	<div class="col-md-1"></div>
                             	<div class="col-md-10">
                             		<label for="ex1">Search Book By ISBN: </label>
-							  		<input class="form-control" type="text" id="isbn" name="isbn" placeholder="Enter ISBN here" required />
+							  		<input class="form-control" type="text" id="isbn1" name="isbn1" placeholder="Enter ISBN here" required />
                             	</div>
 							</div>
 							<br>
@@ -142,7 +142,7 @@
        <div class="row"> 
        		<div class="col-md-2"></div>
        		<div class="col-md-7">
-             <form action="/LibrarySystem/newBook" method="post" id="form1" hidden=true; enctype="multipart/form-data">
+             <form action="/LibrarySystem/newBookAPI" method="post" id="form1" hidden=true; enctype="multipart/form-data">
 	            <div class="row">
 	            	<div class="col-md-2"></div>
 	            	<div class="col-md-3">
@@ -184,12 +184,12 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 	<script>
 	$("#getData").click(function(){
-			var isbnVal = document.getElementById('isbn').value;
+			var isbnVal = document.getElementById('isbn1').value;
 			//alert("isbnVal: "+isbnVal);
 			var url = "https://www.googleapis.com/books/v1/volumes?q=isbn:"+isbnVal;
 			//alert(url)
 	        $.get(url, function(data, status){
-	            alert("Data: " + JSON.stringify(data, null, 2) + "\nStatus: " + status);
+	           // alert("Data: " + JSON.stringify(data, null, 2) + "\nStatus: " + status);
 				document.getElementById("tab").hidden=false;
 				document.getElementById("form1").hidden=false;
 			 var table = document.getElementById("tab1");

@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Iterator;
 import java.util.List;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -244,6 +245,7 @@ public class AppController {
 				request.getSession().setAttribute("loggedIn", patron);
 				request.getSession().setAttribute("email", patron.getEmail());
 				request.getSession().setAttribute("userName", patron.getFirstName());
+
 //				List<BookStatus> bookStatus = bookStatusService.getListOfIssuedBooks(reqParams.get("email"));
 //				model.addAttribute("bookStatus", bookStatus);
 				request.getSession().setAttribute("loggedIn", patron);
@@ -336,14 +338,12 @@ public class AppController {
 		model.addAttribute("message", "");
 		return login;
 	}
-	
-	
 	/**
 	 * CREATE NEW BOOK ON CLICKING ADD BOOK IN ADDNEWBOOK PAGE
 	 * @author Pratik
-	 * @param book
-	 * @param ucBuilder
-	 * @param model
+	 * @param reqParams
+	 * @param file
+	 * @param request
 	 * @return
 	 */
 	@RequestMapping(value = "/newBook", method = RequestMethod.POST)
@@ -387,6 +387,69 @@ public class AppController {
 			} else {
 				picture.setLocation("/resources/images/book.png");
 			}
+			try{
+				if(reqParams.get("phoneNumber")!=null && (reqParams.get("phoneNumber")).isEmpty()==false)
+					publisher.setPhoneNumber(Integer.parseInt(reqParams.get("phoneNumber")));
+				if(reqParams.get("numberOfCopies")!=null && (reqParams.get("numberOfCopies")).isEmpty()==false)
+					book.setNumberOfCopies(Integer.parseInt(reqParams.get("numberOfCopies")));
+			}
+			catch(Exception e){
+				System.out.println(e);
+			}
+			book.setCoverImage(picture);
+			book.setPublisher(publisher);
+			if(reqParams.get("location")!=null && (reqParams.get("location")).isEmpty()==false)
+				book.setLocation(reqParams.get("location"));
+			if(reqParams.get("keywords").length()>0 && reqParams.get("keywords")!=null && (reqParams.get("keywords")).isEmpty()==false)
+				book.setKeywords(Arrays.asList(reqParams.get("keywords").split("\\s*,\\s*")));
+			book = bookService.saveNewBook(book);
+			ModelAndView model = new ModelAndView("LibraryHome");
+			model.addObject("httpStatus", HttpStatus.CREATED);
+			model.addObject("book",book);
+			model.addObject("message", "Book Added Successfully");
+			return model;
+	}
+	
+	
+	/**
+	 * CREATE NEW BOOK ON CLICKING ADD BOOK IN ADDNEWBOOK PAGE
+	 * @author Pratik
+	 * @param book
+	 * @param ucBuilder
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value = "/newBookAPI", method = RequestMethod.POST)
+	public ModelAndView createNewBookAPI(@RequestParam Map<String, String> reqParams, HttpServletRequest request) {
+			Book book = new Book();
+			/*System.out.println("Inside createNewBookAPI");
+			Iterator it = reqParams.entrySet().iterator();
+		    while (it.hasNext()) {
+		        Map.Entry pair = (Map.Entry)it.next();
+		        System.out.println(pair.getKey() + " = " + pair.getValue());
+		    }*/
+			if((reqParams.get("isbn"))!=null && (reqParams.get("isbn")).isEmpty()==false)
+				book.setIsbn(reqParams.get("isbn"));
+			if((reqParams.get("author"))!=null && (reqParams.get("author")).isEmpty()==false)
+				book.setAuthor(reqParams.get("author"));
+			if((reqParams.get("title"))!=null && (reqParams.get("title")).isEmpty()==false)
+				book.setTitle(reqParams.get("title"));
+			Publisher publisher = new Publisher();
+			if(reqParams.get("publisher")!=null && (reqParams.get("publisher")).isEmpty()==false)
+				publisher.setPublisher(reqParams.get("publisher"));
+			DateFormat format = new SimpleDateFormat("y");
+			Date date = null;
+			try {
+				if(reqParams.get("yearOfPublication")!=null && (reqParams.get("yearOfPublication")).isEmpty()==false){
+					date = format.parse(reqParams.get("yearOfPublication").toString());
+					publisher.setYearOfPublication(date);
+				}
+			} catch (ParseException e1) {
+				e1.printStackTrace();
+			}
+			Picture picture = new Picture();
+			if(reqParams.get("image_location")!=null && (reqParams.get("image_location")).isEmpty()==false)
+				picture.setLocation(reqParams.get("image_location"));
 			try{
 				if(reqParams.get("phoneNumber")!=null && (reqParams.get("phoneNumber")).isEmpty()==false)
 					publisher.setPhoneNumber(Integer.parseInt(reqParams.get("phoneNumber")));
@@ -482,19 +545,30 @@ public class AppController {
 	 * @return
 	 */
 	@RequestMapping(value="/book/{bookISBN}", method = RequestMethod.DELETE)
-	public String deleteBook(@PathVariable("bookISBN") String isbn, Model model, HttpServletRequest request) {
+	public ModelAndView deleteBook(@PathVariable("bookISBN") String isbn, Model model, HttpServletRequest request) {
+		ModelAndView login= new ModelAndView("Login");
 		if(request.getSession().getAttribute("loggedIn") == null){
-			return "Login";
+			return login;
 		}
+		ModelAndView deletedBook= new ModelAndView("BookDeletedSuccessfully");
+		ModelAndView notDeletedBook= new ModelAndView("Error");
 		System.out.println("inside deleteBook");
-		if(bookService.findBookByISBN(isbn)==null){
-	        System.out.println("A book with ISBN "+isbn+" doesnot exist");
-	        model.addAttribute("httpStatus", HttpStatus.NOT_FOUND);
-			return "BookNotFound";
+		Book book = bookService.findBookByISBN(isbn);
+		if(book==null){
+	        notDeletedBook.addObject("message", "A book with ISBN "+isbn+" doesnot exist");
+	        notDeletedBook.addObject("httpStatus", HttpStatus.NOT_FOUND);
+			return notDeletedBook;
 	    }
-		bookService.deleteBookByISBN(isbn);;
-		model.addAttribute("httpStatus", HttpStatus.OK);
-		return "BookDeletedSuccessfully";
+		if(book.getNumberOfCopies()==book.getAvailableCopies()){
+			bookService.deleteBookByISBN(isbn);
+			notDeletedBook.addObject("httpStatus", HttpStatus.OK);
+			return deletedBook;
+		}else{
+			notDeletedBook.addObject("message", "Cannot be deleted as checkout by patron");
+			notDeletedBook.addObject("httpStatus", HttpStatus.FORBIDDEN);
+			return notDeletedBook;
+		}		
+		
 	}
 	
 	/**
@@ -580,8 +654,9 @@ public class AppController {
 			return login;
 		}
 		ModelAndView patron = new ModelAndView("PatronHome");
-//		List<BookStatus> bookStatus = bookStatusService.getListOfIssuedBooks((String)request.getSession().getAttribute("email"));
-//		model.addAttribute("bookStatus", bookStatus);
+
+		//List<BookStatus> bookStatus = bookStatusService.getListOfIssuedBooks((String)request.getSession().getAttribute("email"));
+		//model.addAttribute("bookStatus", bookStatus);
 		return patron;
 	}
 	
