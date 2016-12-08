@@ -245,8 +245,9 @@ public class AppController {
 				request.getSession().setAttribute("loggedIn", patron);
 				request.getSession().setAttribute("email", patron.getEmail());
 				request.getSession().setAttribute("userName", patron.getFirstName());
-				//List<BookStatus> bookStatus = bookStatusService.getListOfIssuedBooks(reqParams.get("email"));
-				//model.addAttribute("bookStatus", bookStatus);
+
+//				List<BookStatus> bookStatus = bookStatusService.getListOfIssuedBooks(reqParams.get("email"));
+//				model.addAttribute("bookStatus", bookStatus);
 				request.getSession().setAttribute("loggedIn", patron);
 				request.getSession().setAttribute("userName", patron.getFirstName());
 			}else{
@@ -653,6 +654,7 @@ public class AppController {
 			return login;
 		}
 		ModelAndView patron = new ModelAndView("PatronHome");
+
 		//List<BookStatus> bookStatus = bookStatusService.getListOfIssuedBooks((String)request.getSession().getAttribute("email"));
 		//model.addAttribute("bookStatus", bookStatus);
 		return patron;
@@ -950,24 +952,35 @@ public class AppController {
 	 */
 	@RequestMapping(value="/checkout", method = RequestMethod.POST)
 	@Transactional
-	public void checkout(Model model) {
-		System.out.println("challa ");
-		String books[]=new String[2];
-		books[0]="123";
-		books[1]="124";
+	public ModelAndView checkout(@RequestParam Map<String, String> reqParams, HttpServletRequest request) {
+		ModelAndView success = new ModelAndView("PatronHome");
+		ModelAndView error = new ModelAndView("Error");
+		System.out.println("inside checkout ");
+		System.out.println(reqParams.get("isbn"));
+		String email = ((Patron)request.getSession().getAttribute("loggedIn")).getEmail();
+		System.out.println(email);
 		Calendar c=new GregorianCalendar();
 		Date issueDate=c.getTime();
 		c.add(Calendar.DATE, 30);
 		Date dueDate=c.getTime();	
-		Patron patron=patronService.findPatronByEmailId("pratikproths04@gmail.com");
+		System.out.println();
+		Patron patron=patronService.findPatronByEmailId(email);
+		BookStatus bookStatus = new BookStatus();
+		Book book = bookService.findBookByISBN(reqParams.get("isbn"));
 		System.out.println("challa 1"+patron);
-		for(int i=0;i<books.length;i++) {
-			if(patron.getDayIssuedCount()>=5 || patron.getTotalIssuedCount()>=10)
-				return ;
+			if(book.getAvailableCopies()<=0){
+				error.addObject("message","Sorry, Requested book is not available");
+				return error;
+			}
+		
+			if(patron.getDayIssuedCount()>=5 || patron.getTotalIssuedCount()>=10){
+				error.addObject("message","Sorry, Exceeded issue limit");
+				return error;
+			}
+			
 			patron.setDayIssuedCount(patron.getDayIssuedCount()+1);
 			patron.setTotalIssuedCount(patron.getTotalIssuedCount()+1);
-			BookStatus bookStatus = new BookStatus();
-			Book book = bookService.findBookByISBN(books[i]);
+			
 			System.out.println("book bhai wala is "+book);
 			bookStatus.setCurrentDate(issueDate);
 			bookStatus.setDueDate(dueDate);
@@ -975,19 +988,24 @@ public class AppController {
 			bookStatus.setRequestDate(issueDate);
 			bookStatus.setRequestStatus("done");
 			bookStatus.setBook(book);
-			entityManager.persist(bookStatus);
+			book.setAvailableCopies(book.getAvailableCopies()-1);
+			System.out.println(patron.getEmail()+"test danger");
+			bookStatus.getPatrons().add(patron);
+			entityManager.persist(book);
 			entityManager.persist(patron);
-			//bookStatusService.issueBooks(bookStatus);
-		}
+			entityManager.persist(bookStatus);
+			
+			
 		System.out.println("Hi You have just checked out following items");
         SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo("pratikproths04@gmail.com");
+        message.setTo(email);
         message.setSubject("SJSU Library Checkout on "+c.getTime());
         message.setText("Hi You have just checked out following items "
-        		+ "\n = "+c.getTime()
+        		+reqParams.get("isbn")+ "\n = "+c.getTime()
         		+"\n Please don't reply on this email.");
         System.out.println("1");
         System.out.println(activationMailSender);
         activationMailSender.send(message);
+        return success;
 		}	
 }

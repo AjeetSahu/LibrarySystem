@@ -202,7 +202,7 @@
 			    var cell6 = row.insertCell(5);
 	    
 	    
-	    
+	    console.log("image: "+data.items[0].volumeInfo.imageLinks.thumbnail);
 	    cell1.innerHTML = data.items[0].volumeInfo.authors.toString();
 	    cell2.innerHTML = data.items[0].volumeInfo.title;
 	    cell3.innerHTML = data.items[0].volumeInfo.publisher;

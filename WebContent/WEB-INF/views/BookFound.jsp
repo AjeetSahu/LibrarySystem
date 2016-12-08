@@ -92,17 +92,18 @@
     <!-- /#wrapper -->
 </div>
            <div class="col-md-5"  style="padding-top:120px;">
-     	   		<img style="height:360px; width:400px;"alt="book-cover-image" src="https://static.pexels.com/photos/8700/wall-animal-dog-pet.jpg">       
+     	   		<img style="height:360px; width:400px;"alt="book-cover-image" src="https://images-na.ssl-images-amazon.com/images/I/51Dcweva%2BnL._SX323_BO1,204,203,200_.jpg">       
            </div>
             
 			<div class="col-md-5">
-            	 <form action="/LibrarySystem/patronHome" method="get">
+            	 <form action="/LibrarySystem/checkout" method="post">
 		            <div style="padding-top:120px;">
 		            	<h3><mark>ISBN :</mark> <label>${book.isbn}</label></h3><br>
 		            	<h3><mark>Author :</mark> <label>${book.author}</label></h3><br>
 		            	<h3><mark>Title :</mark> <label>${book.title}</label></h3><br>
 	            	 	<h3><mark>Publisher :</mark> <label>${book.publisher.publisher}</label></h3><br>
 	            	 	<h3><mark>Year Of Publication :</mark> <label>${book.publisher.yearOfPublication}</label></h3><br>
+	            	 	<input type="hidden" name="isbn" id="isbn" value="${book.isbn}" hidden=true>
 	            	 	<input style="alighn:center" type="submit" value="Issue Book" class="btn btn-primary btn-lg">
 	                 </div>
 				</form>

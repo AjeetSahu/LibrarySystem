@@ -70,10 +70,10 @@
                     <a href="<%=request.getContextPath() %>/patronSearchBook">Search Book</a>
                 </li>
                 <li>
-                    <a href="<%=request.getContextPath() %>/">Already Issued Books</a>
+                    <a href="<%=request.getContextPath() %>/patronHome">Already Issued Books</a>
                 </li>
                 <li>
-                    <a href="<%=request.getContextPath() %>/">Issue Book</a>
+                    <a href="<%=request.getContextPath() %>/patronSearchBook">Issue Book</a>
                 </li>
                 <li>
                     <a href="<%=request.getContextPath() %>/">Return Book</a>
@@ -110,18 +110,18 @@
 							</div>
 							<br>
                             <div style="padding-left:40%">
-                                <input type="button" id="issueBook" class="btn btn-primary btn-lg" value="Search Book">
+                                <input type="submit" class="btn btn-primary btn-lg" value="Search Book">
                             </div>
-                            <div id="submitBtn" hidden="true">
+                           <!--  <div id="submitBtn" hidden="true">
                             	<input type="submit" class="btn btn-primary btn-lg" value="Submit">
-                            </div>
+                            </div> -->
                         </form>
                         
                     </div>
                     
                  </div>
                  </div>
-                 <div class="row">
+                 <%--<div class="row">
                  <div id="tab" hidden=true>
                  <c:forEach var="entry" items="${book}">
 					Name:  ${entry.author} <br/>
@@ -144,7 +144,7 @@
           		<input type="submit" class="btn btn-danger btn-lg" value="Checkout">
          		</div>
          		<div class="col-md-1"></div>
-           </div>
+           </div> --%>
            </div>  
            <div class="col-md-1"></div>          
        </div>

@@ -4,6 +4,7 @@ package edu.sjsu.cmpe275.term.model;
  *
  */
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -46,7 +47,7 @@ public class BookStatus implements Serializable {
 	private Book book;
 	
 	@ManyToMany(mappedBy="bookStatus")
-	private List<Patron> patrons;
+	private List<Patron> patrons=new ArrayList<Patron>();
 	
 	public BookStatus() {
 		super();
