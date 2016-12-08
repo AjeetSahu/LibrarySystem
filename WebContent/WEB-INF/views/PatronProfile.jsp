@@ -66,16 +66,16 @@
                     <a href="<%=request.getContextPath() %>/patronHome">Home</a>
                 </li>
                 <li>
-                    <a href="#">Search Book</a>
+                    <a href="<%=request.getContextPath() %>/patronSearchBook">Search Book</a>
                 </li>
                 <li>
-                    <a href="#">Already Issued Books</a>
+                    <a href="<%=request.getContextPath() %>/patronHome">Already Issued Books</a>
                 </li>
                 <li>
-                    <a href="#">Issue Book</a>
+                    <a href="<%=request.getContextPath() %>/patronSearchBook">Issue Book</a>
                 </li>
                 <li>
-                    <a href="#">Return Book</a>
+                    <a href="<%=request.getContextPath() %>/">Return Book</a>
                 </li>
                 <li>
                     <a href="<%=request.getContextPath() %>/patronProfile">Profile</a>

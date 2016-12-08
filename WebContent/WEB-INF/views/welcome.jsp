@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
-    <title>themeinthebox.com</title>
+    <title>Library Management</title>
 	<!-- core CSS -->
 	<spring:url value="/resources/css/bootstrap.min.css" var="bootstrap" />
 		<link href="${bootstrap}" rel="stylesheet">
@@ -96,7 +96,7 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="carousel-content text-center">
-                                    <h2>I have always imagined that Paradise will be a kind of library <span>Color</span>.</h2>
+                                    <h2>I have always imagined that Paradise will be a kind of <span>library</span>.</h2>
                                     <p>Any book that helps a child to form a habit of reading, to make reading one of his deep and continuing needs, is good for him.</p>
                                     <a class="btn btn-primary btn-lg" href="#">Read More</a>
                                 </div>
@@ -111,9 +111,8 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="carousel-content text-center">
-
-                                    <h2>OUR MAIN GOAL IS CONTINUOUSLY SATISFY OUR <span>Clients</span></h2>
-                                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et  dolore magna incididunt ut labore aliqua. </p>
+                                    <h2>I have always imagined that Paradise will be a kind of <span>library</span>.</h2>
+                                    <p>Any book that helps a child to form a habit of reading, to make reading one of his deep and continuing needs, is good for him.</p>
                                     <a class="btn btn-primary btn-lg" href="#">Read More</a>
                                 </div>
                             </div>
@@ -127,9 +126,8 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="carousel-content text-center">
-                                    <h2>Accessible design is good design. Only with <span>Color</span>.</h2>
-                                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et  dolore magna incididunt ut labore aliqua. </p>
-                                    <a class="btn btn-primary btn-lg" href="#">Read More</a>
+                                    <h2>I have always imagined that Paradise will be a kind of <span>library</span>.</h2>
+                                    <p>Any book that helps a child to form a habit of reading, to make reading one of his deep and continuing needs, is good for him.</p><a class="btn btn-primary btn-lg" href="#">Read More</a>
                                 </div>
                             </div>
                         </div>
@@ -144,8 +142,7 @@
         <div class="container">
 
             <div class="section-header">
-                <h2 class="section-title text-center wow fadeInDown">WELCOME TO OUR COMPANY</h2>
-                <p class="text-center wow fadeInDown">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut <br> et dolore magna aliqua. Ut enim ad minim veniam</p>
+                <h2 class="section-title text-center wow fadeInDown">WELCOME TO OUR LIBRARY</h2>
             </div>
 
             <div class="row">
@@ -153,15 +150,17 @@
 
                 <div class="col-sm-6 wow fadeInRight">
                     <h3 class="column-title">A Little More About Us</h3>
-                    <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</p>
+                    <p>Information helps you to see that you're not alone. That there's somebody in Mississippi and somebody in Tokyo who all have wept, who've all longed and lost, who've all been happy. So the library helps you to see, not only that you are not alone, but that you're not really any different from everyone else.
+					@Maya Angelou</p>
+					<br>
+                    <p>I was teased if I brought my books home. I would take a paper bag to the library and put the books in the bag and bring them home. Not that I was that concerned about them teasing me - because I would hit them in a heartbeat. But I felt a little ashamed, having books. @Walter Dean Myers</p>
 
-                    <p>Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</p>
-
-                    <a class="btn btn-primary" href="#">Discover Us</a>
+                    <a class="btn btn-primary" href="<%=request.getContextPath() %>/registration">Discover Us</a>
 
                 </div>
-                <div class="col-sm-6 wow fadeInLeft">
-                    <img class="img-responsive" src="https://static.pexels.com/photos/8700/wall-animal-dog-pet.jpg" alt="">
+                <div class="col-sm-2"></div>
+                <div class="col-sm-4 wow fadeInLeft"><br>
+                    <img class="img-responsive" src="http://brainconnection.brainhq.com/wp-content/uploads/2013/02/tree-library.jpg" alt="">
                 </div>
             </div>
         </div>
@@ -172,96 +171,45 @@
 
             <div class="section-header">
                 <h2 class="section-title text-center wow fadeInDown">Our Services</h2>
-                <p class="text-center wow fadeInDown">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut <br> et dolore magna aliqua. Ut enim ad minim veniam</p>
+                <p class="text-center wow fadeInDown">If you have a garden and a library, you have everything you need. </p>
             </div>
 
             <div class="row">
                 <div class="features">
-                    <div class="col-sm-6 col-md-3 col-lg-3 wow fadeInUp" data-wow-duration="300ms" data-wow-delay="0ms">
+                    <div class="col-sm-4 col-md-4 col-lg-4 wow fadeInUp" data-wow-duration="300ms" data-wow-delay="0ms">
                         <div class="features-item">
                             <div class="features-icon">
                                 <i class="fa fa-bicycle"></i>
                             </div>
-                            <h3 class="features-title font-alt">Optimised for speed</h3>
-                            Careful attention to detail and clean, well structured code ensures a smooth user experience for all your visitors.
+                            <h3 class="features-title font-alt">Large Book Database</h3>
+                            Your library is your portrait.
                         </div>
                     </div>
 
-                    <div class="col-sm-6 col-md-3 col-lg-3 wow fadeInUp" data-wow-duration="300ms" data-wow-delay="100ms">
+                    <div class="col-sm-4 col-md-4 col-lg-4 wow fadeInUp" data-wow-duration="300ms" data-wow-delay="100ms">
                         <div class="features-item">
                             <div class="features-icon">
                                 <i class="fa fa-cubes"></i>
                             </div>
-                            <h3 class="features-title font-alt">SEO Services</h3>
-                            Careful attention to detail and clean, well structured code ensures a smooth user experience for all your visitors.
+                            <h3 class="features-title font-alt">Multiple Book Checkout</h3>
+                            Your library is your portrait.
                         </div>
                     </div>
 
-                    <div class="col-sm-6 col-md-3 col-lg-3 wow fadeInUp" data-wow-duration="300ms" data-wow-delay="200ms">
+                    <div class="col-sm-4 col-md-4 col-lg-4 wow fadeInUp" data-wow-duration="300ms" data-wow-delay="200ms">
                         <div class="features-item">
                             <div class="features-icon">
                                 <i class="fa fa-connectdevelop"></i>
                             </div>
-                            <h3 class="features-title font-alt">Optimised for speed</h3>
-                            Careful attention to detail and clean, well structured code ensures a smooth user experience for all your visitors.
+                            <h3 class="features-title font-alt">Faster Book Access</h3>
+                            Your library is your portrait.
                         </div>
                     </div>
-
-                    <div class="col-sm-6 col-md-3 col-lg-3 wow fadeInUp" data-wow-duration="300ms" data-wow-delay="300ms">
-                        <div class="features-item">
-                            <div class="features-icon">
-                                <i class="fa  fa-diamond"></i>
-                            </div>
-                            <h3 class="features-title font-alt">Optimised for speed</h3>
-                            Careful attention to detail and clean, well structured code ensures a smooth user experience for all your visitors.
-                        </div>
-                    </div>
-
-                    <div class="col-sm-6 col-md-3 col-lg-3 wow fadeInUp" data-wow-duration="300ms" data-wow-delay="400ms">
-                        <div class="features-item">
-                            <div class="features-icon">
-                                <i class="fa fa-user-secret"></i>
-                            </div>
-                            <h3 class="features-title font-alt">Optimised for speed</h3>
-                            Careful attention to detail and clean, well structured code ensures a smooth user experience for all your visitors.
-                        </div>
-                    </div>
-
-                    <div class="col-sm-6 col-md-3 col-lg-3 wow fadeInUp" data-wow-duration="300ms" data-wow-delay="500ms">
-                        <div class="features-item">
-                            <div class="features-icon">
-                                <i class="fa fa-key"></i>
-                            </div>
-                            <h3 class="features-title font-alt">Optimised for speed</h3>
-                            Careful attention to detail and clean, well structured code ensures a smooth user experience for all your visitors.
-                        </div>
-                    </div>
-
-                    <div class="col-sm-6 col-md-3 col-lg-3 wow fadeInUp" data-wow-duration="300ms" data-wow-delay="600ms">
-                        <div class="features-item">
-                            <div class="features-icon">
-                                <i class="fa fa-laptop"></i>
-                            </div>
-                            <h3 class="features-title font-alt">Optimised for speed</h3>
-                            Careful attention to detail and clean, well structured code ensures a smooth user experience for all your visitors.
-                        </div>
-                    </div>
-
-                    <div class="col-sm-6 col-md-3 col-lg-3 wow fadeInUp" data-wow-duration="300ms" data-wow-delay="700ms">
-                        <div class="features-item">
-                            <div class="features-icon">
-                                <i class="fa fa-paw"></i>
-                            </div>
-                            <h3 class="features-title font-alt">Optimised for speed</h3>
-                            Careful attention to detail and clean, well structured code ensures a smooth user experience for all your visitors.
-                        </div>
-                    </div>
-
                 </div>
             </div><!--/.row-->    
         </div><!--/.container-->
     </section><!--/#services-->
-
+<!-- 
     <section id="portfolio">
         <div class="container">
             <div class="section-header">
@@ -275,7 +223,7 @@
                     <li><a href="#" data-filter=".animation">Animation</a></li>
                     <li><a href="#" data-filter=".Business">Business</a></li>
                     <li><a href="#" data-filter=".art">Art</a></li>
-                </ul><!--/#portfolio-filter-->
+                </ul>/#portfolio-filter
             </div>
 
             <div class="portfolio-items">
@@ -289,7 +237,7 @@
                             </a>
                         </div>
                     </div>
-                </div><!--/.portfolio-item-->
+                </div>/.portfolio-item
 
 
                 <div class="portfolio-item Business art">
@@ -302,7 +250,7 @@
                             </a>
                         </div>
                     </div>
-                </div><!--/.portfolio-item-->
+                </div>/.portfolio-item
 
                 <div class="portfolio-item animation">
                     <div class="portfolio-item-inner">
@@ -315,7 +263,7 @@
                             </a>
                         </div>
                     </div>
-                </div><!--/.portfolio-item-->
+                </div>/.portfolio-item
 
                 <div class="portfolio-item Business">
                     <div class="portfolio-item-inner">
@@ -328,7 +276,7 @@
                             </a>
                         </div>
                     </div>
-                </div><!--/.portfolio-item-->
+                </div>/.portfolio-item
 
                 <div class="portfolio-item animation art">
                     <div class="portfolio-item-inner">
@@ -341,7 +289,7 @@
                             </a>
                         </div>
                     </div>
-                </div><!--/.portfolio-item-->
+                </div>/.portfolio-item
 
                 <div class="portfolio-item Business">
                     <div class="portfolio-item-inner">
@@ -354,11 +302,12 @@
                             </a>
                         </div>
                     </div>
-                </div><!--/.portfolio-item-->
+                </div>/.portfolio-item
             </div>
-        </div><!--/.container-->
-    </section><!--/#portfolio-->
-
+        </div>/.container
+    </section>/#portfolio
+ -->
+ <%-- 
     <section id="contact-area">
         <div class="container">
             <div class="row">
@@ -401,7 +350,7 @@
             </div>
         </div>
     </section><!--/#bottom-->
-
+ --%>
     <footer id="footer">
         <div class="container">
             <div class="row">

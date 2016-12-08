@@ -130,7 +130,7 @@
 		<br>
 		
 		<div style="padding-left:300px;">
-			<input class="btn btn-primary btn-lg" type="submit" name="submit" value="  Register  ">
+			<input class="btn btn-primary btn-lg" type="submit" name="submit" value=" Add Book ">
 		</div>
 		</form>
 	        </div>

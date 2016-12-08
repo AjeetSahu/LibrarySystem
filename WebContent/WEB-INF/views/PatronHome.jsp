@@ -73,10 +73,10 @@
                     <a href="<%=request.getContextPath() %>/patronSearchBook">Search Book</a>
                 </li>
                 <li>
-                    <a href="<%=request.getContextPath() %>/">Already Issued Books</a>
+                    <a href="<%=request.getContextPath() %>/patronHome">Already Issued Books</a>
                 </li>
                 <li>
-                    <a href="<%=request.getContextPath() %>/">Issue Book</a>
+                    <a href="<%=request.getContextPath() %>/patronSearchBook">Issue Book</a>
                 </li>
                 <li>
                     <a href="<%=request.getContextPath() %>/">Return Book</a>

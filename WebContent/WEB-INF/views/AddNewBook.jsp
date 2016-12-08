@@ -169,7 +169,7 @@
 		  		<input type="hidden" name="title" id="title">
 		  		<input type="hidden" name="yearOfPublication" id="yearOfPublication">
 		  		<input type="hidden" name="publisher" id="publisher">
-		  		<input type="file" name="file" id="file">
+		  		<input type="hidden" name="image_location" id="image_location">
 	            <div class="row">
 		            <div style="padding-left:365px;">
 		            	<input type="submit" class="btn btn-primary" value="Add Book to Library">
@@ -202,7 +202,7 @@
 			    var cell6 = row.insertCell(5);
 	    
 	    
-	    
+	    console.log("image: "+data.items[0].volumeInfo.imageLinks.thumbnail);
 	    cell1.innerHTML = data.items[0].volumeInfo.authors.toString();
 	    cell2.innerHTML = data.items[0].volumeInfo.title;
 	    cell3.innerHTML = data.items[0].volumeInfo.publisher;
@@ -215,7 +215,7 @@
 	    document.getElementById("title").value = data.items[0].volumeInfo.title;
 	    document.getElementById("publisher").value = data.items[0].volumeInfo.publisher;
 	    document.getElementById("yearOfPublication").value = data.items[0].volumeInfo.publishedDate;
-	    document.getElementById("file").value = data.items[0].volumeInfo.imageLinks.thumbnail;
+	    document.getElementById("image_location").value = data.items[0].volumeInfo.imageLinks.thumbnail;
 	        });
 	    });
 	
