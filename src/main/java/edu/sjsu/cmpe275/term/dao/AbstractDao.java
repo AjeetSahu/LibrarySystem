@@ -11,6 +11,8 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.RollbackException;
 import org.springframework.transaction.annotation.Transactional;
 
+import edu.sjsu.cmpe275.term.model.BookStatus;
+
 @Transactional
 public abstract class AbstractDao<PK extends Serializable, T> {
 	
@@ -99,9 +101,14 @@ public abstract class AbstractDao<PK extends Serializable, T> {
 	
 	@SuppressWarnings("unchecked")
 	public List<T> getListOfIssuedBooks(PK id){
-		return this.entityManager.createNativeQuery("Select bookstatusid from book_status"
+		try{
+			return this.entityManager.createNativeQuery("Select bookstatusid from book_status"
 				+ " where bookstatusid IN (Select book_status_id from patron_bookstatus "
 				+ "where email='"+id.toString()+"')").getResultList();
+		}catch(Exception e){
+			System.out.println("Exception "+ e);
+			return null;
+		}
 	}
 	
 	/**
