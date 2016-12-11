@@ -1,12 +1,14 @@
 package edu.sjsu.cmpe275.term.controller;
 
 import java.util.Map;
+
+import javax.mail.Session;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
-import javax.transaction.Transactional;
+
 import java.io.File;
 import java.io.IOException;
 import java.text.DateFormat;
@@ -25,6 +27,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -168,13 +171,17 @@ public class AppController {
 	 *
 	 */
 	@RequestMapping(value = "/addToCart/{bookISBN}", method = RequestMethod.GET)
-	public String addToCart(@PathVariable("bookISBN") String isbn, Model model) {
+	@Transactional
+	public String addToCart(@PathVariable("bookISBN") String isbn, Model model){
+		//Session session = entityManager.unwrap(Session.class);
 		BookingCart bookingCart = new BookingCart();
 		Book book = bookService.findBookByISBN(isbn);
+		book.setAvailableCopies(book.getAvailableCopies()-1);
+		entityManager.merge(book);
         if (book != null) {
         	bookingCart.addCartItem(book);
         }
-        return "redirect:/PatronHome";
+        return "redirect:/patronHome";
 	}
 	
 	/**
