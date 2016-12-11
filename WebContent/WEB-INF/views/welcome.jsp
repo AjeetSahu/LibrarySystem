@@ -76,8 +76,6 @@
                             <li class="scroll"><a href="#home" data-section="#home">Home</a></li>
                             <li class="scroll"><a href="#about" data-section="#about">About</a></li>
                             <li class="scroll"><a href="#services" data-section="#services">Services</a></li>
-                            <li class="scroll"><a href="#portfolio" data-section="#portfolio">Portfolio</a></li>
-                            <li class="scroll"><a href="#contact-area" data-section="#contact-area">Contact</a></li>
                             <a href="<%=request.getContextPath() %>/registration">SignUp</a>
                             <a href="<%=request.getContextPath() %>/login">LogIn</a>
                         </ul>
