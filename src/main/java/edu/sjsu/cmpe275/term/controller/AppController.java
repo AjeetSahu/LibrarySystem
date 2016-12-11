@@ -3,6 +3,7 @@ package edu.sjsu.cmpe275.term.controller;
 import java.util.Map;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
@@ -253,7 +254,7 @@ public class AppController {
 	 * @author Pratik
 	 *
 	 */
-    @RequestMapping(value="/home", method = RequestMethod.POST)
+    @RequestMapping(value="/patronHome", method = RequestMethod.POST)
     public ModelAndView authenticateUser(@RequestParam Map<String, String> reqParams,
     		Model model, HttpServletRequest request){
     	ModelAndView modelAndView = null;
@@ -283,10 +284,9 @@ public class AppController {
 				request.getSession().setAttribute("email", patron.getEmail());
 				request.getSession().setAttribute("userName", patron.getFirstName());
 
-//				List<BookStatus> bookStatus = bookStatusService.getListOfIssuedBooks(reqParams.get("email"));
-//				model.addAttribute("bookStatus", bookStatus);
 				request.getSession().setAttribute("loggedIn", patron);
 				request.getSession().setAttribute("userName", patron.getFirstName());
+				
 			}else{
 				model.addAttribute("message", "Authentication failed, incorrect email or password!");
 				modelAndView = new ModelAndView("Login");
@@ -534,28 +534,66 @@ public class AppController {
 	 * @param model
 	 * @return
 	 */
+//	@RequestMapping(value="/book/{bookISBN}", method = RequestMethod.GET)
+//	public ModelAndView getBookByISBN(@PathVariable("bookISBN") String isbn, Model model, HttpServletRequest request) {
+//		System.out.println("getBookByISBN");
+//		if(request.getSession().getAttribute("loggedIn") == null){
+//			ModelAndView login = new ModelAndView("Login");
+//			return login;
+//		}
+//		ModelAndView bookFound= new ModelAndView("BookFound");
+//		ModelAndView bookNotFound= new ModelAndView("Error");
+//		Book book = bookService.findBookByISBN(isbn);
+//		System.out.println("working getBookByISBN"+book);
+//		System.out.println("book "+book);
+//		if(book == null){
+//	        System.out.println("Unable to find book as book with ISBN "+isbn+" doesnot exist");
+//	        bookNotFound.addObject("message","Unable to find book as book with ISBN "+isbn+" doesnot exist");
+//	        bookNotFound.addObject("httpStatus", HttpStatus.NOT_FOUND);
+//			return bookNotFound;
+//	    }
+//		bookFound.addObject("book", book);
+//		bookFound.addObject("test", "test");
+//		bookFound.addObject("httpStatus", HttpStatus.OK);
+//		return bookFound;	
+//	}
+	
 	@RequestMapping(value="/book/{bookISBN}", method = RequestMethod.GET)
-	public ModelAndView getBookByISBN(@PathVariable("bookISBN") String isbn, Model model, HttpServletRequest request) {
+	public String getBookByISBN(@PathVariable("bookISBN") String isbn, Model model, HttpServletRequest request) {
 		System.out.println("getBookByISBN");
 		if(request.getSession().getAttribute("loggedIn") == null){
-			ModelAndView login = new ModelAndView("Login");
-			return login;
+			return "Login";
 		}
-		ModelAndView bookFound= new ModelAndView("BookFound");
-		ModelAndView bookNotFound= new ModelAndView("Error");
-		Book book = bookService.findBookByISBN(isbn);
+		
+		Book book = bookService.findBookByISBN("9788881555581");
 		System.out.println("working getBookByISBN"+book);
 		System.out.println("book "+book);
 		if(book == null){
 	        System.out.println("Unable to find book as book with ISBN "+isbn+" doesnot exist");
-	        bookNotFound.addObject("message","Unable to find book as book with ISBN "+isbn+" doesnot exist");
-	        bookNotFound.addObject("httpStatus", HttpStatus.NOT_FOUND);
-			return bookNotFound;
+	        model.addAttribute("message","Unable to find book as book with ISBN "+isbn+" doesnot exist");
+	        model.addAttribute("httpStatus", HttpStatus.NOT_FOUND);
+			return "Error";
 	    }
-		bookFound.addObject("book", book);
-		bookFound.addObject("test", "test");
-		bookFound.addObject("httpStatus", HttpStatus.OK);
-		return bookFound;	
+		model.addAttribute("book", book);
+		model.addAttribute("author", book.getAuthor());
+		model.addAttribute("test", "test");
+		model.addAttribute("httpStatus", HttpStatus.OK);
+		return "PatronHome";	
+	}
+	
+	@RequestMapping(value="/searchBookByTitle/{pattern}", method = RequestMethod.GET)
+	public String searchBookByTitle(@PathVariable("pattern") String pattern, Model model, HttpServletRequest request){
+		System.out.println("Hi Search book by Title: "+pattern);
+		//String pattern = reqParams.get("isbn");
+		Query q = entityManager.createNativeQuery("SELECT * FROM book where title LIKE '%" + pattern + "%'", Book.class);
+		List<Book> books = q.getResultList();
+		int i = 0;
+		while(books.size() > i){
+			System.out.println(books.get(i).getAuthor());
+			i++;
+		}
+		model.addAttribute("books", books);
+		return "PatronHome";
 	}
 	
 	
@@ -727,16 +765,16 @@ public class AppController {
 	 *
 	 */
 	@RequestMapping(value = "/patronHome", method = RequestMethod.GET)
-	public ModelAndView patronHome(Model model, HttpServletRequest request) {
+	public String patronHome(Model model, HttpServletRequest request) {
 		if(request.getSession().getAttribute("loggedIn") == null){
-			ModelAndView login = new ModelAndView("Login");
-			return login;
+			//ModelAndView login = new ModelAndView("Login");
+			return "Login";
 		}
-		ModelAndView patron = new ModelAndView("PatronHome");
-
-		//List<BookStatus> bookStatus = bookStatusService.getListOfIssuedBooks((String)request.getSession().getAttribute("email"));
-		//model.addAttribute("bookStatus", bookStatus);
-		return patron;
+		//ModelAndView patron = new ModelAndView("PatronHome");
+		Book book = bookService.findBookByISBN("9788881555581");
+		model.addAttribute("author",book.getAuthor());
+		System.out.println("book: "+book);
+		return "PatronHome";
 	}
 	
 	/**
@@ -1077,7 +1115,6 @@ public class AppController {
 			entityManager.persist(book);
 			entityManager.persist(patron);
 			entityManager.persist(bookStatus);
-			
 			
 		System.out.println("Hi You have just checked out following items");
         SimpleMailMessage message = new SimpleMailMessage();
