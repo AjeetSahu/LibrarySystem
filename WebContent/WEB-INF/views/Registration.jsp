@@ -65,7 +65,7 @@
 			  <input class="form-control" type="text" name="email" >
 			<br>
 			  <label for="ex1">PASSWORD: </label>
-			  <input class="form-control" type="text" name="password" >
+			  <input class="form-control" type="password" name="password" >
 		<br>
 		
 		

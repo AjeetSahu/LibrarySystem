@@ -818,14 +818,14 @@ public class AppController {
 		return patronFound;	
 	}
 	
-	/**
+/*	*//**
 	 * CREATE NEW LIBRARIAN ON CLICKING CREATE LIBRARIAN IN SIGNUP PAGE
 	 * @author Pratik 
 	 * @param librarian
 	 * @param ucBuilder
 	 * @param model
 	 * @return
-	 */
+	 *//*
 	@RequestMapping(value="/newLibrarian", method = RequestMethod.POST)
 	public String createNewLibrarian(@ModelAttribute("librarian") Librarian librarian,
 			UriComponentsBuilder ucBuilder, Model model) {
@@ -839,7 +839,7 @@ public class AppController {
 			model.addAttribute("httpStatus", HttpStatus.CONFLICT);
 			return "Conflict";
 		}
-	}
+	}*/
 
 	/**
 	 * GET LIBRARIAN BY ID
@@ -949,13 +949,13 @@ public class AppController {
 		return userActivation;
 		}
 	
-	/**
+/*	*//**
 	 * 
 	 * @param reqParams
 	 * @param ucBuilder
 	 * @param model
 	 * @return
-	 */
+	 *//*
 	@RequestMapping(value="/completeRegistration", method = RequestMethod.POST)
 	public String completeUserRegistration(@RequestParam Map<String, String> reqParams,
 			UriComponentsBuilder ucBuilder, Model model) {
@@ -985,7 +985,7 @@ public class AppController {
 					return "wrongActivationCode";
 				}
 		}	
-	}	
+	}*/	
 	
 	/**
 	 * Search Books 
