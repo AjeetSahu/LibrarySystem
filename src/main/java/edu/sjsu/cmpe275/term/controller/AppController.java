@@ -15,8 +15,6 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.Iterator;
-import java.util.List;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -370,6 +368,7 @@ public class AppController {
 				book.setAuthor(reqParams.get("author"));
 			if((reqParams.get("title"))!=null && (reqParams.get("title")).isEmpty()==false)
 				book.setTitle(reqParams.get("title"));
+			
 			Publisher publisher = new Publisher();
 			if(reqParams.get("publisher")!=null && (reqParams.get("publisher")).isEmpty()==false)
 				publisher.setPublisher(reqParams.get("publisher"));
@@ -452,6 +451,7 @@ public class AppController {
 			Publisher publisher = new Publisher();
 			if(reqParams.get("publisher")!=null && (reqParams.get("publisher")).isEmpty()==false)
 				publisher.setPublisher(reqParams.get("publisher"));
+			book.setAvailableCopies(Integer.parseInt(reqParams.get("numberOfCopies")));
 			DateFormat format = new SimpleDateFormat("y");
 			Date date = null;
 			try {
@@ -911,6 +911,8 @@ public class AppController {
 				librarian = librarianService.saveNewLibrarian(librarian);
 			}
 			else{
+				errorPage.addObject("httpStatus", "ErrorLogin");
+				errorPage.addObject("message", "Id already Exist");
 				return errorPage;
 			}
 		}
@@ -926,6 +928,8 @@ public class AppController {
 				patron = patronService.saveNewPatron(patron);
 			}
 			else{
+				errorPage.addObject("httpStatus", "ErrorLogin");
+				errorPage.addObject("message", "Id already Exist");
 				return errorPage;
 			}
 		}
