@@ -42,9 +42,9 @@
                         <a href="<%=request.getContextPath() %>/patronProfile">Profile</a>
                     </li>
                     <li>
-                    <a href="<c:url value="/cart"/>">
-                        Cart: <span class="badge">${shoppingCart.totalQuantity}</span><span class="badge">$${shoppingCart.totalPrice}</span>
-                    </a>
+	                    <a href="<c:url value="/cart"/>">
+	                        Cart: <span class="badge">${shoppingCart.totalQuantity}</span><span class="badge">$${shoppingCart.totalPrice}</span>
+	                    </a>
                 	</li>
                     <li>
                         <a href="<%=request.getContextPath() %>/logout">Signout</a>
@@ -110,7 +110,7 @@
                         
                         <div class="col-md-6">
                         	
-			  				<input class="form-control" type="text" id="isbn" name="isbn" placeholder="Enter Title Here" onchange="append();" required />
+			  				<input class="form-control" type="text" id="isbn" name="isbn" value="${pattern}" placeholder="Enter Title Here" onchange="append();" required />
                         </div>
                         <div class="col-md-2">
                             <a id="link" href="<%=request.getContextPath() %>/searchBookByTitle/"><input type="button" class="btn btn-primary" value="Search Book" name="search" id="search"></a>
@@ -123,7 +123,7 @@
 						<div class="col-md-3"></div>
 							<%-- <h1>${author}</h1> --%>
 							<div class="col-md-8">
-							<div class="table-responsive">
+							<div id="tab" class="table-responsive">
 						        <table class="table table-striped">
 						            <thead>
 						            <tr>
@@ -141,8 +141,7 @@
 								<td>${book.author}</td>
 								<td>${book.title}</td>
 								<td>${book.availableCopies}</td>
-								<td><a href="<c:url value="/cart/addProduct/${product.productId}"/>"><span
-                            class="glyphicon glyphicon-shopping-cart"></span></a></td>
+								<td><a href="<%=request.getContextPath() %>/addToCart/${book.isbn}"><span class="glyphicon glyphicon-shopping-cart"></span></a></td>
 							</tr>
 							</c:forEach>
 							</tbody>
@@ -162,8 +161,9 @@
           var link = document.getElementById('link');
           var text = document.getElementById('isbn');
           link.href = link.href + text.value;
+          //document.getElementById("tab").hidden=false;
           /* link.text = text.value; */
-          alert(link.href);
+          //alert(link.href);
       }
 	</script>
 	</body>
