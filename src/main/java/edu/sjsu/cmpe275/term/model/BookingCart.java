@@ -24,13 +24,19 @@ public class BookingCart implements Serializable {
 	@ManyToMany
     private List<Book> Books;
     private int totalQuantity;
-
+    
     public BookingCart() {
         Books = new ArrayList<Book>();
         totalQuantity = 0;
     }
         
-    public String getBookingCartId() {
+    public BookingCart(List<Book> books, int totalQuantity) {
+		super();
+		Books = books;
+		this.totalQuantity = totalQuantity;
+	}
+
+	public String getBookingCartId() {
 		return bookingCartId;
 	}
     
@@ -54,7 +60,7 @@ public class BookingCart implements Serializable {
         this.totalQuantity = totalQuantity;
     }
 
-    public synchronized void addBook(Book Book) {
+    public synchronized void addCartItem(Book Book) {
         for (Book item : Books) {
             if (Book.getIsbn().equalsIgnoreCase(item.getIsbn())){
                 item.increaseQuantity();
@@ -64,7 +70,7 @@ public class BookingCart implements Serializable {
         Books.add(Book);
     }
 
-    public synchronized void removeItemByBookId(String id) {
+    public synchronized void removeCartItemByISBN(String id) {
         Iterator<Book> iterator = Books.iterator();
         while (iterator.hasNext()) {
             if (iterator.next().getIsbn().equalsIgnoreCase(id)){
@@ -74,7 +80,7 @@ public class BookingCart implements Serializable {
         }
     }
 
-    public synchronized void clearItems() {
+    public synchronized void clearCart() {
         this.Books.clear();
     }
 }

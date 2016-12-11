@@ -36,6 +36,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.UriComponentsBuilder;
 import edu.sjsu.cmpe275.term.model.Book;
 import edu.sjsu.cmpe275.term.model.BookStatus;
+import edu.sjsu.cmpe275.term.model.BookingCart;
 import edu.sjsu.cmpe275.term.model.Librarian;
 import edu.sjsu.cmpe275.term.model.Patron;
 import edu.sjsu.cmpe275.term.model.Picture;
@@ -160,6 +161,44 @@ public class AppController {
 		ModelAndView welcome = new ModelAndView("welcome");
 		return welcome;
 	}
+	
+	/**
+	 * GET ADD TO CART PAGE
+	 * @author Pratik
+	 *
+	 */
+	@RequestMapping(value = "/addToCart/{bookISBN}", method = RequestMethod.GET)
+	public String addToCart(@PathVariable("bookISBN") String isbn, Model model) {
+		BookingCart bookingCart = new BookingCart();
+		Book book = bookService.findBookByISBN(isbn);
+        if (book != null) {
+        	bookingCart.addCartItem(book);
+        }
+        return "redirect:/PatronHome";
+	}
+	
+	/**
+	 * Remove all items from Cart
+	 * @author Pratik
+	 *
+	 */
+	@RequestMapping(value = "/clearCart", method = RequestMethod.GET)
+    public void clearCart(Model model) {
+		BookingCart bookingCart = new BookingCart();
+		bookingCart.clearCart();
+    }
+
+	/**
+	 * Remove a particular item from Cart
+	 * @author Pratik
+	 *
+	 */
+	@RequestMapping(value = "/removeFromCart/{bookISBN}", method = RequestMethod.GET)
+    public void removeFromCart(@PathVariable("bookISBN") String isbn, Model model) {
+		BookingCart bookingCart = new BookingCart();
+		bookingCart.removeCartItemByISBN(isbn);
+    }
+	
 	
 	/**
 	 * GET GO TO Activate User Page
