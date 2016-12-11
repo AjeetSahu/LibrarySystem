@@ -10,16 +10,16 @@ import java.util.List;
 import java.util.UUID;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.Embeddable;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.PrePersist;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 @Entity
-@Embeddable
 public class BookStatus implements Serializable {
 	private static final long serialVersionUID = 5865760835716664141L;
 	@Id
@@ -30,22 +30,25 @@ public class BookStatus implements Serializable {
 		this.setBookStatusId(UUID.randomUUID().toString());
 	}
 	@Column(name = "ISUUEDATE")
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date issueDate;
 	@Column(name = "DUEDATE")
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date dueDate;
 	@Column(name = "RETURNDATE")
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date returnDate;
 	@Column(name = "REQUESTDATE")
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date requestDate;
 	@Column(name = "REQUESTSTATUS")
 	private String requestStatus;
 	@Column(name = "CURRENTDATE")
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date currentDate;
-	
 	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name="BOOKID")
 	private Book book;
-	
 	@ManyToMany(mappedBy="bookStatus")
 	private List<Patron> patrons=new ArrayList<Patron>();
 	

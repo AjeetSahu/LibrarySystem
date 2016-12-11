@@ -13,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity 
@@ -46,6 +47,9 @@ public class Patron  implements Serializable {
 	@JoinTable(name="PATRON_BOOKSTATUS", joinColumns={@JoinColumn(name="email", referencedColumnName = "email")},
 	inverseJoinColumns={@JoinColumn(name="bookStatusId", referencedColumnName= "bookStatusId")})
 	private List<BookStatus> bookStatus;
+	@OneToOne(cascade = CascadeType.ALL, fetch=FetchType.LAZY)
+	@JoinColumn(name="BOOKINGCARTID")
+	private BookingCart bookingCart;
 	
 	public Patron() {
 		super();
