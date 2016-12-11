@@ -16,6 +16,8 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
+
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -254,7 +256,7 @@ public class AppController {
 	 * @author Pratik
 	 *
 	 */
-    @RequestMapping(value="/patronHome", method = RequestMethod.POST)
+    @RequestMapping(value="/home", method = RequestMethod.POST)
     public ModelAndView authenticateUser(@RequestParam Map<String, String> reqParams,
     		Model model, HttpServletRequest request){
     	ModelAndView modelAndView = null;
@@ -283,7 +285,7 @@ public class AppController {
 				request.getSession().setAttribute("loggedIn", patron);
 				request.getSession().setAttribute("email", patron.getEmail());
 				request.getSession().setAttribute("userName", patron.getFirstName());
-
+				request.getSession().setAttribute("pattern", "");
 				request.getSession().setAttribute("loggedIn", patron);
 				request.getSession().setAttribute("userName", patron.getFirstName());
 				
@@ -293,6 +295,7 @@ public class AppController {
 			}		
 		}
     	modelAndView.addObject("userEmail",request.getSession().getAttribute("userEmail"));
+    	model.addAttribute("pattern","");
     	return modelAndView;
     }
     
@@ -585,6 +588,9 @@ public class AppController {
 	public String searchBookByTitle(@PathVariable("pattern") String pattern, Model model, HttpServletRequest request){
 		System.out.println("Hi Search book by Title: "+pattern);
 		//String pattern = reqParams.get("isbn");
+		if(pattern.equals(""))
+			return "PatronHome";
+		request.getSession().setAttribute("pattern", pattern);
 		Query q = entityManager.createNativeQuery("SELECT * FROM book where title LIKE '%" + pattern + "%'", Book.class);
 		List<Book> books = q.getResultList();
 		int i = 0;
@@ -774,6 +780,7 @@ public class AppController {
 		Book book = bookService.findBookByISBN("9788881555581");
 		model.addAttribute("author",book.getAuthor());
 		System.out.println("book: "+book);
+		model.addAttribute("pattern",request.getSession().getAttribute("patron"));
 		return "PatronHome";
 	}
 	

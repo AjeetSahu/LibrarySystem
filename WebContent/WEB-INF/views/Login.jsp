@@ -55,7 +55,7 @@
                         <h3 style="text-align:center">Login Here</h3>
                     </div>
                     <div class="panel-body">
-                        <form action='/LibrarySystem/patronHome' method="post" class="form-horizontal">
+                        <form action='/LibrarySystem/home' method="post" class="form-horizontal">
                             <div class="row">
                             	<div class="col-md-1"></div>
                             	<div class="col-md-10">
