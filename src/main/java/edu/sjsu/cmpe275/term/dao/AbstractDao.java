@@ -11,8 +11,6 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.RollbackException;
 import org.springframework.transaction.annotation.Transactional;
 
-import edu.sjsu.cmpe275.term.model.BookStatus;
-
 @Transactional
 public abstract class AbstractDao<PK extends Serializable, T> {
 	
