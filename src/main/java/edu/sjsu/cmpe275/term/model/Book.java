@@ -44,8 +44,10 @@ public class Book implements Serializable {
 	@OneToOne(cascade = CascadeType.ALL, fetch=FetchType.LAZY)
 	@JoinColumn(name="PICTUREID")
 	private Picture coverImage;
+	
 	@OneToMany(mappedBy="book")
 	private List<BookStatus> bookStatus;
+	
 	@Column(name="QUANTITYINCART", nullable= false, columnDefinition= "int default 0")
 	private int quantityInCart;
 	public Book() {

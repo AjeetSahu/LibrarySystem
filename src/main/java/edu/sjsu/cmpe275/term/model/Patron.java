@@ -4,6 +4,7 @@ package edu.sjsu.cmpe275.term.model;
  *
  */
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -14,6 +15,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.OrderColumn;
 import javax.persistence.Table;
 
 @Entity 
@@ -43,10 +45,16 @@ public class Patron  implements Serializable {
 	private boolean status; //activation
 	@Column(name = "ACTIVATIONCODE", nullable= false, length=5)
 	private int activationCode;
-	@ManyToMany(cascade = {CascadeType.ALL},fetch=FetchType.EAGER)
-	@JoinTable(name="PATRON_BOOKSTATUS", joinColumns={@JoinColumn(name="email", referencedColumnName = "email")},
-	inverseJoinColumns={@JoinColumn(name="bookStatusId", referencedColumnName= "bookStatusId")})
-	private List<BookStatus> bookStatus;
+	
+//	@ManyToMany(cascade = {CascadeType.ALL},fetch=FetchType.EAGER)
+//	@JoinTable(name="PATRON_BOOKSTATUS", joinColumns={@JoinColumn(name="email", referencedColumnName = "email")},
+//	inverseJoinColumns={@JoinColumn(name="bookStatusId", referencedColumnName= "bookStatusId")})
+//	private List<BookStatus> bookStatus;
+	
+	@ManyToMany(mappedBy="patrons")
+	
+	private List<BookStatus> bookStatus=new ArrayList<BookStatus>();
+	
 	@OneToOne(cascade = CascadeType.ALL, fetch=FetchType.LAZY)
 	@JoinColumn(name="BOOKINGCARTID")
 	private BookingCart bookingCart;

@@ -11,10 +11,13 @@ import java.util.UUID;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OrderColumn;
 import javax.persistence.PrePersist;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -46,11 +49,21 @@ public class BookStatus implements Serializable {
 	@Column(name = "CURRENTDATE")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date currentDate;
-	@ManyToOne(cascade = CascadeType.ALL)
+	
+	@ManyToOne
 	@JoinColumn(name="BOOKID")
 	private Book book;
-	@ManyToMany(mappedBy="bookStatus")
+	
+	
+	//@ManyToMany(mappedBy="bookStatus")
+	//private List<Patron> patrons=new ArrayList<Patron>();
+	
+
+	@ManyToMany(cascade = {CascadeType.ALL},fetch=FetchType.EAGER)
+	@JoinTable(name="PATRON_BOOKSTATUS", joinColumns={@JoinColumn(name="bookStatusId", referencedColumnName = "bookStatusId")},
+	inverseJoinColumns={@JoinColumn(name="email", referencedColumnName= "email")})
 	private List<Patron> patrons=new ArrayList<Patron>();
+	
 	
 	public BookStatus() {
 		super();
