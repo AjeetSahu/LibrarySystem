@@ -450,11 +450,17 @@ public class AppController {
 			} else {
 				picture.setLocation("/resources/images/book.png");
 			}
+			System.out.println(" 1   no of copies value is "+reqParams.get("numberOfCopies"));
+			
 			try{
 				if(reqParams.get("phoneNumber")!=null && (reqParams.get("phoneNumber")).isEmpty()==false)
 					publisher.setPhoneNumber(Integer.parseInt(reqParams.get("phoneNumber")));
 				if(reqParams.get("numberOfCopies")!=null && (reqParams.get("numberOfCopies")).isEmpty()==false)
+				{
+					System.out.println("2  no of copies value is "+reqParams.get("numberOfCopies"));
 					book.setNumberOfCopies(Integer.parseInt(reqParams.get("numberOfCopies")));
+					book.setAvailableCopies(Integer.parseInt(reqParams.get("numberOfCopies")));
+				}
 			}
 			catch(Exception e){
 				System.out.println(e);
@@ -1085,57 +1091,63 @@ public class AppController {
 	 * @param model
 	 * @return
 	 */
+	
+	
 	@RequestMapping(value="/checkout", method = RequestMethod.POST)
 	@Transactional
-	public ModelAndView checkout(@RequestParam Map<String, String> reqParams, HttpServletRequest request) {
+	public ModelAndView checkout(@RequestParam(value = "isbn[]") String[] isbnArray, HttpServletRequest request) {
 		ModelAndView success = new ModelAndView("PatronHome");
 		ModelAndView error = new ModelAndView("Error");
 		System.out.println("inside checkout ");
-		System.out.println(reqParams.get("isbn"));
+		System.out.println(isbnArray[0]);
+		//String email="kadakiaruchit@gmail.com";
 		String email = ((Patron)request.getSession().getAttribute("loggedIn")).getEmail();
 		System.out.println(email);
-		Calendar c=new GregorianCalendar();
-		Date issueDate=c.getTime();
+		Calendar c = new GregorianCalendar();
+		Date issueDate = c.getTime();
 		c.add(Calendar.DATE, 30);
-		Date dueDate=c.getTime();	
-		System.out.println();
+		Date dueDate = c.getTime();	
 		Patron patron=patronService.findPatronByEmailId(email);
-		BookStatus bookStatus = new BookStatus();
-		Book book = bookService.findBookByISBN(reqParams.get("isbn"));
-		System.out.println("challa 1"+patron);
+		String checkoutData="";
+		
+		for(int i=0;i<isbnArray.length;i++){
+			BookStatus bookStatus = new BookStatus();
+		    Book book = bookService.findBookByISBN(isbnArray[i]);
+		    System.out.println("challa 1"+patron+book.getIsbn());
 			if(book.getAvailableCopies()<=0){
 				error.addObject("message","Sorry, Requested book is not available");
+				
 				return error;
-			}
-		
+			}		
 			if(patron.getDayIssuedCount()>=5 || patron.getTotalIssuedCount()>=10){
 				error.addObject("message","Sorry, Exceeded issue limit");
 				return error;
-			}
-			
+			}					
 			patron.setDayIssuedCount(patron.getDayIssuedCount()+1);
 			patron.setTotalIssuedCount(patron.getTotalIssuedCount()+1);
 			
-			System.out.println("book bhai wala is "+book);
+			System.out.println(book.getIsbn()+" book bhai wala is "+book);
 			bookStatus.setCurrentDate(issueDate);
 			bookStatus.setDueDate(dueDate);
 			bookStatus.setIssueDate(issueDate);
-			bookStatus.setRequestDate(issueDate);
-			bookStatus.setRequestStatus("done");
+			//bookStatus.setRequestDate(issueDate);
+			//bookStatus.setRequestStatus("done");
 			bookStatus.setBook(book);
-			book.setAvailableCopies(book.getAvailableCopies()-1);
-			System.out.println(patron.getEmail()+"test danger");
 			bookStatus.getPatrons().add(patron);
+			book.setAvailableCopies(book.getAvailableCopies()-1);			
 			entityManager.persist(book);
 			entityManager.persist(patron);
+			//bookStatus.getPatrons().add(patron);
 			entityManager.persist(bookStatus);
-			
+
+			checkoutData+="\n  ISBN: "+book.getIsbn()+" TITLE:"+book.getTitle()+"	";
+		}
 		System.out.println("Hi You have just checked out following items");
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(email);
         message.setSubject("SJSU Library Checkout on "+c.getTime());
-        message.setText("Hi You have just checked out following items "
-        		+reqParams.get("isbn")+ "\n = "+c.getTime()
+        message.setText("Hi You have just checked out following items "+checkoutData
+        	+ "\n = issueDate : "+issueDate+"   DueDate : "+dueDate+"   "
         		+"\n Please don't reply on this email.");
         System.out.println("1");
         System.out.println(activationMailSender);
@@ -1143,73 +1155,71 @@ public class AppController {
         return success;
 		}
 	
-	/**
-	 * Search Books 
+	 /* Search Books 
 	 * Ruchit code strts here
 	 * @param librarianID
 	 * @param model
 	 * @return
-	 */
+	 * 
+	 */ 
+	
+	 
 	@RequestMapping(value="/checkout/return", method = RequestMethod.POST)
 	@Transactional
-	public ModelAndView checkoutReturn(@RequestParam Map<String, String> reqParams, HttpServletRequest request) {
+	public ModelAndView checkoutReturn(@RequestParam(value = "isbn[]") String[] isbnArray, HttpServletRequest request) {
 		ModelAndView success = new ModelAndView("PatronHome");
 		ModelAndView error = new ModelAndView("Error");
 		System.out.println("inside checkout ");
-		System.out.println(reqParams.get("isbn"));
-		String email = ((Patron)request.getSession().getAttribute("loggedIn")).getEmail();
+		String email="kadakiaruchit@gmail.com";
+		//System.out.println(reqParams.get("isbn"));
+		//String email = ((Patron)request.getSession().getAttribute("loggedIn")).getEmail();
 		System.out.println(email);
 		Calendar c=new GregorianCalendar();
-		Date issueDate=c.getTime();
-		c.add(Calendar.DATE, 30);
+		Date returnDate=c.getTime();
+		//c.add(Calendar.DATE, 30);
 //		Date dueDate=c.getTime();	
 //		System.out.println();
-		Patron patron=patronService.findPatronByEmailId(email);
-		BookStatus bookStatus = new BookStatus();
-		Book book = bookService.findBookByISBN(reqParams.get("isbn"));
-		System.out.println("challa 1"+patron);
-			if(book== null || patron == null){
-				error.addObject("message","Invalid input");
-				return error;
-			}
 		
-//			if(patron.getDayIssuedCount()>=5 || patron.getTotalIssuedCount()>=10){
-//				error.addObject("message","Sorry, Exceeded issue limit");
-//				return error;
-//			}
+		String checkoutReturnData="";
+		
+	
+		
+		Patron patron=patronService.findPatronByEmailId(email);
+		List<BookStatus> patronsBookStatus=patron.getBookStatus();
+		for(int i=0;i<patronsBookStatus.size();i++){
+		System.out.println("bhaijaan"+patronsBookStatus.get(i).getBookStatusId()+"  "+patronsBookStatus.get(i).getBook().getIsbn());
+		for(int j=0;j<isbnArray.length;j++){
 			
-			patron.setDayIssuedCount(patron.getDayIssuedCount()-1);
-			patron.setTotalIssuedCount(patron.getTotalIssuedCount()-1);
-			
-			System.out.println("book bhai wala is "+book);
-//			bookStatus.setCurrentDate(issueDate);
-//			bookStatus.setDueDate(dueDate);
-//			bookStatus.setIssueDate(issueDate);
-//			bookStatus.setRequestDate(issueDate);
-//			bookStatus.setRequestStatus("done");
-			bookStatus.setReturnDate(issueDate);
-			bookStatus.setBook(book);
-			book.setAvailableCopies(book.getAvailableCopies()+1);
-			System.out.println(patron.getEmail()+"test danger");
-//			bookStatus.getPatrons().remove(patron);
-			entityManager.persist(book);
-			
-			entityManager.persist(patron);
-			entityManager.persist(bookStatus);
-			
+			if(isbnArray[j].equals(patronsBookStatus.get(i).getBook().getIsbn())){
+				System.out.println("deleting book isbn of "+isbnArray[j]);
+				checkoutReturnData+="\n"+patronsBookStatus.get(i).getBook().getIsbn()+"  "+patronsBookStatus.get(i).getBook().getTitle()+"  "+patronsBookStatus.get(i).getIssueDate();
+				System.out.println("deleting book isbn of "+isbnArray[j]);
+				bookStatusService.returnBooks(patronsBookStatus.get(i).getBookStatusId());
+				break;
+			}
+		}
+		
+		}
+		
+		
+		
+		
+		
 			
 		System.out.println("Hi You have just Returned out following item");
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(email);
         message.setSubject("SJSU Library Return on "+c.getTime());
         message.setText("Hi You have just return out following items "
-        		+reqParams.get("isbn")+ "\n = "+c.getTime()
+        		+checkoutReturnData +"     Rerturn date is "	+returnDate+ "\n = "+c.getTime()
         		+"\n Please don't reply on this email.");
-        System.out.println("1");
+        System.out.println("bhaijaan mail bje dia");
         System.out.println(activationMailSender);
         activationMailSender.send(message);
         return success;
-		}
+
+		} 
+	
 	
 	@RequestMapping(value="/setDateTime", method = RequestMethod.POST)
 	@Transactional
@@ -1237,6 +1247,5 @@ public class AppController {
             e.printStackTrace();
         }	*/	
 	}
-	
 	
 }
