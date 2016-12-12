@@ -1210,4 +1210,33 @@ public class AppController {
         activationMailSender.send(message);
         return success;
 		}
+	
+	@RequestMapping(value="/setDateTime", method = RequestMethod.POST)
+	@Transactional
+	public void setDateTime(@RequestParam Map<String, String> reqParams, HttpServletRequest request){
+		System.out.println("Hi setting time");
+		SimpleDateFormat formatter = new SimpleDateFormat("EEEE, MMM dd, yyyy HH:mm:ss a");
+		Date date = null;
+		try {
+			date = formatter.parse(reqParams.get("appTime"));
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		request.getSession().setAttribute("appTime", date);
+/*        try {
+ * 
+            System.out.println(date);
+            BookStatus bookstatus = new BookStatus();
+            Book book = bookService.findBookByISBN("471417439");
+            bookstatus.setCurrentDate(date);
+            bookstatus.setBook(book);
+            bookstatus.setReturnDate(date);
+            entityManager.persist(bookstatus);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }	*/	
+	}
+	
+	
 }
