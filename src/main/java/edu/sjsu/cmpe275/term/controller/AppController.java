@@ -1,11 +1,14 @@
 package edu.sjsu.cmpe275.term.controller;
 
 import java.util.Map;
+
+import javax.mail.Session;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
-import javax.transaction.Transactional;
+
 import java.io.File;
 import java.io.IOException;
 import java.text.DateFormat;
@@ -15,8 +18,8 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.Iterator;
 import java.util.List;
+
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -25,6 +28,7 @@ import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,6 +40,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.UriComponentsBuilder;
 import edu.sjsu.cmpe275.term.model.Book;
 import edu.sjsu.cmpe275.term.model.BookStatus;
+import edu.sjsu.cmpe275.term.model.BookingCart;
 import edu.sjsu.cmpe275.term.model.Librarian;
 import edu.sjsu.cmpe275.term.model.Patron;
 import edu.sjsu.cmpe275.term.model.Picture;
@@ -162,6 +167,48 @@ public class AppController {
 	}
 	
 	/**
+	 * GET ADD TO CART PAGE
+	 * @author Pratik
+	 *
+	 */
+	@RequestMapping(value = "/addToCart/{bookISBN}", method = RequestMethod.GET)
+	@Transactional
+	public String addToCart(@PathVariable("bookISBN") String isbn, Model model){
+		//Session session = entityManager.unwrap(Session.class);
+		BookingCart bookingCart = new BookingCart();
+		Book book = bookService.findBookByISBN(isbn);
+		book.setAvailableCopies(book.getAvailableCopies()-1);
+		entityManager.merge(book);
+        if (book != null) {
+        	bookingCart.addCartItem(book);
+        }
+        return "redirect:/patronHome";
+	}
+	
+	/**
+	 * Remove all items from Cart
+	 * @author Pratik
+	 *
+	 */
+	@RequestMapping(value = "/clearCart", method = RequestMethod.GET)
+    public void clearCart(Model model) {
+		BookingCart bookingCart = new BookingCart();
+		bookingCart.clearCart();
+    }
+
+	/**
+	 * Remove a particular item from Cart
+	 * @author Pratik
+	 *
+	 */
+	@RequestMapping(value = "/removeFromCart/{bookISBN}", method = RequestMethod.GET)
+    public void removeFromCart(@PathVariable("bookISBN") String isbn, Model model) {
+		BookingCart bookingCart = new BookingCart();
+		bookingCart.removeCartItemByISBN(isbn);
+    }
+	
+	
+	/**
 	 * GET GO TO Activate User Page
 	 * @author Amitesh
 	 *
@@ -246,17 +293,17 @@ public class AppController {
 				request.getSession().setAttribute("loggedIn", patron);
 				request.getSession().setAttribute("email", patron.getEmail());
 				request.getSession().setAttribute("userName", patron.getFirstName());
-
-//				List<BookStatus> bookStatus = bookStatusService.getListOfIssuedBooks(reqParams.get("email"));
-//				model.addAttribute("bookStatus", bookStatus);
+				request.getSession().setAttribute("pattern", "");
 				request.getSession().setAttribute("loggedIn", patron);
 				request.getSession().setAttribute("userName", patron.getFirstName());
+				
 			}else{
 				model.addAttribute("message", "Authentication failed, incorrect email or password!");
 				modelAndView = new ModelAndView("Login");
 			}		
 		}
     	modelAndView.addObject("userEmail",request.getSession().getAttribute("userEmail"));
+    	model.addAttribute("pattern","");
     	return modelAndView;
     }
     
@@ -404,11 +451,17 @@ public class AppController {
 			} else {
 				picture.setLocation("/resources/images/book.png");
 			}
+			System.out.println(" 1   no of copies value is "+reqParams.get("numberOfCopies"));
+			
 			try{
 				if(reqParams.get("phoneNumber")!=null && (reqParams.get("phoneNumber")).isEmpty()==false)
 					publisher.setPhoneNumber(Integer.parseInt(reqParams.get("phoneNumber")));
 				if(reqParams.get("numberOfCopies")!=null && (reqParams.get("numberOfCopies")).isEmpty()==false)
+				{
+					System.out.println("2  no of copies value is "+reqParams.get("numberOfCopies"));
 					book.setNumberOfCopies(Integer.parseInt(reqParams.get("numberOfCopies")));
+					book.setAvailableCopies(Integer.parseInt(reqParams.get("numberOfCopies")));
+				}
 			}
 			catch(Exception e){
 				System.out.println(e);
@@ -498,28 +551,69 @@ public class AppController {
 	 * @param model
 	 * @return
 	 */
+//	@RequestMapping(value="/book/{bookISBN}", method = RequestMethod.GET)
+//	public ModelAndView getBookByISBN(@PathVariable("bookISBN") String isbn, Model model, HttpServletRequest request) {
+//		System.out.println("getBookByISBN");
+//		if(request.getSession().getAttribute("loggedIn") == null){
+//			ModelAndView login = new ModelAndView("Login");
+//			return login;
+//		}
+//		ModelAndView bookFound= new ModelAndView("BookFound");
+//		ModelAndView bookNotFound= new ModelAndView("Error");
+//		Book book = bookService.findBookByISBN(isbn);
+//		System.out.println("working getBookByISBN"+book);
+//		System.out.println("book "+book);
+//		if(book == null){
+//	        System.out.println("Unable to find book as book with ISBN "+isbn+" doesnot exist");
+//	        bookNotFound.addObject("message","Unable to find book as book with ISBN "+isbn+" doesnot exist");
+//	        bookNotFound.addObject("httpStatus", HttpStatus.NOT_FOUND);
+//			return bookNotFound;
+//	    }
+//		bookFound.addObject("book", book);
+//		bookFound.addObject("test", "test");
+//		bookFound.addObject("httpStatus", HttpStatus.OK);
+//		return bookFound;	
+//	}
+	
 	@RequestMapping(value="/book/{bookISBN}", method = RequestMethod.GET)
-	public ModelAndView getBookByISBN(@PathVariable("bookISBN") String isbn, Model model, HttpServletRequest request) {
+	public String getBookByISBN(@PathVariable("bookISBN") String isbn, Model model, HttpServletRequest request) {
 		System.out.println("getBookByISBN");
 		if(request.getSession().getAttribute("loggedIn") == null){
-			ModelAndView login = new ModelAndView("Login");
-			return login;
+			return "Login";
 		}
-		ModelAndView bookFound= new ModelAndView("BookFound");
-		ModelAndView bookNotFound= new ModelAndView("Error");
-		Book book = bookService.findBookByISBN(isbn);
+		
+		Book book = bookService.findBookByISBN("9788881555581");
 		System.out.println("working getBookByISBN"+book);
 		System.out.println("book "+book);
 		if(book == null){
 	        System.out.println("Unable to find book as book with ISBN "+isbn+" doesnot exist");
-	        bookNotFound.addObject("message","Unable to find book as book with ISBN "+isbn+" doesnot exist");
-	        bookNotFound.addObject("httpStatus", HttpStatus.NOT_FOUND);
-			return bookNotFound;
+	        model.addAttribute("message","Unable to find book as book with ISBN "+isbn+" doesnot exist");
+	        model.addAttribute("httpStatus", HttpStatus.NOT_FOUND);
+			return "Error";
 	    }
-		bookFound.addObject("book", book);
-		bookFound.addObject("test", "test");
-		bookFound.addObject("httpStatus", HttpStatus.OK);
-		return bookFound;	
+		model.addAttribute("book", book);
+		model.addAttribute("author", book.getAuthor());
+		model.addAttribute("test", "test");
+		model.addAttribute("httpStatus", HttpStatus.OK);
+		return "PatronHome";	
+	}
+	
+	@RequestMapping(value="/searchBookByTitle/{pattern}", method = RequestMethod.GET)
+	public String searchBookByTitle(@PathVariable("pattern") String pattern, Model model, HttpServletRequest request){
+		System.out.println("Hi Search book by Title: "+pattern);
+		//String pattern = reqParams.get("isbn");
+		if(pattern.equals(""))
+			return "PatronHome";
+		request.getSession().setAttribute("pattern", pattern);
+		Query q = entityManager.createNativeQuery("SELECT * FROM book where title LIKE '%" + pattern + "%'", Book.class);
+		List<Book> books = q.getResultList();
+		int i = 0;
+		while(books.size() > i){
+			System.out.println(books.get(i).getAuthor());
+			i++;
+		}
+		model.addAttribute("books", books);
+		return "PatronHome";
 	}
 	
 	
@@ -691,16 +785,17 @@ public class AppController {
 	 *
 	 */
 	@RequestMapping(value = "/patronHome", method = RequestMethod.GET)
-	public ModelAndView patronHome(Model model, HttpServletRequest request) {
+	public String patronHome(Model model, HttpServletRequest request) {
 		if(request.getSession().getAttribute("loggedIn") == null){
-			ModelAndView login = new ModelAndView("Login");
-			return login;
+			//ModelAndView login = new ModelAndView("Login");
+			return "Login";
 		}
-		ModelAndView patron = new ModelAndView("PatronHome");
-
-		//List<BookStatus> bookStatus = bookStatusService.getListOfIssuedBooks((String)request.getSession().getAttribute("email"));
-		//model.addAttribute("bookStatus", bookStatus);
-		return patron;
+		//ModelAndView patron = new ModelAndView("PatronHome");
+		Book book = bookService.findBookByISBN("9788881555581");
+		model.addAttribute("author",book.getAuthor());
+		System.out.println("book: "+book);
+		model.addAttribute("pattern",request.getSession().getAttribute("patron"));
+		return "PatronHome";
 	}
 	
 	/**
@@ -997,58 +1092,63 @@ public class AppController {
 	 * @param model
 	 * @return
 	 */
+	
+	
 	@RequestMapping(value="/checkout", method = RequestMethod.POST)
 	@Transactional
-	public ModelAndView checkout(@RequestParam Map<String, String> reqParams, HttpServletRequest request) {
+	public ModelAndView checkout(@RequestParam(value = "isbn[]") String[] isbnArray, HttpServletRequest request) {
 		ModelAndView success = new ModelAndView("PatronHome");
 		ModelAndView error = new ModelAndView("Error");
 		System.out.println("inside checkout ");
-		System.out.println(reqParams.get("isbn"));
+		System.out.println(isbnArray[0]);
+		//String email="kadakiaruchit@gmail.com";
 		String email = ((Patron)request.getSession().getAttribute("loggedIn")).getEmail();
 		System.out.println(email);
-		Calendar c=new GregorianCalendar();
-		Date issueDate=c.getTime();
+		Calendar c = new GregorianCalendar();
+		Date issueDate = c.getTime();
 		c.add(Calendar.DATE, 30);
-		Date dueDate=c.getTime();	
-		System.out.println();
+		Date dueDate = c.getTime();	
 		Patron patron=patronService.findPatronByEmailId(email);
-		BookStatus bookStatus = new BookStatus();
-		Book book = bookService.findBookByISBN(reqParams.get("isbn"));
-		System.out.println("challa 1"+patron);
+		String checkoutData="";
+		
+		for(int i=0;i<isbnArray.length;i++){
+			BookStatus bookStatus = new BookStatus();
+		    Book book = bookService.findBookByISBN(isbnArray[i]);
+		    System.out.println("challa 1"+patron+book.getIsbn());
 			if(book.getAvailableCopies()<=0){
 				error.addObject("message","Sorry, Requested book is not available");
+				
 				return error;
-			}
-		
+			}		
 			if(patron.getDayIssuedCount()>=5 || patron.getTotalIssuedCount()>=10){
 				error.addObject("message","Sorry, Exceeded issue limit");
 				return error;
-			}
-			
+			}					
 			patron.setDayIssuedCount(patron.getDayIssuedCount()+1);
 			patron.setTotalIssuedCount(patron.getTotalIssuedCount()+1);
 			
-			System.out.println("book bhai wala is "+book);
+			System.out.println(book.getIsbn()+" book bhai wala is "+book);
 			bookStatus.setCurrentDate(issueDate);
 			bookStatus.setDueDate(dueDate);
 			bookStatus.setIssueDate(issueDate);
-			bookStatus.setRequestDate(issueDate);
-			bookStatus.setRequestStatus("done");
+			//bookStatus.setRequestDate(issueDate);
+			//bookStatus.setRequestStatus("done");
 			bookStatus.setBook(book);
-			book.setAvailableCopies(book.getAvailableCopies()-1);
-			System.out.println(patron.getEmail()+"test danger");
 			bookStatus.getPatrons().add(patron);
+			book.setAvailableCopies(book.getAvailableCopies()-1);			
 			entityManager.persist(book);
 			entityManager.persist(patron);
+			//bookStatus.getPatrons().add(patron);
 			entityManager.persist(bookStatus);
-			
-			
+
+			checkoutData+="\n  ISBN: "+book.getIsbn()+" TITLE:"+book.getTitle()+"	";
+		}
 		System.out.println("Hi You have just checked out following items");
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(email);
         message.setSubject("SJSU Library Checkout on "+c.getTime());
-        message.setText("Hi You have just checked out following items "
-        		+reqParams.get("isbn")+ "\n = "+c.getTime()
+        message.setText("Hi You have just checked out following items "+checkoutData
+        	+ "\n = issueDate : "+issueDate+"   DueDate : "+dueDate+"   "
         		+"\n Please don't reply on this email.");
         System.out.println("1");
         System.out.println(activationMailSender);
@@ -1056,73 +1156,71 @@ public class AppController {
         return success;
 		}
 	
-	/**
-	 * Search Books 
+	 /* Search Books 
 	 * Ruchit code strts here
 	 * @param librarianID
 	 * @param model
 	 * @return
-	 */
+	 * 
+	 */ 
+	
+	 
 	@RequestMapping(value="/checkout/return", method = RequestMethod.POST)
 	@Transactional
-	public ModelAndView checkoutReturn(@RequestParam Map<String, String> reqParams, HttpServletRequest request) {
+	public ModelAndView checkoutReturn(@RequestParam(value = "isbn[]") String[] isbnArray, HttpServletRequest request) {
 		ModelAndView success = new ModelAndView("PatronHome");
 		ModelAndView error = new ModelAndView("Error");
 		System.out.println("inside checkout ");
-		System.out.println(reqParams.get("isbn"));
-		String email = ((Patron)request.getSession().getAttribute("loggedIn")).getEmail();
+		String email="kadakiaruchit@gmail.com";
+		//System.out.println(reqParams.get("isbn"));
+		//String email = ((Patron)request.getSession().getAttribute("loggedIn")).getEmail();
 		System.out.println(email);
 		Calendar c=new GregorianCalendar();
-		Date issueDate=c.getTime();
-		c.add(Calendar.DATE, 30);
+		Date returnDate=c.getTime();
+		//c.add(Calendar.DATE, 30);
 //		Date dueDate=c.getTime();	
 //		System.out.println();
-		Patron patron=patronService.findPatronByEmailId(email);
-		BookStatus bookStatus = new BookStatus();
-		Book book = bookService.findBookByISBN(reqParams.get("isbn"));
-		System.out.println("challa 1"+patron);
-			if(book== null || patron == null){
-				error.addObject("message","Invalid input");
-				return error;
-			}
 		
-//			if(patron.getDayIssuedCount()>=5 || patron.getTotalIssuedCount()>=10){
-//				error.addObject("message","Sorry, Exceeded issue limit");
-//				return error;
-//			}
+		String checkoutReturnData="";
+		
+	
+		
+		Patron patron=patronService.findPatronByEmailId(email);
+		List<BookStatus> patronsBookStatus=patron.getBookStatus();
+		for(int i=0;i<patronsBookStatus.size();i++){
+		System.out.println("bhaijaan"+patronsBookStatus.get(i).getBookStatusId()+"  "+patronsBookStatus.get(i).getBook().getIsbn());
+		for(int j=0;j<isbnArray.length;j++){
 			
-			patron.setDayIssuedCount(patron.getDayIssuedCount()-1);
-			patron.setTotalIssuedCount(patron.getTotalIssuedCount()-1);
-			
-			System.out.println("book bhai wala is "+book);
-//			bookStatus.setCurrentDate(issueDate);
-//			bookStatus.setDueDate(dueDate);
-//			bookStatus.setIssueDate(issueDate);
-//			bookStatus.setRequestDate(issueDate);
-//			bookStatus.setRequestStatus("done");
-			bookStatus.setReturnDate(issueDate);
-			bookStatus.setBook(book);
-			book.setAvailableCopies(book.getAvailableCopies()+1);
-			System.out.println(patron.getEmail()+"test danger");
-//			bookStatus.getPatrons().remove(patron);
-			entityManager.persist(book);
-			
-			entityManager.persist(patron);
-			entityManager.persist(bookStatus);
-			
+			if(isbnArray[j].equals(patronsBookStatus.get(i).getBook().getIsbn())){
+				System.out.println("deleting book isbn of "+isbnArray[j]);
+				checkoutReturnData+="\n"+patronsBookStatus.get(i).getBook().getIsbn()+"  "+patronsBookStatus.get(i).getBook().getTitle()+"  "+patronsBookStatus.get(i).getIssueDate();
+				System.out.println("deleting book isbn of "+isbnArray[j]);
+				bookStatusService.returnBooks(patronsBookStatus.get(i).getBookStatusId());
+				break;
+			}
+		}
+		
+		}
+		
+		
+		
+		
+		
 			
 		System.out.println("Hi You have just Returned out following item");
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(email);
         message.setSubject("SJSU Library Return on "+c.getTime());
         message.setText("Hi You have just return out following items "
-        		+reqParams.get("isbn")+ "\n = "+c.getTime()
+        		+checkoutReturnData +"     Rerturn date is "	+returnDate+ "\n = "+c.getTime()
         		+"\n Please don't reply on this email.");
-        System.out.println("1");
+        System.out.println("bhaijaan mail bje dia");
         System.out.println(activationMailSender);
         activationMailSender.send(message);
         return success;
-		}
+
+		} 
+	
 	
 	/**
 	 * Will set date and time of application as input by user in variable "appTIme"

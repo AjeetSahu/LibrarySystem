@@ -44,9 +44,12 @@ public class Book implements Serializable {
 	@OneToOne(cascade = CascadeType.ALL, fetch=FetchType.LAZY)
 	@JoinColumn(name="PICTUREID")
 	private Picture coverImage;
+	
 	@OneToMany(mappedBy="book")
 	private List<BookStatus> bookStatus;
 	
+	@Column(name="QUANTITYINCART", nullable= false, columnDefinition= "int default 0")
+	private int quantityInCart;
 	public Book() {
 		super();
 	}
@@ -67,7 +70,7 @@ public class Book implements Serializable {
 	 */
 	public Book(String isbn, String author, String title, Publisher publisher, String location, int numberOfCopies,
 			int availableCopies, boolean currentStatus, List<String> keywords, Picture coverImage,
-			List<BookStatus> bookStatus) {
+			List<BookStatus> bookStatus, int quantityInCart) {
 		super();
 		this.isbn = isbn;
 		this.author = author;
@@ -80,16 +83,15 @@ public class Book implements Serializable {
 		this.keywords = keywords;
 		this.coverImage = coverImage;
 		this.bookStatus = bookStatus;
+		this.quantityInCart = quantityInCart;
 	}
-	
 	/**
 	 * 
 	 * @return
 	 */
 	public String getIsbn() {
 		return isbn;
-	}
-	
+	}	
 	/**
 	 * 
 	 * @param isbn
@@ -237,4 +239,22 @@ public class Book implements Serializable {
 	public void setBookStatus(List<BookStatus> bookStatus) {
 		this.bookStatus = bookStatus;
 	}
+	/**
+	 * 
+	 * @return
+	 */
+	public int getQuantityInCart() {
+		return quantityInCart;
+	}
+	/**
+	 * 
+	 * @param quantityInCart
+	 */
+	public void setQuantityInCart(int quantityInCart) {
+		this.quantityInCart = quantityInCart;
+	}
+	
+	public void increaseQuantity() {
+		quantityInCart++;
+    }
 }

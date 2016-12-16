@@ -42,6 +42,11 @@
                         <a href="<%=request.getContextPath() %>/patronProfile">Profile</a>
                     </li>
                     <li>
+	                    <a href="<c:url value="/cart"/>">
+	                        Cart: <span class="badge">${shoppingCart.totalQuantity}</span><span class="badge">$${shoppingCart.totalPrice}</span>
+	                    </a>
+                	</li>
+                    <li>
                         <a href="<%=request.getContextPath() %>/logout">Signout</a>
                     </li>
                 </ul>
@@ -98,16 +103,66 @@
                      
        </div>
        <div class="row"> 
-       		<div class="col-md-2"></div>
+       		<div class="col-md-3"></div>
 	       		<div class="col-md-7">
-	             <form id="form1" hidden=true;>
-		            
-	            </form>
-	        </div>
-         <div class="col-md-1"></div>
-         </div>
-                		
-	
-                </div>
+	             <form id="form1" style="padding-top:100px;">
+		            <div class="row" >
+                        
+                        <div class="col-md-6">
+                        	
+			  				<input class="form-control" type="text" id="isbn" name="isbn" value="${pattern}" placeholder="Enter Title Here" onchange="append();" required />
+                        </div>
+                        <div class="col-md-2">
+                            <a id="link" href="<%=request.getContextPath() %>/searchBookByTitle/"><input type="button" class="btn btn-primary" value="Search Book" name="search" id="search"></a>
+                        </div>    
+					</div><br><br>
+					</form>
+					</div>
+			</div>		
+					<div class="row">
+						<div class="col-md-3"></div>
+							<%-- <h1>${author}</h1> --%>
+							<div class="col-md-8">
+							<div id="tab" class="table-responsive">
+						        <table class="table table-striped">
+						            <thead>
+						            <tr>
+						                <th>ISBN</th>
+						                <th>Author</th>
+						                <th>Title</th>
+						                <th>Available Count</th>
+						                <th>#</th>
+						            </tr>
+						            </thead>
+						            <tbody>
+							<c:forEach var="book" items="${books}">
+							<tr>
+								<td>${book.isbn}</td>
+								<td>${book.author}</td>
+								<td>${book.title}</td>
+								<td>${book.availableCopies}</td>
+								<td><a href="<%=request.getContextPath() %>/addToCart/${book.isbn}"><span class="glyphicon glyphicon-shopping-cart"></span></a></td>
+							</tr>
+							</c:forEach>
+							</tbody>
+				        </table>
+				    </div>
+				    </div>
+				    <div class="col-md-1"></div>
+				</div>
+					
+         <!--  -->
+         
+      </div>
+      <script>
+      function append() {
+          var link = document.getElementById('link');
+          var text = document.getElementById('isbn');
+          link.href = link.href + text.value;
+          //document.getElementById("tab").hidden=false;
+          /* link.text = text.value; */
+          //alert(link.href);
+      }
+	</script>
 	</body>
 </html>
