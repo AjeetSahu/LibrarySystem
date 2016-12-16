@@ -1132,7 +1132,6 @@ public class AppController {
 	@RequestMapping(value="/setDateTime", method = RequestMethod.POST)
 	@Transactional
 	public void setDateTime(@RequestParam Map<String, String> reqParams, HttpServletRequest request){
-		System.out.println("Hi setting time");
 		//"EEEE, MMM dd, yyyy HH:mm:ss a"
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 		Date date = null;
