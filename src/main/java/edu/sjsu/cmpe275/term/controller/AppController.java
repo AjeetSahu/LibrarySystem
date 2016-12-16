@@ -26,6 +26,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -1221,11 +1222,16 @@ public class AppController {
 		} 
 	
 	
+	/**
+	 * Will set date and time of application as input by user in variable "appTIme"
+	 * @param reqParams
+	 * @param request
+	 */
 	@RequestMapping(value="/setDateTime", method = RequestMethod.POST)
 	@Transactional
 	public void setDateTime(@RequestParam Map<String, String> reqParams, HttpServletRequest request){
-		System.out.println("Hi setting time");
-		SimpleDateFormat formatter = new SimpleDateFormat("EEEE, MMM dd, yyyy HH:mm:ss a");
+		//"EEEE, MMM dd, yyyy HH:mm:ss a"
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 		Date date = null;
 		try {
 			date = formatter.parse(reqParams.get("appTime"));
@@ -1234,18 +1240,26 @@ public class AppController {
 			e.printStackTrace();
 		}
 		request.getSession().setAttribute("appTime", date);
-/*        try {
- * 
+  
+ /*
             System.out.println(date);
             BookStatus bookstatus = new BookStatus();
             Book book = bookService.findBookByISBN("471417439");
             bookstatus.setCurrentDate(date);
             bookstatus.setBook(book);
             bookstatus.setReturnDate(date);
-            entityManager.persist(bookstatus);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }	*/	
+            entityManager.persist(bookstatus);*/
+         
 	}
+	
+	
+	
+
+
+/*	@Scheduled(fixedRate = 100000)
+	public void dailyjob(){
+		System.out.println("cron job running");
+			
+	}*/
 	
 }
