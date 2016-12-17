@@ -1,6 +1,8 @@
 package edu.sjsu.cmpe275.term.controller;
 
 import java.util.Map;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import javax.mail.Session;
 import javax.persistence.EntityManager;
@@ -47,6 +49,7 @@ import edu.sjsu.cmpe275.term.model.Picture;
 import edu.sjsu.cmpe275.term.model.Publisher;
 import edu.sjsu.cmpe275.term.service.BookService;
 import edu.sjsu.cmpe275.term.service.BookStatusService;
+import edu.sjsu.cmpe275.term.service.CartService;
 import edu.sjsu.cmpe275.term.service.LibrarianService;
 import edu.sjsu.cmpe275.term.service.PatronService;
 
@@ -65,6 +68,9 @@ public class AppController {
 	
 	@Autowired
 	private BookStatusService bookStatusService;
+	
+	@Autowired
+	private CartService cartService;
 	
 	@Autowired
 	private static MailSender activationMailSender;
@@ -124,6 +130,14 @@ public class AppController {
 	}
 	
 	/**
+	 * 
+	 * @param cartService
+	 */
+	public void setCartService(CartService cartService) {
+		this.cartService = cartService;
+	}
+
+	/**
      * This method will send compose and send the message 
      * @author Pratik 
 	 * @param to
@@ -181,6 +195,7 @@ public class AppController {
 		entityManager.merge(book);
         if (book != null) {
         	bookingCart.addCartItem(book);
+        	cartService.saveNewBookingCart(bookingCart);
         }
         return "redirect:/patronHome";
 	}
@@ -458,7 +473,6 @@ public class AppController {
 					publisher.setPhoneNumber(Integer.parseInt(reqParams.get("phoneNumber")));
 				if(reqParams.get("numberOfCopies")!=null && (reqParams.get("numberOfCopies")).isEmpty()==false)
 				{
-					System.out.println("2  no of copies value is "+reqParams.get("numberOfCopies"));
 					book.setNumberOfCopies(Integer.parseInt(reqParams.get("numberOfCopies")));
 					book.setAvailableCopies(Integer.parseInt(reqParams.get("numberOfCopies")));
 				}
@@ -1178,8 +1192,8 @@ public class AppController {
 		Calendar c=new GregorianCalendar();
 		Date returnDate=c.getTime();
 		//c.add(Calendar.DATE, 30);
-//		Date dueDate=c.getTime();	
-//		System.out.println();
+		//Date dueDate=c.getTime();	
+		//System.out.println();
 		
 		String checkoutReturnData="";
 		
@@ -1253,13 +1267,33 @@ public class AppController {
 	}
 	
 	
-	
-
-
 /*	@Scheduled(fixedRate = 100000)
 	public void dailyjob(){
 		System.out.println("cron job running");
 			
 	}*/
 	
+	public void checkFunctionalityAtReturn(String[] isbnArray, HttpServletRequest request) {
+		Date minDate = new Date(Long.MAX_VALUE);
+		BookStatus bookStatus1 = null;
+		Boolean flag = false;
+		for(int j=0;j<isbnArray.length;j++){
+			BookStatus bookStatus = bookStatusService.findBookStatusByISBN(isbnArray[j]);
+			if(bookStatus.getRequestStatus().equals("requested")){
+				 if(minDate.compareTo(bookStatus.getRequestDate())>0){
+					minDate = bookStatus.getRequestDate();
+					bookStatus1 = bookStatus;
+				 }
+				 String email = (String) request.getSession().getAttribute("email");
+				 SimpleMailMessage message = new SimpleMailMessage();
+			     message.setTo(email);
+			     message.setSubject("Your requested Book is now available"+(Date)request.getSession().getAttribute("appTime"));
+			     message.setText("Thank you for requesting the book. \n The Book you requested is now available. Kindly issue it within 3 days. "
+			        		+ "Otherwise your request would be neglected. \n It is an auto generated email. Please don't reply on this email.");
+			     activationMailSender.send(message);
+			     bookStatus1.setRequestStatus("emailed");
+				 bookStatusService.updateBookStatus(bookStatus1);				
+			}
+		}			
+	}
 }
