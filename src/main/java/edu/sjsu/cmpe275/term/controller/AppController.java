@@ -1093,17 +1093,15 @@ public class AppController {
 	 * @param model
 	 * @return
 	 */
-	
-	
 	@RequestMapping(value="/checkout", method = RequestMethod.POST)
 	@Transactional
-	public ModelAndView checkout(@RequestParam(value = "isbn[]") String[] isbnArray, HttpServletRequest request) {
+	public ModelAndView checkout(@RequestParam(value = "isbn[]") String[] isbnArray,Model model, HttpServletRequest request) {
 		ModelAndView success = new ModelAndView("PatronHome");
 		ModelAndView error = new ModelAndView("Error");
 		System.out.println("inside checkout ");
 		System.out.println(isbnArray[0]);
-		//String email="kadakiaruchit@gmail.com";
-		String email = ((Patron)request.getSession().getAttribute("loggedIn")).getEmail();
+		String email="kadakiaruchit@gmail.com";
+		//String email = ((Patron)request.getSession().getAttribute("loggedIn")).getEmail();
 		System.out.println(email);
 		Calendar c = new GregorianCalendar();
 		Date issueDate = c.getTime();
@@ -1112,8 +1110,55 @@ public class AppController {
 		Patron patron=patronService.findPatronByEmailId(email);
 		String checkoutData="";
 		
+		if(isbnArray.length>5){
+
+		//	model.addAttribute("message2","You cant checkout more than 5 books at a time");
+	error.addObject("message", "You cant checkout more than 5 books at a tiime");
+			return error;
+		}
+		
+		
+		if(patron.getDayIssuedCount()+isbnArray.length>5){
+			error.addObject("message1", "You cant checkout more than 5 books in one day");
+					return error;
+				}
+		
+		
+
+		if(patron.getTotalIssuedCount()+isbnArray.length>10){
+			error.addObject("message1", "You cant checkout more than total 10 books ");
+					return error;
+				}
+		
+		System.out.println("before for in checkout ");
+	
+		
+		List<BookStatus> patronsBookStatus=patron.getBookStatus();
+		
+		System.out.println("before for in checkout 1 "+patronsBookStatus.size());
+		
 		for(int i=0;i<isbnArray.length;i++){
+			
+			for(int j=0;j<patronsBookStatus.size();j++){
+				
+				BookStatus bookStatus = new BookStatus();
+				
+				if(isbnArray[i].equals(patronsBookStatus.get(j).getBook().getIsbn())){
+					System.out.println("fuck u");
+					return error;
+				}
+			}
+		}
+		
+		for(int i=0;i<isbnArray.length;i++){
+			
+	
+			
 			BookStatus bookStatus = new BookStatus();
+			
+		
+			
+
 		    Book book = bookService.findBookByISBN(isbnArray[i]);
 		    System.out.println("challa 1"+patron+book.getIsbn());
 			if(book.getAvailableCopies()<=0){
@@ -1121,10 +1166,7 @@ public class AppController {
 				
 				return error;
 			}		
-			if(patron.getDayIssuedCount()>=5 || patron.getTotalIssuedCount()>=10){
-				error.addObject("message","Sorry, Exceeded issue limit");
-				return error;
-			}					
+				
 			patron.setDayIssuedCount(patron.getDayIssuedCount()+1);
 			patron.setTotalIssuedCount(patron.getTotalIssuedCount()+1);
 			
@@ -1156,6 +1198,7 @@ public class AppController {
         activationMailSender.send(message);
         return success;
 		}
+		
 	
 	 /* Search Books 
 	 * Ruchit code strts here
@@ -1165,28 +1208,43 @@ public class AppController {
 	 * 
 	 */ 
 	
-	 
+
 	@RequestMapping(value="/checkout/return", method = RequestMethod.POST)
-	@Transactional
-	public ModelAndView checkoutReturn(@RequestParam(value = "isbn[]") String[] isbnArray, HttpServletRequest request) {
+	public ModelAndView Return(@RequestParam(value = "isbn[]") String[] isbnArray, Model model, HttpServletRequest request) {
 		ModelAndView success = new ModelAndView("PatronHome");
 		ModelAndView error = new ModelAndView("Error");
+		
 		System.out.println("inside checkout ");
 		String email="kadakiaruchit@gmail.com";
+		
+		
 		//System.out.println(reqParams.get("isbn"));
 		//String email = ((Patron)request.getSession().getAttribute("loggedIn")).getEmail();
 		System.out.println(email);
 		Calendar c=new GregorianCalendar();
 		Date returnDate=c.getTime();
+	//	int days = Days.daysBetween(returnDate, returnDate).getDays();
 		//c.add(Calendar.DATE, 30);
 //		Date dueDate=c.getTime();	
 //		System.out.println();
 		
+	
 		String checkoutReturnData="";
 		
 	
 		
 		Patron patron=patronService.findPatronByEmailId(email);
+		
+		if(isbnArray.length>10){
+
+		//	model.addAttribute("message2","You cant checkout more than 5 books at a time");
+	error.addObject("message", "You cant return more than 10 books at a tiime");
+		
+	return error;
+			
+		}
+	
+		
 		List<BookStatus> patronsBookStatus=patron.getBookStatus();
 		for(int i=0;i<patronsBookStatus.size();i++){
 		System.out.println("bhaijaan"+patronsBookStatus.get(i).getBookStatusId()+"  "+patronsBookStatus.get(i).getBook().getIsbn());
@@ -1196,6 +1254,14 @@ public class AppController {
 				System.out.println("deleting book isbn of "+isbnArray[j]);
 				checkoutReturnData+="\n"+patronsBookStatus.get(i).getBook().getIsbn()+"  "+patronsBookStatus.get(i).getBook().getTitle()+"  "+patronsBookStatus.get(i).getIssueDate();
 				System.out.println("deleting book isbn of "+isbnArray[j]);
+				int penalty=(int)(returnDate.getTime()-patronsBookStatus.get(i).getDueDate().getTime()/(1000 * 60 * 60 * 24));
+				System.out.println(penalty);
+				if(penalty>0){
+			
+				patron.setPenalty(patron.getPenalty()+penalty);
+			
+				}
+				
 				bookStatusService.returnBooks(patronsBookStatus.get(i).getBookStatusId());
 				break;
 			}
@@ -1298,3 +1364,6 @@ public class AppController {
 	}
 	
 }
+
+
+//patron cant keep a more than 1 boook for same isbn
