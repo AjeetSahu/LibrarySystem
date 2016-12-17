@@ -172,18 +172,17 @@ public class AppController {
 	 */
 	@RequestMapping(value = "/addToCart/{bookISBN}", method = RequestMethod.GET)
 	@Transactional
-	public String addToCart(@PathVariable("bookISBN") String isbn, Model model, HttpServletRequest request) {
-		// Session session = entityManager.unwrap(Session.class);
+	public String addToCart(@PathVariable("bookISBN") String isbn, Model model, HttpServletRequest request){
+		//Session session = entityManager.unwrap(Session.class);
 		BookingCart bookingCart = new BookingCart();
 		Book book = bookService.findBookByISBN(isbn);
-		System.out.println("book object: " + book);
-		book.setAvailableCopies(book.getAvailableCopies() - 1);
+		System.out.println("book object: "+book);
+		book.setAvailableCopies(book.getAvailableCopies()-1);
 		entityManager.merge(book);
-		if (book != null) {
-			bookingCart.addCartItem(book);
-			cartService.saveNewBookingCart(bookingCart);
-		}
-		return "redirect:/searchBookByTitle/" + request.getSession().getAttribute("pattern");
+        if (book != null) {
+        	bookingCart.addCartItem(book);
+        }
+        return "redirect:/searchBookByTitle/"+request.getSession().getAttribute("pattern");
 	}
 
 	/**
@@ -567,6 +566,7 @@ public class AppController {
 	 */
 
 	@RequestMapping(value = "/book/{bookISBN}", method = RequestMethod.GET)
+
 	public String getBookByISBN(@PathVariable("bookISBN") String isbn, Model model, HttpServletRequest request) {
 		System.out.println("getBookByISBN");
 		if (request.getSession().getAttribute("loggedIn") == null) {
@@ -606,7 +606,8 @@ public class AppController {
 		}
 		model.addAttribute("books", books);
 		return "PatronHome";
-	}
+	}	
+	
 
 	@RequestMapping(value = "/cartCheckout", method = RequestMethod.GET)
 	public String cartCheckout(Model model, HttpServletRequest request) {
