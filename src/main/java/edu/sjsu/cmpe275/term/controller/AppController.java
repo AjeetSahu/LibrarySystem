@@ -143,17 +143,7 @@ public class AppController {
         System.out.println(activationMailSender);
         activationMailSender.send(message);
     }
-    
-    /**
-	 * ATTACH CURRENT DATE AND TIME TO ALL PAGES
-	 * @author Pratik 
-     * @param currentdate
-     * @param model
-     */
-    @ModelAttribute
-	public void attachCurrentDateAndTime(Date currentdate, Model model){
-    	model.addAttribute("currentDate", currentdate);
-	}   
+      
 	
 	/**
 	 * GET GO TO WELCOME PAGE
@@ -1129,7 +1119,7 @@ public class AppController {
 			patron.setTotalIssuedCount(patron.getTotalIssuedCount()+1);
 			
 			System.out.println(book.getIsbn()+" book bhai wala is "+book);
-			bookStatus.setCurrentDate(issueDate);
+			//bookStatus.setCurrentDate(issueDate);
 			bookStatus.setDueDate(dueDate);
 			bookStatus.setIssueDate(issueDate);
 			//bookStatus.setRequestDate(issueDate);
@@ -1266,7 +1256,7 @@ public class AppController {
 			Patron patron = patronService.findPatronByEmailId(email);
 			BookStatus bookstatus = new BookStatus();
 			System.out.println("date to be set is " + (Date)request.getSession().getAttribute("appTime"));
-			bookstatus.setCurrentDate((Date)request.getSession().getAttribute("appTime"));
+			bookstatus.setAssignedDate((Date)request.getSession().getAttribute("appTime"));
 			bookstatus.setRequestDate((Date)request.getSession().getAttribute("appTime"));
 	        bookstatus.setRequestStatus("requested");
 	        bookstatus.getPatrons().add(patron);
@@ -1293,6 +1283,13 @@ public class AppController {
 	}
 	@Scheduled(fixedRate = 10000)
 	public void removeRequestAfterThreeDays(){
+		Query q = entityManager.createNativeQuery("SELECT * FROM cmpe275termdb.book_status where requeststatus = 'emailed';", BookStatus.class);
+		List<BookStatus> bookstatuslist = q.getResultList();
+		int i = 0;
+		while(bookstatuslist.size() > i){
+			
+			i++;
+		}
 		System.out.println("cron job running");
 			
 	}

@@ -46,9 +46,9 @@ public class BookStatus implements Serializable {
 	private Date requestDate;
 	@Column(name = "REQUESTSTATUS")
 	private String requestStatus;
-	@Column(name = "CURRENTDATE")
+	@Column(name = "ASSIGNEDDATE")
 	@Temporal(TemporalType.TIMESTAMP)
-	private Date currentDate;
+	private Date assignedDate;
 	
 	@ManyToOne
 	@JoinColumn(name="BOOKID")
@@ -76,20 +76,20 @@ public class BookStatus implements Serializable {
 	 * @param returnDate
 	 * @param requestDate
 	 * @param requestStatus
-	 * @param currentDate
+	 * @param assignedDate
 	 * @param book
 	 * @param patrons
 	 * @param librarians
 	 */
 	public BookStatus(String bookStatusId, Date issueDate, Date dueDate, Date returnDate, Date requestDate,
-			String requestStatus, Date currentDate, Book book, List<Patron> patrons, List<Librarian> librarians) {
+			String requestStatus, Date assignedDate, Book book, List<Patron> patrons, List<Librarian> librarians) {
 		super();
 		this.bookStatusId = bookStatusId;
 		this.issueDate = issueDate;
 		this.dueDate = dueDate;
 		this.returnDate = returnDate;
 		this.requestDate = requestDate;
-		this.currentDate = currentDate;
+		this.assignedDate = assignedDate;
 		this.requestStatus = requestStatus;
 		this.book = book;
 		this.patrons = patrons;
@@ -133,15 +133,15 @@ public class BookStatus implements Serializable {
 	 * 
 	 * @return
 	 */
-	public Date getCurrentDate() {
-		return currentDate;
+	public Date getAssignedDate() {
+		return assignedDate;
 	}
 	/**
 	 * 
-	 * @param currentDate
+	 * @param assignedDate
 	 */
-	public void setCurrentDate(Date currentDate) {
-		this.currentDate = currentDate;
+	public void setAssignedDate(Date assignedDate) {
+		this.assignedDate = assignedDate;
 	}
 	/**
 	 * 
