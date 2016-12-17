@@ -9,6 +9,8 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.RollbackException;
+
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
@@ -24,6 +26,7 @@ public abstract class AbstractDao<PK extends Serializable, T> {
 		this.persistentClass =(Class<T>) ((ParameterizedType) this.getClass().getGenericSuperclass()).getActualTypeArguments()[1];
 	}
 	
+	@Transactional(propagation = Propagation.REQUIRED)
 	public T findById(String id) {
 		try{
 			System.out.println("in abstract DAO+"+id);
