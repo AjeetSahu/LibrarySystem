@@ -21,6 +21,7 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
+import org.hibernate.loader.custom.Return;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -1254,12 +1255,46 @@ public class AppController {
 	
 	
 	
+	@RequestMapping(value="/requestBook/{bookISBN}", method = RequestMethod.POST)
+	@Transactional
+	public ModelAndView set( @PathVariable("bookISBN") String isbn, HttpServletRequest request){
+		ModelAndView requestSuccess = new ModelAndView("BookRequestSuccess");
+		Book book = bookService.findBookByISBN(isbn);
+		if(book.getAvailableCopies() == 0){
+			String email = (String)request.getSession().getAttribute("email");
+			System.out.println("email address is " + email);
+			Patron patron = patronService.findPatronByEmailId(email);
+			BookStatus bookstatus = new BookStatus();
+			System.out.println("date to be set is " + (Date)request.getSession().getAttribute("appTime"));
+			bookstatus.setCurrentDate((Date)request.getSession().getAttribute("appTime"));
+			bookstatus.setRequestDate((Date)request.getSession().getAttribute("appTime"));
+	        bookstatus.setRequestStatus("requested");
+	        bookstatus.getPatrons().add(patron);
+	        bookstatus.setBook(book);
+	        //patron.getBookStatus().add(bookstatus);
+	        //patronService.updatePatron(patron);
+			//entityManager.persist(book);
+			entityManager.persist(patron);
+			entityManager.persist(bookstatus);
+	        requestSuccess.addObject("message", "book have been requested");
+	        return requestSuccess; 
+		}
+		else{
+			ModelAndView error = new ModelAndView("BookRequestError");
+			error.addObject("message", "Book is available");
+			return error;
+		}
+	}
 
-
-/*	@Scheduled(fixedRate = 100000)
-	public void dailyjob(){
+	@RequestMapping("/tester")
+	public void tester(HttpServletRequest request){
+		String email = (String)request.getSession().getAttribute("email");
+		System.out.println(email);
+	}
+	@Scheduled(fixedRate = 10000)
+	public void removeRequestAfterThreeDays(){
 		System.out.println("cron job running");
 			
-	}*/
+	}
 	
 }
