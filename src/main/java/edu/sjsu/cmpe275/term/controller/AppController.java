@@ -164,16 +164,17 @@ public class AppController {
 	 */
 	@RequestMapping(value = "/addToCart/{bookISBN}", method = RequestMethod.GET)
 	@Transactional
-	public String addToCart(@PathVariable("bookISBN") String isbn, Model model){
+	public String addToCart(@PathVariable("bookISBN") String isbn, Model model, HttpServletRequest request){
 		//Session session = entityManager.unwrap(Session.class);
 		BookingCart bookingCart = new BookingCart();
 		Book book = bookService.findBookByISBN(isbn);
+		System.out.println("book object: "+book);
 		book.setAvailableCopies(book.getAvailableCopies()-1);
 		entityManager.merge(book);
         if (book != null) {
         	bookingCart.addCartItem(book);
         }
-        return "redirect:/patronHome";
+        return "redirect:/searchBookByTitle/"+request.getSession().getAttribute("pattern");
 	}
 	
 	/**
@@ -542,30 +543,7 @@ public class AppController {
 	 * @param model
 	 * @return
 	 */
-//	@RequestMapping(value="/book/{bookISBN}", method = RequestMethod.GET)
-//	public ModelAndView getBookByISBN(@PathVariable("bookISBN") String isbn, Model model, HttpServletRequest request) {
-//		System.out.println("getBookByISBN");
-//		if(request.getSession().getAttribute("loggedIn") == null){
-//			ModelAndView login = new ModelAndView("Login");
-//			return login;
-//		}
-//		ModelAndView bookFound= new ModelAndView("BookFound");
-//		ModelAndView bookNotFound= new ModelAndView("Error");
-//		Book book = bookService.findBookByISBN(isbn);
-//		System.out.println("working getBookByISBN"+book);
-//		System.out.println("book "+book);
-//		if(book == null){
-//	        System.out.println("Unable to find book as book with ISBN "+isbn+" doesnot exist");
-//	        bookNotFound.addObject("message","Unable to find book as book with ISBN "+isbn+" doesnot exist");
-//	        bookNotFound.addObject("httpStatus", HttpStatus.NOT_FOUND);
-//			return bookNotFound;
-//	    }
-//		bookFound.addObject("book", book);
-//		bookFound.addObject("test", "test");
-//		bookFound.addObject("httpStatus", HttpStatus.OK);
-//		return bookFound;	
-//	}
-	
+
 	@RequestMapping(value="/book/{bookISBN}", method = RequestMethod.GET)
 	public String getBookByISBN(@PathVariable("bookISBN") String isbn, Model model, HttpServletRequest request) {
 		System.out.println("getBookByISBN");
@@ -605,6 +583,16 @@ public class AppController {
 		}
 		model.addAttribute("books", books);
 		return "PatronHome";
+	}
+	
+	
+	@RequestMapping(value="/cartCheckout", method = RequestMethod.GET)
+	public String cartCheckout(Model model, HttpServletRequest request){
+		Query q = entityManager.createNativeQuery("SELECT * FROM BOOKING_CART", Book.class);
+		List<Book> books = q.getResultList();
+		System.out.println("books size: "+books);
+		model.addAttribute("books", books);
+		return "IssueCheckout";
 	}
 	
 	
@@ -783,7 +771,7 @@ public class AppController {
 		}
 		//ModelAndView patron = new ModelAndView("PatronHome");
 		Book book = bookService.findBookByISBN("9788881555581");
-		model.addAttribute("author",book.getAuthor());
+		//model.addAttribute("author",book.getAuthor());
 		System.out.println("book: "+book);
 		model.addAttribute("pattern",request.getSession().getAttribute("patron"));
 		return "PatronHome";
@@ -1090,7 +1078,7 @@ public class AppController {
 		ModelAndView error = new ModelAndView("Error");
 		System.out.println("inside checkout ");
 		System.out.println(isbnArray[0]);
-		String email="kadakiaruchit@gmail.com";
+		String email="amitesh.jaiswal21@gmail.com";
 		//String email = ((Patron)request.getSession().getAttribute("loggedIn")).getEmail();
 		System.out.println(email);
 		Calendar c = new GregorianCalendar();
@@ -1357,13 +1345,12 @@ public class AppController {
 		String email = (String)request.getSession().getAttribute("email");
 		System.out.println(email);
 	}
-	@Scheduled(fixedRate = 10000)
+	@Scheduled(fixedRate = 90000000)
 	public void removeRequestAfterThreeDays(){
 		Query q = entityManager.createNativeQuery("SELECT * FROM cmpe275termdb.book_status where requeststatus = 'emailed';", BookStatus.class);
 		List<BookStatus> bookstatuslist = q.getResultList();
 		int i = 0;
 		while(bookstatuslist.size() > i){
-			
 			i++;
 		}
 		System.out.println("cron job running");
