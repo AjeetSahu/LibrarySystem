@@ -1234,7 +1234,7 @@ public class AppController {
 			
 		}
 	
-		
+		Date returndate=null;
 		List<BookStatus> patronsBookStatus=patron.getBookStatus();
 		for(int i=0;i<patronsBookStatus.size();i++){
 		System.out.println("bhaijaan"+patronsBookStatus.get(i).getBookStatusId()+"  "+patronsBookStatus.get(i).getBook().getIsbn());
@@ -1243,18 +1243,28 @@ public class AppController {
 			if(isbnArray[j].equals(patronsBookStatus.get(i).getBook().getIsbn())){
 				System.out.println("deleting book isbn of "+isbnArray[j]);
 				checkoutReturnData+="\n"+patronsBookStatus.get(i).getBook().getIsbn()+"  "+patronsBookStatus.get(i).getBook().getTitle()+"  "+patronsBookStatus.get(i).getIssueDate();
-				System.out.println("deleting book isbn of "+isbnArray[j]);
-				int penalty=(int)(returnDate.getTime()-patronsBookStatus.get(i).getDueDate().getTime()/(1000 * 60 * 60 * 24));
+				System.out.println("penalty deleting book isbn of "+isbnArray[j]);
+				 returndate=(Date)request.getSession().getAttribute("appTime");
+				int penalty=(int)(returndate.getTime()-patronsBookStatus.get(i).getDueDate().getTime())/(1000 * 60 * 60 * 24);
+				System.out.println("aaj ka date is "+returndate);	
+				System.out.println("due ka date is "+patronsBookStatus.get(i).getDueDate());	
+				
 				System.out.println(penalty);
+				patron.setTotalIssuedCount(patron.getTotalIssuedCount()-1);
+				
 				if(penalty>0){
+					
+					System.out.println("high heels ");
+					patron.setPenalty(patron.getPenalty()+penalty);
+				
+					patronService.updatePatron(patron);
 			
-				patron.setPenalty(patron.getPenalty()+penalty);
-			
-				}
+					}
 				
 				bookStatusService.returnBooks(patronsBookStatus.get(i).getBookStatusId());
 				break;
 			}
+			
 		}
 		
 		}
@@ -1269,7 +1279,7 @@ public class AppController {
         message.setTo(email);
         message.setSubject("SJSU Library Return on "+c.getTime());
         message.setText("Hi You have just return out following items "
-        		+checkoutReturnData +"     Rerturn date is "	+returnDate+ "\n = "+c.getTime()
+        		+checkoutReturnData +"     Rerturn date is "	+returndate+ "\n = "+c.getTime()
         		+"\n Please don't reply on this email.");
         System.out.println("bhaijaan mail bje dia");
         System.out.println(activationMailSender);
