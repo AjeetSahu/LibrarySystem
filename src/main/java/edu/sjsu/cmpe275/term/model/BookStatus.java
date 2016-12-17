@@ -55,11 +55,11 @@ public class BookStatus implements Serializable {
 	private Book book;
 	
 	
-	//@ManyToMany(mappedBy="bookStatus")
+	//@(mappedBy="bookStatus")
 	//private List<Patron> patrons=new ArrayList<Patron>();
 	
 
-	@ManyToMany(cascade = {CascadeType.ALL},fetch=FetchType.EAGER)
+	@ManyToMany(cascade = {CascadeType.MERGE},fetch=FetchType.EAGER)
 	@JoinTable(name="PATRON_BOOKSTATUS", joinColumns={@JoinColumn(name="bookStatusId", referencedColumnName = "bookStatusId")},
 	inverseJoinColumns={@JoinColumn(name="email", referencedColumnName= "email")})
 	private List<Patron> patrons=new ArrayList<Patron>();
