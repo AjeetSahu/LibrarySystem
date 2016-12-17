@@ -29,4 +29,14 @@ public class BookStatusServiceImpl implements BookStatusService {
 	public List<BookStatus> getListOfIssuedBooks(String patronId) {
 		return bookStatusDAO.getListOfIssuedBooks(patronId);
 	}
+
+	@Override
+	public BookStatus findBookStatusByISBN(String isbn) {
+		return bookStatusDAO.findBookStatusByISBN(isbn);
+	}
+
+	@Override
+	public void updateBookStatus(BookStatus bookStatus) {
+		bookStatusDAO.updateBookStatus(bookStatus);
+	}
 }

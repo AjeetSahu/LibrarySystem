@@ -20,5 +20,15 @@ public class BookStatusDAOImpl extends AbstractDao<String, BookStatus>  implemen
 	public List<BookStatus> getListOfIssuedBooks(String patronId) {
 		return getListOfIssuedBooks(patronId);
 	}
+
+	@Override
+	public BookStatus findBookStatusByISBN(String isbn) {
+		return findById(isbn);
+	}
+
+	@Override
+	public void updateBookStatus(BookStatus bookStatus) {
+		update(bookStatus);
+	}
 }
 

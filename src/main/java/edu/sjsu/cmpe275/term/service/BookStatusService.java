@@ -7,4 +7,7 @@ public interface BookStatusService {
 	public void issueBooks(BookStatus bookStatus);
 	public String returnBooks(String bookStatusId);
 	public List<BookStatus> getListOfIssuedBooks(String patronId);
+	public BookStatus findBookStatusByISBN(String isbn);
+	public void updateBookStatus(BookStatus bookStatus);
+	
 }
