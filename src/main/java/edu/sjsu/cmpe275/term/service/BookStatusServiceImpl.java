@@ -31,7 +31,7 @@ public class BookStatusServiceImpl implements BookStatusService {
 	}
 
 	@Override
-	public BookStatus findBookStatusByISBN(String isbn) {
+	public List<BookStatus> findBookStatusByISBN(String isbn) {
 		return bookStatusDAO.findBookStatusByISBN(isbn);
 	}
 

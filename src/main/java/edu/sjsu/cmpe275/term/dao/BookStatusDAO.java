@@ -7,7 +7,7 @@ public interface BookStatusDAO {
 	public BookStatus issueBooks(BookStatus bookStatus);
 	public String returnBooks(String bookStatusId);
 	public List<BookStatus> getListOfIssuedBooks(String patronId);
-	public BookStatus findBookStatusByISBN(String isbn);
+	public List<BookStatus> findBookStatusByISBN(String isbn);
 	public void updateBookStatus(BookStatus bookStatus);
 	public List<BookStatus> getListOfAllBookStatus();
 	
