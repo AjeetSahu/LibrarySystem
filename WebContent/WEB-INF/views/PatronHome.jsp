@@ -110,7 +110,7 @@
                         
                         <div class="col-md-6">
                         	
-			  				<input class="form-control" type="text" id="isbn" name="isbn" value="${pattern}" placeholder="Enter Title Here" onchange="append();" required />
+			  				<input class="form-control" type="text" id="title" name="title" value="${pattern}" placeholder="Enter Title Here" onchange="append();" required />
                         </div>
                         <div class="col-md-2">
                             <a id="link" href="<%=request.getContextPath() %>/searchBookByTitle/"><input type="button" class="btn btn-primary" value="Search Book" name="search" id="search"></a>
@@ -150,18 +150,16 @@
 				    </div>
 				    <div class="col-md-1"></div>
 				</div>
-					
-         <!--  -->
          
       </div>
       <script>
       function append() {
           var link = document.getElementById('link');
-          var text = document.getElementById('isbn');
+          var text = document.getElementById('title');
           link.href = link.href + text.value;
           //document.getElementById("tab").hidden=false;
           /* link.text = text.value; */
-          //alert(link.href);
+          alert(link.href);
       }
 	</script>
 	</body>

@@ -110,16 +110,16 @@
 				            <thead>
 				            <tr>
 				                <th>ISBN</th>
-				                <th>Author</th>
-				                <th>Title</th>
+				                <th>Quantity</th>
+				                <th>Remove</th>
 				            </tr>
 				            </thead>
 				            <tbody>
 					<c:forEach var="book" items="${books}">
 					<tr>
-						<td>${book.isbn}</td>
-						<td>${book.author}</td>
-						<td>${book.title}</td>
+						<td>${book.getBook().getIsbn()}</td>
+						<td>${book.cartItemId}</td>
+						<td><a href="<%=request.getContextPath() %>/removeFromCart/${book.getBook().getIsbn()}"><span class="glyphicon glyphicon-remove"></span></a></td>
 					</tr>
 					</c:forEach>
 					</tbody>

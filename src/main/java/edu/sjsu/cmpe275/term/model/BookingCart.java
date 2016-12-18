@@ -23,8 +23,8 @@ public class BookingCart implements Serializable {
 	private void generateSecret(){
 		this.setBookingCartId(UUID.randomUUID().toString());
 	}
-	@OneToMany(fetch = FetchType.LAZY)
-	@JoinColumn(name = "CARTITEMS")
+	
+	@OneToMany(mappedBy = "bookCartId")
     private List<CartItem> cartItems;
     private int totalQuantity;
     
