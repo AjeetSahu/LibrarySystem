@@ -1,8 +1,8 @@
-package edu.sjsu.cmpe275.term.dao;
+package edu.sjsu.cmpe275.term.service;
 
 import edu.sjsu.cmpe275.term.model.BookingCart;
 
-public interface CartDAO {
+public interface BookingCartService {
 	
 	public BookingCart findBookingCartById(String bookingCartId);
 
@@ -11,5 +11,4 @@ public interface CartDAO {
 	public void updateBookingCart(BookingCart bookingCart);
 	
 	public void deleteBookingCartById(String bookingCartId);
-
 }

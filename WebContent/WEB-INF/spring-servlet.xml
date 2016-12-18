@@ -33,7 +33,8 @@
     	<property name="librarianService" ref="librarianService"></property>
     	<property name="patronService" ref="patronService"></property>	
     	<property name="bookStatusService" ref="bookStatusService"></property>
-    	<property name="cartService" ref="cartService"></property>
+    	<property name="bookingCartService" ref="bookingCartService"></property>
+    	<property name="cartItemService" ref="cartItemService"></property>
    	</bean>
    	<bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
 	    <property name="staticMethod" value="edu.sjsu.cmpe275.term.controller.AppController.setActivationMailSender"/>
@@ -55,14 +56,18 @@
     <bean id="patronService" class="edu.sjsu.cmpe275.term.service.PatronServiceImpl">
     	<property name="patronDAO" ref="patronDAO"></property>
     </bean> 
-    <bean id="cartService" class="edu.sjsu.cmpe275.term.service.CartServiceImpl">
-    	<property name="cartDAO" ref="cartDAO"></property>
+    <bean id="bookingCartService" class="edu.sjsu.cmpe275.term.service.BookingCartServiceImpl">
+    	<property name="bookingCartDAO" ref="bookingCartDAO"></property>
     </bean>   
+    <bean id="cartItemService" class="edu.sjsu.cmpe275.term.service.CartItemServiceImpl">
+    	<property name="cartItemDAO" ref="cartItemDAO"></property>
+    </bean>
     <bean id ="patronDAO" class="edu.sjsu.cmpe275.term.dao.PatronDAOImpl"/>
     <bean id ="bookDAO" class="edu.sjsu.cmpe275.term.dao.BookDAOImpl"/>
     <bean id="librarianDAO" class="edu.sjsu.cmpe275.term.dao.LibrarianDAOImpl"/>
     <bean id="bookStatusDAO" class="edu.sjsu.cmpe275.term.dao.BookStatusDAOImpl"/> 
-    <bean id="cartDAO" class="edu.sjsu.cmpe275.term.dao.CartDAOImpl"/> 
+    <bean id="bookingCartDAO" class="edu.sjsu.cmpe275.term.dao.BookingCartDAOImpl"/> 
+    <bean id="cartItemDAO" class="edu.sjsu.cmpe275.term.dao.CartItemDAOImpl"/>
      <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
     	<!-- one of the properties available; the maximum file size in bytes -->
     	<property name="maxUploadSize" value="900000"/>

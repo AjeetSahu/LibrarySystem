@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -44,7 +45,8 @@ import edu.sjsu.cmpe275.term.model.Picture;
 import edu.sjsu.cmpe275.term.model.Publisher;
 import edu.sjsu.cmpe275.term.service.BookService;
 import edu.sjsu.cmpe275.term.service.BookStatusService;
-import edu.sjsu.cmpe275.term.service.CartService;
+import edu.sjsu.cmpe275.term.service.BookingCartService;
+import edu.sjsu.cmpe275.term.service.CartItemService;
 import edu.sjsu.cmpe275.term.service.LibrarianService;
 import edu.sjsu.cmpe275.term.service.PatronService;
 
@@ -65,7 +67,10 @@ public class AppController {
 	private BookStatusService bookStatusService;
 
 	@Autowired
-	private CartService cartService;
+	private BookingCartService bookingCartService;
+	
+	@Autowired
+	private CartItemService cartItemService;
 
 	@Autowired
 	private static MailSender activationMailSender;
@@ -126,13 +131,19 @@ public class AppController {
 	public void setPatronService(PatronService patronService) {
 		this.patronService = patronService;
 	}
-
 	/**
 	 * 
-	 * @param cartService
+	 * @param bookingCartService
 	 */
-	public void setCartService(CartService cartService) {
-		this.cartService = cartService;
+	public void setBookingCartService(BookingCartService bookingCartService) {
+		this.bookingCartService = bookingCartService;
+	}
+	/**
+	 * 
+	 * @param cartItemService
+	 */
+	public void setCartItemService(CartItemService cartItemService) {
+		this.cartItemService = cartItemService;
 	}
 
 	/**
@@ -155,6 +166,20 @@ public class AppController {
 		activationMailSender.send(message);
 	}
 
+	/**
+	 * SEND ANY information message to user
+	 * @param to
+	 * @param activationCode
+	 */
+	public static void sendGenericMail(String to, String subject, String body) {
+		
+		SimpleMailMessage message = new SimpleMailMessage();
+		message.setTo(to);
+		message.setSubject(subject);
+		message.setText(body);
+		activationMailSender.send(message);
+	}
+	
 	/**
 	 * GET GO TO WELCOME PAGE
 	 * 
@@ -182,14 +207,14 @@ public class AppController {
 		System.out.println("book object: "+book);
 		book.setAvailableCopies(book.getAvailableCopies()-1);
 		entityManager.merge(book);
+		CartItem cartItem;
 		if (book != null) {
-			CartItem cartItem = new CartItem(book, 1);
-//			System.out.println("cartItem: "+cartItem+" bookingCart:"+bookingCart.getBookingCartId());
-//			cartService.findBookingCartById(bookingCart.getBookingCartId());
-//			BookingCart bookingCart = bookingCart.addCartItem(cartItem);
-			System.out.println("1");
-			//cartService.saveNewBookingCart(bookingCart);
-			System.out.println("2");
+			cartItem = new CartItem(book, 1);
+			cartItem = cartItemService.saveNewCartItem(cartItem);
+			List<CartItem> cartItems = new ArrayList<CartItem>();
+			cartItems.add(cartItem);
+			BookingCart bookingCart = new BookingCart(cartItems);
+			bookingCartService.saveNewBookingCart(bookingCart);
 		}
 		System.out.println("3");
 		return "redirect:/searchBookByTitle/" + request.getSession().getAttribute("pattern");
@@ -215,11 +240,15 @@ public class AppController {
 	 *
 	 */
 	@RequestMapping(value = "/removeFromCart/{bookISBN}", method = RequestMethod.GET)
-	public void removeFromCart(@PathVariable("bookISBN") String isbn, Model model) {
-		BookingCart bookingCart = new BookingCart();
+	public void removeFromCart(@PathVariable("bookISBN") String isbn, Model model, HttpServletRequest httpServletRequest) {
+		CartItem cartItem = cartItemService.findCartItemByBookId(isbn);
+		String email = (String) httpServletRequest.getSession().getAttribute("email");
+		Patron patron = patronService.findPatronByEmailId(email);
+		BookingCart bookingCart = bookingCartService.findBookingCartById(patron.getBookingCart().getBookingCartId());
+		//List<CartItem> cartItems = bookingCart.findCartItems(cartItem.getCartItemId());
+		cartItemService.deleteCartItemById(cartItem.getCartItemId());
 		bookingCart.removeCartItemByISBN(isbn);
-		String bookingCartId = bookingCart.getBookingCartId();
-		cartService.deleteBookingCartById(bookingCartId);
+		bookingCartService.updateBookingCart(bookingCart);
 	}
 
 	/**
@@ -584,11 +613,13 @@ public class AppController {
 		if (request.getSession().getAttribute("loggedIn") == null) {
 			return "Login";
 		}
+
 		System.out.println("Isbn Value: "+isbn);
 		Query q = entityManager.createNativeQuery("SELECT * FROM book where isbn ='"+ isbn +"'",
 				Book.class);
 		List<Book> book = q.getResultList();
 		//Book book = bookService.findBookByISBN(isbn);
+
 		System.out.println("working getBookByISBN" + book);
 		//System.out.println("book " + book);
 		if (book == null) {
@@ -1115,9 +1146,8 @@ public class AppController {
 		ModelAndView error = new ModelAndView("Error");
 		System.out.println("inside checkout ");
 		System.out.println(isbnArray[0]);
-		String email = "amitesh.jaiswal21@gmail.com";
-		// String email =
-		// ((Patron)request.getSession().getAttribute("loggedIn")).getEmail();
+		//String email = "amitesh.jaiswal21@gmail.com";
+		String email =((Patron)request.getSession().getAttribute("loggedIn")).getEmail();
 		System.out.println(email);
 		Calendar c = new GregorianCalendar();
 		Date issueDate = c.getTime();
@@ -1157,7 +1187,7 @@ public class AppController {
 				BookStatus bookStatus = new BookStatus();
 
 				if (isbnArray[i].equals(patronsBookStatus.get(j).getBook().getIsbn())) {
-					System.out.println("fuck u");
+					System.out.println("Book is already there");
 					return error;
 				}
 			}
@@ -1183,7 +1213,7 @@ public class AppController {
 			bookStatus.setDueDate(dueDate);
 			bookStatus.setIssueDate(issueDate);
 			// bookStatus.setRequestDate(issueDate);
-			// bookStatus.setRequestStatus("done");
+			bookStatus.setRequestStatus("issued");
 			bookStatus.setBook(book);
 			bookStatus.getPatrons().add(patron);
 			book.setAvailableCopies(book.getAvailableCopies() - 1);
@@ -1313,25 +1343,18 @@ public class AppController {
 	@RequestMapping(value = "/setDateTime", method = RequestMethod.POST)
 	@Transactional
 	public void setDateTime(@RequestParam Map<String, String> reqParams, HttpServletRequest request) {
-		// "EEEE, MMM dd, yyyy HH:mm:ss a"
+		System.out.println("Setting time");
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 		Date date = null;
 		try {
 			date = formatter.parse(reqParams.get("appTime"));
 			globalDate = date;
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		request.getSession().setAttribute("appTime", date);
-
-		/*
-		 * System.out.println(date); BookStatus bookstatus = new BookStatus();
-		 * Book book = bookService.findBookByISBN("471417439");
-		 * bookstatus.setCurrentDate(date); bookstatus.setBook(book);
-		 * bookstatus.setReturnDate(date); entityManager.persist(bookstatus);
-		 */
-
+		// Will Execute code for sending reminders
+		sendDueReminder();
 	}
 
 	@RequestMapping(value = "/requestBook/{bookISBN}", method = RequestMethod.POST)
@@ -1398,39 +1421,40 @@ public class AppController {
 		entityManager.getTransaction().commit();
 		//removeFromBook_status.getResultList();
 	}
-//	
-//	@Scheduled(fixedRate = 1000 * 100000)
-//	public void removeRequestAfterThreeDays(){
-//		List<BookStatus> bookstatuslist = selectRequests();
-//		System.out.println("size of fetched result is " + bookstatuslist.size());
-//		Date todayDate = globalDate;
-//		System.out.println("printing todays date " + todayDate);
-//		int i = 0;
-//		while(bookstatuslist.size() > i){
-//			Date assignedDate = bookstatuslist.get(i).getAssignedDate();
-//			long x = (todayDate.getTime()-assignedDate.getTime());
-//			long passedDays = x/(1000 * 60 * 60 * 24);
-//			int count = (int)passedDays;
-//			if(count > 3){
-//				System.out.println("inside Loop");
-//				String bookStatusId = bookstatuslist.get(i).getBookStatusId();
-//				
-//				//Query q = entityManager.createNativeQuery("SELECT email FROM cmpe275termdb.patron_bookstatus where book_status_id = '" + bookStatusId + "';");
-//				//List<String> strList = q.getResultList();
-//				//Patron patron = patronService.findPatronByEmailId(strList.get(0));
-//				//System.out.println("first Name is " + patron.getFirstName());
-//				System.out.println("calling patron_bookstatus");
-//				deleteRowpatron_bookstatus(bookStatusId);
-//				System.out.println("calling book_status");
-//				deleteRowbook_status(bookStatusId);
-//				//bookstatuslist.get(i).getPatrons().remove(patron);
-//				//entityManager.persist(bookstatuslist.get(i));
-//			}
-//			i++;
-//		}
-//		System.out.println("cron job running");
-//
-//	}
+	
+/*	@Scheduled(fixedRate = 1000 * 10)
+	public void removeRequestAfterThreeDays(){
+		List<BookStatus> bookstatuslist = selectRequests();
+		System.out.println("size of fetched result is " + bookstatuslist.size());
+		Date todayDate = globalDate;
+		System.out.println("printing todays date " + todayDate);
+		int i = 0;
+		while(bookstatuslist.size() > i){
+			Date assignedDate = bookstatuslist.get(i).getAssignedDate();
+			long x = (todayDate.getTime()-assignedDate.getTime());
+			long passedDays = x/(1000 * 60 * 60 * 24);
+			int count = (int)passedDays;
+			if(count > 3){
+				System.out.println("inside Loop");
+				String bookStatusId = bookstatuslist.get(i).getBookStatusId();
+				
+				//Query q = entityManager.createNativeQuery("SELECT email FROM cmpe275termdb.patron_bookstatus where book_status_id = '" + bookStatusId + "';");
+				//List<String> strList = q.getResultList();
+				//Patron patron = patronService.findPatronByEmailId(strList.get(0));
+				//System.out.println("first Name is " + patron.getFirstName());
+				System.out.println("calling patron_bookstatus");
+				deleteRowpatron_bookstatus(bookStatusId);
+				System.out.println("calling book_status");
+				deleteRowbook_status(bookStatusId);
+				//bookstatuslist.get(i).getPatrons().remove(patron);
+				//entityManager.persist(bookstatuslist.get(i));
+			}
+			i++;
+		}
+		System.out.println("cron job running");
+
+	}*/
+
 
 	public void checkFunctionalityAtReturn(String[] isbnArray, HttpServletRequest request) {
 		Date minDate = new Date(Long.MAX_VALUE);
@@ -1457,13 +1481,52 @@ public class AppController {
 		}
 	}
 	
+	public void sendDueReminder(){
+		List<Patron> allPatron = patronService.findAllPatron();
+		int i = 0;
+		System.out.println("Total patrons fetched " + allPatron.size());
+		while(allPatron.size() > i){
+			System.out.println("Mail of he Patron" + allPatron.get(i).getEmail());
+			List<BookStatus> bookStatusList = allPatron.get(i).getBookStatus();
+			int j = 0;
+			String body = null;
+			System.out.println("Total Bookstatus fetched for a Patron" + bookStatusList.size());
+			while(bookStatusList.size() > j){
+				Date dueDate = bookStatusList.get(j).getDueDate();
+				System.out.println("DueDate " + dueDate);
+				Date todayDate = globalDate;
+				System.out.println("GLOBAL date " + globalDate);
+				if(dueDate != null && todayDate != null){
+					long x = (dueDate.getTime() - todayDate.getTime());
+					long daysLeft = x/(1000 * 60 * 60 * 24);
+					int count = (int)daysLeft;
+					System.out.println("Count is " + count);
+					// change Request status to issued while issuing 
+					if(bookStatusList.get(j).getRequestStatus().equals("issued") && count <= 5){
+						String isbn = bookStatusList.get(j).getBook().getIsbn();
+						String bookName = bookStatusList.get(j).getBook().getTitle();
+						body = body + "Book " + bookName + " " + " ISBN: " +  isbn + " is due on " + dueDate;
+					}
+				}
+				j++;
+			}
+			if(body != null){
+				System.out.println(body);
+				String email = allPatron.get(i).getEmail();
+				String subject = "Book Due Date Reminder";
+				sendGenericMail(email, subject, body);
+			}
+			i++;
+		}
+
+	}
+
 	public String getPatronByBookStatusId(String bookStatusId){
 		Query getPatronByBookStatusId = entityManager.createNativeQuery("Select email FROM cmpe275termdb.patron_bookstatus WHERE bookstatusid='" + bookStatusId + "'");
 		System.out.println(getPatronByBookStatusId);
 		String email = (String) getPatronByBookStatusId.getSingleResult();
 		return email;
 	}
-
 }
 
 // patron cant keep a more than 1 boook for same isbn
