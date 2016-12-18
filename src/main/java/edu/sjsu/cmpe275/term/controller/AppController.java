@@ -1437,7 +1437,7 @@ public class AppController {
 					minDate = bookStatus.getRequestDate();
 					bookStatus1 = bookStatus;
 				}
-				String email = (String) request.getSession().getAttribute("email");
+				String email = getPatronByBookStatusId(bookStatus.getBookStatusId());				
 				SimpleMailMessage message = new SimpleMailMessage();
 				message.setTo(email);
 				message.setSubject(
@@ -1450,6 +1450,13 @@ public class AppController {
 				bookStatusService.updateBookStatus(bookStatus1);
 			}
 		}
+	}
+	
+	public String getPatronByBookStatusId(String bookStatusId){
+		Query getPatronByBookStatusId = entityManager.createNativeQuery("Select email FROM cmpe275termdb.patron_bookstatus WHERE bookstatusid='" + bookStatusId + "'");
+		System.out.println(getPatronByBookStatusId);
+		String email = (String) getPatronByBookStatusId.getSingleResult();
+		return email;
 	}
 
 }
