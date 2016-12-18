@@ -39,4 +39,14 @@ public class BookStatusServiceImpl implements BookStatusService {
 	public void updateBookStatus(BookStatus bookStatus) {
 		bookStatusDAO.updateBookStatus(bookStatus);
 	}
+
+	/* (non-Javadoc)
+	 * @see edu.sjsu.cmpe275.term.service.BookStatusService#getListOfAllIssuedBooks()
+	 */
+	@Override
+	public List<BookStatus> getListOfAllIssuedBooks() {
+		// TODO Auto-generated method stub
+		
+		return bookStatusDAO.getListOfAllBookStatus();
+	}
 }

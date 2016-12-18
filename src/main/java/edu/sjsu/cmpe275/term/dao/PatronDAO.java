@@ -1,5 +1,7 @@
 package edu.sjsu.cmpe275.term.dao;
 
+import java.util.List;
+
 import edu.sjsu.cmpe275.term.model.Patron;
 
 public interface PatronDAO {
@@ -22,4 +24,10 @@ public interface PatronDAO {
 	 * @param patron
 	 */
 	public void updatePatron(Patron patron);
+	
+	/**
+	 * @author Ajeet
+	 * @return
+	 */
+	public List<Patron> findAllPatron();
 }
