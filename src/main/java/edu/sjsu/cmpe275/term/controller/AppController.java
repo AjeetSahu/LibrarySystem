@@ -37,6 +37,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import edu.sjsu.cmpe275.term.model.Book;
 import edu.sjsu.cmpe275.term.model.BookStatus;
 import edu.sjsu.cmpe275.term.model.BookingCart;
+import edu.sjsu.cmpe275.term.model.CartItem;
 import edu.sjsu.cmpe275.term.model.Librarian;
 import edu.sjsu.cmpe275.term.model.Patron;
 import edu.sjsu.cmpe275.term.model.Picture;
@@ -82,6 +83,9 @@ public class AppController {
 	public void setContext(ServletContext context) {
 		this.context = context;
 	}
+
+	
+	public Date globalDate = null;	
 
 	/**
 	 * 
@@ -179,12 +183,14 @@ public class AppController {
 		System.out.println("book object: "+book);
 		book.setAvailableCopies(book.getAvailableCopies()-1);
 		entityManager.merge(book);
-        if (book != null) {
-        	System.out.println("inside addCartItem");
-        	bookingCart.addCartItem(book);
-        	cartService.saveNewBookingCart(bookingCart);
-        }
-        return "redirect:/searchBookByTitle/"+request.getSession().getAttribute("pattern");
+
+		if (book != null) {
+			CartItem cartItem = new CartItem(book, 1);
+			bookingCart.addCartItem(cartItem);
+			cartService.saveNewBookingCart(bookingCart);
+		}
+		return "redirect:/searchBookByTitle/" + request.getSession().getAttribute("pattern");
+
 	}
 
 	/**
@@ -209,7 +215,8 @@ public class AppController {
 	public void removeFromCart(@PathVariable("bookISBN") String isbn, Model model) {
 		BookingCart bookingCart = new BookingCart();
 		bookingCart.removeCartItemByISBN(isbn);
-		cartService.deleteBookingCartById(bookingCart.getBookingCartId());
+		String bookingCartId = bookingCart.getBookingCartId();
+		cartService.deleteBookingCartById(bookingCartId);
 	}
 
 	/**
@@ -1306,6 +1313,7 @@ public class AppController {
 		Date date = null;
 		try {
 			date = formatter.parse(reqParams.get("appTime"));
+			globalDate = date;
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -1357,13 +1365,62 @@ public class AppController {
 		System.out.println(email);
 	}
 
-	@Scheduled(fixedRate = 90000000)
-	public void removeRequestAfterThreeDays() {
-		Query q = entityManager.createNativeQuery(
-				"SELECT * FROM cmpe275termdb.book_status where requeststatus = 'emailed';", BookStatus.class);
-		List<BookStatus> bookstatuslist = q.getResultList();
+
+	
+	public List<BookStatus> selectRequests(){
+		List<BookStatus> bookstatuslist = null;
+		Query selectRequestedRecodrs = entityManager.createNativeQuery("SELECT * FROM cmpe275termdb.book_status where requeststatus = 'emailed';", BookStatus.class);
+		bookstatuslist = selectRequestedRecodrs.getResultList();
+		return bookstatuslist;
+	}
+	
+	
+	public void deleteRowpatron_bookstatus(String bookStatusId){
+		entityManager.getTransaction().begin();
+		Query removeFromPatron_bookstatus = entityManager.createNativeQuery("DELETE FROM cmpe275termdb.patron_bookstatus WHERE book_status_id='" + bookStatusId + "'; ");
+		System.out.println(removeFromPatron_bookstatus);
+		removeFromPatron_bookstatus.executeUpdate();
+		entityManager.getTransaction().commit();
+		//removeFromPatron_bookstatus.getResultList();
+	}
+	
+	
+	public void deleteRowbook_status(String bookStatusId){
+		entityManager.getTransaction().begin();
+		Query removeFromBook_status = entityManager.createNativeQuery("DELETE FROM cmpe275termdb.book_status WHERE bookstatusid='" + bookStatusId + "';");
+		System.out.println(removeFromBook_status);
+		removeFromBook_status.executeUpdate();
+		entityManager.getTransaction().commit();
+		//removeFromBook_status.getResultList();
+	}
+	
+	@Scheduled(fixedRate = 1000 * 10)
+	public void removeRequestAfterThreeDays(){
+		List<BookStatus> bookstatuslist = selectRequests();
+		System.out.println("size of fetched result is " + bookstatuslist.size());
+		Date todayDate = globalDate;
+		System.out.println("printing todays date " + todayDate);
 		int i = 0;
-		while (bookstatuslist.size() > i) {
+		while(bookstatuslist.size() > i){
+			Date assignedDate = bookstatuslist.get(i).getAssignedDate();
+			long x = (todayDate.getTime()-assignedDate.getTime());
+			long passedDays = x/(1000 * 60 * 60 * 24);
+			int count = (int)passedDays;
+			if(count > 3){
+				System.out.println("inside Loop");
+				String bookStatusId = bookstatuslist.get(i).getBookStatusId();
+				
+				//Query q = entityManager.createNativeQuery("SELECT email FROM cmpe275termdb.patron_bookstatus where book_status_id = '" + bookStatusId + "';");
+				//List<String> strList = q.getResultList();
+				//Patron patron = patronService.findPatronByEmailId(strList.get(0));
+				//System.out.println("first Name is " + patron.getFirstName());
+				System.out.println("calling patron_bookstatus");
+				deleteRowpatron_bookstatus(bookStatusId);
+				System.out.println("calling book_status");
+				deleteRowbook_status(bookStatusId);
+				//bookstatuslist.get(i).getPatrons().remove(patron);
+				//entityManager.persist(bookstatuslist.get(i));
+			}
 			i++;
 		}
 		System.out.println("cron job running");
@@ -1373,7 +1430,6 @@ public class AppController {
 	public void checkFunctionalityAtReturn(String[] isbnArray, HttpServletRequest request) {
 		Date minDate = new Date(Long.MAX_VALUE);
 		BookStatus bookStatus1 = null;
-		Boolean flag = false;
 		for (int j = 0; j < isbnArray.length; j++) {
 			BookStatus bookStatus = bookStatusService.findBookStatusByISBN(isbnArray[j]);
 			if (bookStatus.getRequestStatus().equals("requested")) {

@@ -48,8 +48,6 @@ public class Book implements Serializable {
 	@OneToMany(mappedBy="book")
 	private List<BookStatus> bookStatus;
 	
-	@Column(name="QUANTITYINCART", nullable= false, columnDefinition= "int default 0")
-	private int quantityInCart;
 	public Book() {
 		super();
 	}
@@ -83,7 +81,6 @@ public class Book implements Serializable {
 		this.keywords = keywords;
 		this.coverImage = coverImage;
 		this.bookStatus = bookStatus;
-		this.quantityInCart = quantityInCart;
 	}
 	/**
 	 * 
@@ -239,22 +236,4 @@ public class Book implements Serializable {
 	public void setBookStatus(List<BookStatus> bookStatus) {
 		this.bookStatus = bookStatus;
 	}
-	/**
-	 * 
-	 * @return
-	 */
-	public int getQuantityInCart() {
-		return quantityInCart;
-	}
-	/**
-	 * 
-	 * @param quantityInCart
-	 */
-	public void setQuantityInCart(int quantityInCart) {
-		this.quantityInCart = quantityInCart;
-	}
-	
-	public void increaseQuantity() {
-		quantityInCart++;
-    }
 }
