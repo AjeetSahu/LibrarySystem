@@ -3,10 +3,11 @@ package edu.sjsu.cmpe275.term.model;
 import java.io.Serializable;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
-
+@Entity
 public class CartItem implements Serializable {
 
     private static final long serialVersionUID = 5865760835716664141L;
