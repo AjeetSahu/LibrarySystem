@@ -37,6 +37,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import edu.sjsu.cmpe275.term.model.Book;
 import edu.sjsu.cmpe275.term.model.BookStatus;
 import edu.sjsu.cmpe275.term.model.BookingCart;
+import edu.sjsu.cmpe275.term.model.CartItem;
 import edu.sjsu.cmpe275.term.model.Librarian;
 import edu.sjsu.cmpe275.term.model.Patron;
 import edu.sjsu.cmpe275.term.model.Picture;
@@ -180,7 +181,8 @@ public class AppController {
 		book.setAvailableCopies(book.getAvailableCopies() - 1);
 		entityManager.merge(book);
 		if (book != null) {
-			bookingCart.addCartItem(book);
+			CartItem cartItem = new CartItem(book, 1);
+			bookingCart.addCartItem(cartItem);
 			cartService.saveNewBookingCart(bookingCart);
 		}
 		return "redirect:/searchBookByTitle/" + request.getSession().getAttribute("pattern");
@@ -208,7 +210,8 @@ public class AppController {
 	public void removeFromCart(@PathVariable("bookISBN") String isbn, Model model) {
 		BookingCart bookingCart = new BookingCart();
 		bookingCart.removeCartItemByISBN(isbn);
-		cartService.deleteBookingCartById(bookingCart.getBookingCartId());
+		String bookingCartId = bookingCart.getBookingCartId();
+		cartService.deleteBookingCartById(bookingCartId);
 	}
 
 	/**

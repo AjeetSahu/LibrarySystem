@@ -8,7 +8,6 @@ import java.util.UUID;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
 import javax.persistence.PrePersist;
 
 @Entity
@@ -21,21 +20,14 @@ public class BookingCart implements Serializable {
 	private void generateSecret(){
 		this.setBookingCartId(UUID.randomUUID().toString());
 	}
-	@ManyToMany
-    private List<Book> Books;
+    private List<CartItem> cartItems;
     private int totalQuantity;
     
     public BookingCart() {
-        Books = new ArrayList<Book>();
+    	cartItems = new ArrayList<CartItem>();
         totalQuantity = 0;
     }
-        
-    public BookingCart(List<Book> books, int totalQuantity) {
-		super();
-		Books = books;
-		this.totalQuantity = totalQuantity;
-	}
-
+    
 	public String getBookingCartId() {
 		return bookingCartId;
 	}
@@ -44,12 +36,12 @@ public class BookingCart implements Serializable {
 		this.bookingCartId = bookingCartId;
 	}
 
-	public synchronized List<Book> getBooks() {
-        return Books;
+	public synchronized List<CartItem> getCartItems() {
+        return cartItems;
     }
 
-    public synchronized void setBooks(List<Book> Books) {
-        this.Books = Books;
+    public synchronized void setCartItems(List<CartItem> cartItems) {
+        this.cartItems = cartItems;
     }
 
     public synchronized int getTotalQuantity() {
@@ -60,20 +52,20 @@ public class BookingCart implements Serializable {
         this.totalQuantity = totalQuantity;
     }
 
-    public synchronized void addCartItem(Book Book) {
-        for (Book item : Books) {
-            if (Book.getIsbn().equalsIgnoreCase(item.getIsbn())){
+    public synchronized void addCartItem(CartItem cartItem) {
+        for (CartItem item : cartItems) {
+            if (cartItem.getBook().getIsbn().equalsIgnoreCase(item.getBook().getIsbn())){
                 item.increaseQuantity();
                 return;
             }
         }
-        Books.add(Book);
+        cartItems.add(cartItem);
     }
 
     public synchronized void removeCartItemByISBN(String id) {
-        Iterator<Book> iterator = Books.iterator();
+        Iterator<CartItem> iterator = cartItems.iterator();
         while (iterator.hasNext()) {
-            if (iterator.next().getIsbn().equalsIgnoreCase(id)){
+            if (iterator.next().getBook().getIsbn().equalsIgnoreCase(id)){
                 iterator.remove();
                 break;
             }
@@ -81,6 +73,6 @@ public class BookingCart implements Serializable {
     }
 
     public synchronized void clearCart() {
-        this.Books.clear();
+        this.cartItems.clear();
     }
 }
