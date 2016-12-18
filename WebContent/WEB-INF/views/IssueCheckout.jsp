@@ -104,7 +104,7 @@
 				<div class="col-md-3"></div>
 					<%-- <h1>${author}</h1> --%>
 					<div class="col-md-8">
-					<form action="/checkout" method="get">
+					<form action="/LibrarySystem/checkout" method="get">
 					<div id="tab" class="table-responsive">
 				        <table class="table table-striped">
 				            <thead>
