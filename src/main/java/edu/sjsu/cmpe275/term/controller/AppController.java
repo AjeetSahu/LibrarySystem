@@ -208,23 +208,26 @@ public class AppController {
 	@Transactional(propagation = Propagation.REQUIRED)
 	public String addToCart(@PathVariable("bookISBN") String isbn, Model model, HttpServletRequest request){
 		//Session session = entityManager.unwrap(Session.class);
-		try{
+		
 			System.out.println("isbn: "+isbn);
 			Book book = bookService.findBookByISBN(isbn);
 			System.out.println("book object: "+book);
+			CartItem cartItem = null;
+			try{
 			Query q = entityManager.createNativeQuery("SELECT * FROM cart_item where bookid ='"+ isbn +"'",
 					CartItem.class);
-			CartItem cartItem = (CartItem) q.getSingleResult();
+			cartItem = (CartItem) q.getSingleResult();
+			}
+			catch(Exception e1){
+				System.out.println("Error: "+e1);
+			}
 			System.out.println("cartItem: "+cartItem);
-			if(cartItem == null){
+			if(cartItem != null){
 				model.addAttribute("message", "Duplicate Addition to Cart");
 				model.addAttribute("httpStatus","404");
 				return "Error";
 			}
-//			book.setAvailableCopies(book.getAvailableCopies()-1);
-//			System.out.println("book1: "+book);
-//			entityManager.merge(book);
-			//CartItem cartItem;
+			try{
 			if (book != null) {
 				cartItem = new CartItem(book, 1);
 				List<CartItem> cartItems = new ArrayList<CartItem>();
