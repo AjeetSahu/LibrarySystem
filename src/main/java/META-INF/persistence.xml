@@ -8,5 +8,6 @@
 		<class>edu.sjsu.cmpe275.term.model.Patron</class>
 		<class>edu.sjsu.cmpe275.term.model.Publisher</class>
 		<class>edu.sjsu.cmpe275.term.model.BookingCart</class>
+		<class>edu.sjsu.cmpe275.term.model.CartItem</class>
 	</persistence-unit>
 </persistence>

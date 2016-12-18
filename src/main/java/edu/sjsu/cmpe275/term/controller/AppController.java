@@ -37,6 +37,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import edu.sjsu.cmpe275.term.model.Book;
 import edu.sjsu.cmpe275.term.model.BookStatus;
 import edu.sjsu.cmpe275.term.model.BookingCart;
+import edu.sjsu.cmpe275.term.model.CartItem;
 import edu.sjsu.cmpe275.term.model.Librarian;
 import edu.sjsu.cmpe275.term.model.Patron;
 import edu.sjsu.cmpe275.term.model.Picture;
@@ -196,10 +197,12 @@ public class AppController {
 		System.out.println("book object: "+book);
 		book.setAvailableCopies(book.getAvailableCopies()-1);
 		entityManager.merge(book);
-        if (book != null) {
-        	bookingCart.addCartItem(book);
-        }
-        return "redirect:/searchBookByTitle/"+request.getSession().getAttribute("pattern");
+		if (book != null) {
+			CartItem cartItem = new CartItem(book, 1);
+			bookingCart.addCartItem(cartItem);
+			cartService.saveNewBookingCart(bookingCart);
+		}
+		return "redirect:/searchBookByTitle/" + request.getSession().getAttribute("pattern");
 	}
 
 	/**
@@ -224,7 +227,8 @@ public class AppController {
 	public void removeFromCart(@PathVariable("bookISBN") String isbn, Model model) {
 		BookingCart bookingCart = new BookingCart();
 		bookingCart.removeCartItemByISBN(isbn);
-		cartService.deleteBookingCartById(bookingCart.getBookingCartId());
+		String bookingCartId = bookingCart.getBookingCartId();
+		cartService.deleteBookingCartById(bookingCartId);
 	}
 
 	/**
@@ -1430,7 +1434,6 @@ public class AppController {
 	public void checkFunctionalityAtReturn(String[] isbnArray, HttpServletRequest request) {
 		Date minDate = new Date(Long.MAX_VALUE);
 		BookStatus bookStatus1 = null;
-		Boolean flag = false;
 		for (int j = 0; j < isbnArray.length; j++) {
 			BookStatus bookStatus = bookStatusService.findBookStatusByISBN(isbnArray[j]);
 			if (bookStatus.getRequestStatus().equals("requested")) {
@@ -1438,7 +1441,7 @@ public class AppController {
 					minDate = bookStatus.getRequestDate();
 					bookStatus1 = bookStatus;
 				}
-				String email = (String) request.getSession().getAttribute("email");
+				String email = getPatronByBookStatusId(bookStatus.getBookStatusId());				
 				SimpleMailMessage message = new SimpleMailMessage();
 				message.setTo(email);
 				message.setSubject(
@@ -1490,8 +1493,15 @@ public class AppController {
 			}
 			i++;
 		}
+
 	}
 
+	public String getPatronByBookStatusId(String bookStatusId){
+		Query getPatronByBookStatusId = entityManager.createNativeQuery("Select email FROM cmpe275termdb.patron_bookstatus WHERE bookstatusid='" + bookStatusId + "'");
+		System.out.println(getPatronByBookStatusId);
+		String email = (String) getPatronByBookStatusId.getSingleResult();
+		return email;
+	}
 }
 
 // patron cant keep a more than 1 boook for same isbn
