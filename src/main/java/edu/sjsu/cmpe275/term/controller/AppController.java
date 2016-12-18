@@ -441,13 +441,15 @@ public class AppController {
 	 * @author Amitesh
 	 *
 	 */
-	@RequestMapping(value = "/patronReturnSearch", method = RequestMethod.GET)
+	@RequestMapping(value = "/patronReturnBook", method = RequestMethod.GET)
 	public ModelAndView patronReturnSearch(HttpServletRequest request) {
 		if (request.getSession().getAttribute("loggedIn") == null) {
 			ModelAndView login = new ModelAndView("Login");
 			return login;
 		}
-		ModelAndView patronSearch = new ModelAndView("PatronReturnSearch");
+		List<BookStatus> books = bookStatusService.getListOfAllIssuedBooks();
+		ModelAndView patronSearch = new ModelAndView("PatronReturnBook");
+		patronSearch.addObject("books",books);
 		return patronSearch;
 	}
 
@@ -1441,7 +1443,6 @@ public class AppController {
 	patronService.updatePatron(patron);
 
 	bookStatusService.returnBooks(patronsBookStatus.get(i).getBookStatusId());
-
 	break;
 
 	}

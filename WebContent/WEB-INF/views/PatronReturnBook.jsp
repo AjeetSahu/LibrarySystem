@@ -95,56 +95,27 @@
             <div class="col-md-7"  style="padding-top:120px;">
            <div class="row">
             <div class="col-md-1"></div>
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h3 style="text-align:center">Search Book to Return</h3>
-                    </div>
-                    <div class="panel-body">
-                        <form id="myForm" action='/LibrarySystem/book/' onsubmit="func();" method="get" class="form-horizontal">
-                            <div class="row">
-                            	<div class="col-md-1"></div>
-                            	<div class="col-md-10">
-                            		<label for="ex1">Search Book By ISBN: </label>
-							  		<input class="form-control" type="text" id="isbn" name="isbn" placeholder="Enter ISBN here" required />
-                            	</div>
-							</div>
-							<br>
-                            <div style="padding-left:40%">
-                                <input type="submit" class="btn btn-primary btn-lg" value="Search Book">
-                            </div>
-                           <!--  <div id="submitBtn" hidden="true">
-                            	<input type="submit" class="btn btn-primary btn-lg" value="Submit">
-                            </div> -->
-                        </form>
-                        
-                    </div>
-                    
+                <div id="tab" class="table-responsive">
+						        <table class="table table-striped">
+						            <thead>
+						            <tr>
+						                <th>ISBN</th>
+						                <th>Title</th>
+						                <th>#</th>
+						            </tr>
+						            </thead>
+						            <tbody>
+							<c:forEach var="book" items="${books}">
+							<tr>
+								<td>${book.getBook().getIsbn()}</td>
+								<td>${book.getBook().getTitle()}</td>
+								<td><a href="<%=request.getContextPath() %>/addToCart/${book.isbn}"><button class="btn btn-danger"></button></a></td>
+							</tr>
+							</c:forEach>
+							</tbody>
+				        </table>
+				    </div>
                  </div>
-                 </div>
-                 <%--<div class="row">
-                 <div id="tab" hidden=true>
-                 <c:forEach var="entry" items="${book}">
-					Name:  ${entry.author} <br/>
-					Value: ${entry.value} <br/>
-					</c:forEach>
-                  <table class="table" border=2px id="tab1">
-             <thead>
-             	<th>Author</th>
-             	<th>Title</th>
-             	<th>Call Number</th>
-             	<th>Publisher</th>
-             	<th>Year of Publication</th>
-             	<th>Cover Image</th>
-             </thead>
-             <tr>
-             	
-             </tr>
-          		</table>
-          		<button id="issueBook" class="btn btn-primary btn-lg">Issue</button>
-          		<input type="submit" class="btn btn-danger btn-lg" value="Checkout">
-         		</div>
-         		<div class="col-md-1"></div>
-           </div> --%>
            </div>  
            <div class="col-md-1"></div>          
        </div>
