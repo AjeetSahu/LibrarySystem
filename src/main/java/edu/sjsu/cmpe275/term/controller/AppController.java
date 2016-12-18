@@ -1187,15 +1187,27 @@ public class AppController {
 	 * @return
 	 */
 	
-	  @RequestMapping(value = "/checkout", method = RequestMethod.POST)
+	  @RequestMapping(value = "/checkout", method = RequestMethod.GET)
 	  @Transactional
-	  public ModelAndView checkout(@RequestParam(value = "isbn[]") String[] isbnArray, Model model,HttpServletRequest request) {
+	  public ModelAndView checkout(Model model,HttpServletRequest request) {
 	    ModelAndView success = new ModelAndView("PatronHome");
 	    ModelAndView error = new ModelAndView("Error");
-	    System.out.println("inside checkout ");
+	    String email = (String)request.getSession().getAttribute("email");
+	    System.out.println("email: "+email);
+	    Query q = entityManager.createNativeQuery("select cart_item.bookid from cart_item where bookingcartid =(select bookingcartid from patron where email='"+email+"')");
+		List<String> bookList = q.getResultList();
+		System.out.println("book size: "+bookList.toString());
+		//Book book = bookService.findBookByISBN(isbn);
+		String[] isbnArray = new String[bookList.size()];
+		for(int i=0; i<isbnArray.length; i++ ){
+			System.out.println("bookList "+i+" : "+bookList.get(i));
+			isbnArray[i] = bookList.get(i);
+			//System.out.println(isbnArray[i]);
+		}
+		
 	    System.out.println(isbnArray[0]);
-	    //String email = "kadakiaruchit@gmail.com";
-	    String email = ((Patron)request.getSession().getAttribute("loggedIn")).getEmail();
+	    // String email = "kadakiaruchit@gmail.com";
+	    //String email = ((Patron)request.getSession().getAttribute("loggedIn")).getEmail();
 	    System.out.println(email);
 	    Calendar c = new GregorianCalendar();
 	    Date issueDate = c.getTime();
@@ -1249,14 +1261,9 @@ public class AppController {
 	    
 	    }
 	    
-	    
-	    
-	    
 	    System.out.println("before for in checkout ");
 	    List<BookStatus> patronsBookStatus1 = patron.getBookStatus();
 	    System.out.println("before for in checkout 1 " + patronsBookStatus.size());
-	    
-	    
 	    
 //	    for (int i = 0; i < isbnArray.length; i++) {
 //	      for (int j = 0; j < patronsBookStatus.size(); j++) {
@@ -1266,9 +1273,6 @@ public class AppController {
 //	        }
 //	      }
 //	    }
-	    
-
-	    
 	    
 	    
 	    for (int i = 0; i < isbnArray.length; i++) {
@@ -1306,12 +1310,6 @@ public class AppController {
 	    return success;
 	  }
 	
-	
-	
-	
-
-
-
 	/*
 	 * Search Books Ruchit code strts here
 	 * 
