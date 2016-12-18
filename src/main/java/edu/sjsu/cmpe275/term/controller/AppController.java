@@ -1309,6 +1309,13 @@ public class AppController {
 	    activationMailSender.send(message);
 	    return success;
 	  }
+	  
+	  @RequestMapping(value = "/return", method = RequestMethod.POST)
+      public ModelAndView BookReturn(@RequestParam(value = "isbn") String isbn, Model model, HttpServletRequest request) {
+    	  String[] isbnArray = new String[1];
+    	  isbnArray[0] = isbn;
+    	  return Return(isbnArray, model, request);
+      }
 	
 	/*
 	 * Search Books Ruchit code strts here
@@ -1321,12 +1328,9 @@ public class AppController {
 	 * 
 	 */
 	
-
-	
 	///////////////Ruchit return Book code Starts ///////////////////////
 	
-	@RequestMapping(value = "/checkout/return", method = RequestMethod.POST)
-	public ModelAndView Return(@RequestParam(value = "isbn[]") String[] isbnArray, Model model, HttpServletRequest request) {
+	public ModelAndView Return(String[] isbnArray, Model model, HttpServletRequest request) {
 
 	ModelAndView success = new ModelAndView("PatronHome");
 
