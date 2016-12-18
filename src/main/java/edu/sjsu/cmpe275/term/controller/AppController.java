@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -44,7 +45,8 @@ import edu.sjsu.cmpe275.term.model.Picture;
 import edu.sjsu.cmpe275.term.model.Publisher;
 import edu.sjsu.cmpe275.term.service.BookService;
 import edu.sjsu.cmpe275.term.service.BookStatusService;
-import edu.sjsu.cmpe275.term.service.CartService;
+import edu.sjsu.cmpe275.term.service.BookingCartService;
+import edu.sjsu.cmpe275.term.service.CartItemService;
 import edu.sjsu.cmpe275.term.service.LibrarianService;
 import edu.sjsu.cmpe275.term.service.PatronService;
 
@@ -65,7 +67,10 @@ public class AppController {
 	private BookStatusService bookStatusService;
 
 	@Autowired
-	private CartService cartService;
+	private BookingCartService bookingCartService;
+	
+	@Autowired
+	private CartItemService cartItemService;
 
 	@Autowired
 	private static MailSender activationMailSender;
@@ -126,13 +131,19 @@ public class AppController {
 	public void setPatronService(PatronService patronService) {
 		this.patronService = patronService;
 	}
-
 	/**
 	 * 
-	 * @param cartService
+	 * @param bookingCartService
 	 */
-	public void setCartService(CartService cartService) {
-		this.cartService = cartService;
+	public void setBookingCartService(BookingCartService bookingCartService) {
+		this.bookingCartService = bookingCartService;
+	}
+	/**
+	 * 
+	 * @param cartItemService
+	 */
+	public void setCartItemService(CartItemService cartItemService) {
+		this.cartItemService = cartItemService;
 	}
 
 	/**
@@ -178,15 +189,18 @@ public class AppController {
 	@Transactional
 	public String addToCart(@PathVariable("bookISBN") String isbn, Model model, HttpServletRequest request){
 		//Session session = entityManager.unwrap(Session.class);
-		BookingCart bookingCart = new BookingCart();
 		Book book = bookService.findBookByISBN(isbn);
 		System.out.println("book object: "+book);
 		book.setAvailableCopies(book.getAvailableCopies()-1);
 		entityManager.merge(book);
+		CartItem cartItem;
 		if (book != null) {
-			CartItem cartItem = new CartItem(book, 1);
-			bookingCart.addCartItem(cartItem);
-			cartService.saveNewBookingCart(bookingCart);
+			cartItem = new CartItem(book, 1);
+			cartItem = cartItemService.saveNewCartItem(cartItem);
+			List<CartItem> cartItems = new ArrayList<CartItem>();
+			cartItems.add(cartItem);
+			BookingCart bookingCart = new BookingCart(cartItems);
+			bookingCartService.saveNewBookingCart(bookingCart);
 		}
 		return "redirect:/searchBookByTitle/" + request.getSession().getAttribute("pattern");
 	}
@@ -210,11 +224,15 @@ public class AppController {
 	 *
 	 */
 	@RequestMapping(value = "/removeFromCart/{bookISBN}", method = RequestMethod.GET)
-	public void removeFromCart(@PathVariable("bookISBN") String isbn, Model model) {
-		BookingCart bookingCart = new BookingCart();
+	public void removeFromCart(@PathVariable("bookISBN") String isbn, Model model, HttpServletRequest httpServletRequest) {
+		CartItem cartItem = cartItemService.findCartItemByBookId(isbn);
+		String email = (String) httpServletRequest.getSession().getAttribute("email");
+		Patron patron = patronService.findPatronByEmailId(email);
+		BookingCart bookingCart = bookingCartService.findBookingCartById(patron.getBookingCart().getBookingCartId());
+		//List<CartItem> cartItems = bookingCart.findCartItems(cartItem.getCartItemId());
+		cartItemService.deleteCartItemById(cartItem.getCartItemId());
 		bookingCart.removeCartItemByISBN(isbn);
-		String bookingCartId = bookingCart.getBookingCartId();
-		cartService.deleteBookingCartById(bookingCartId);
+		bookingCartService.updateBookingCart(bookingCart);
 	}
 
 	/**

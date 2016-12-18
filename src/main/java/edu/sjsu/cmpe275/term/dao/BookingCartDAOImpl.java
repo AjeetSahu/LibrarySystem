@@ -2,7 +2,7 @@ package edu.sjsu.cmpe275.term.dao;
 
 import edu.sjsu.cmpe275.term.model.BookingCart;
 
-public class CartDAOImpl extends AbstractDao<String, BookingCart> implements CartDAO {
+public class BookingCartDAOImpl extends AbstractDao<String, BookingCart> implements BookingCartDAO {
 
 	@Override
 	public BookingCart findBookingCartById(String bookingCartId) {
