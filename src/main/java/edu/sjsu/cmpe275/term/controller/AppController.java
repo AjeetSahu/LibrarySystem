@@ -180,7 +180,9 @@ public class AppController {
 		book.setAvailableCopies(book.getAvailableCopies()-1);
 		entityManager.merge(book);
         if (book != null) {
+        	System.out.println("inside addCartItem");
         	bookingCart.addCartItem(book);
+        	cartService.saveNewBookingCart(bookingCart);
         }
         return "redirect:/searchBookByTitle/"+request.getSession().getAttribute("pattern");
 	}
@@ -611,10 +613,10 @@ public class AppController {
 
 	@RequestMapping(value = "/cartCheckout", method = RequestMethod.GET)
 	public String cartCheckout(Model model, HttpServletRequest request) {
-		Query q = entityManager.createNativeQuery("SELECT * FROM BOOKING_CART", Book.class);
-		List<Book> books = q.getResultList();
-		System.out.println("books size: " + books);
-		model.addAttribute("books", books);
+		Query q = entityManager.createNativeQuery("SELECT * FROM BOOKING_CART", BookingCart.class);
+		List<BookingCart> bookCart = q.getResultList();
+		System.out.println("books size: " + bookCart);
+		model.addAttribute("books", bookCart);
 		return "IssueCheckout";
 	}
 

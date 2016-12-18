@@ -161,7 +161,7 @@
           link.href = link.href + text.value;
           //document.getElementById("tab").hidden=false;
           /* link.text = text.value; */
-          //alert(link.href);
+          alert(link.href);
       }
 	</script>
 	</body>

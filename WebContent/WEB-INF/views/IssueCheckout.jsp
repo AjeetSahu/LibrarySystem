@@ -110,16 +110,14 @@
 				            <thead>
 				            <tr>
 				                <th>ISBN</th>
-				                <th>Author</th>
-				                <th>Title</th>
+				                <th>Quantity</th>
 				            </tr>
 				            </thead>
 				            <tbody>
 					<c:forEach var="book" items="${books}">
 					<tr>
-						<td>${book.isbn}</td>
-						<td>${book.author}</td>
-						<td>${book.title}</td>
+						<td>${book.bookingCartId}</td>
+						<td>${book.totalQuantity}</td>
 					</tr>
 					</c:forEach>
 					</tbody>
