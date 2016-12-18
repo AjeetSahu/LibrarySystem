@@ -1,6 +1,5 @@
 package edu.sjsu.cmpe275.term.dao;
 
-import edu.sjsu.cmpe275.term.model.BookingCart;
 import edu.sjsu.cmpe275.term.model.CartItem;
 
 public class CartItemDAOImpl  extends AbstractDao<String, CartItem> implements CartItemDAO {

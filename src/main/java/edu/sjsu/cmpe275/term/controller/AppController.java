@@ -1,8 +1,12 @@
 package edu.sjsu.cmpe275.term.controller;
 
 import java.util.Map;
+import java.util.UUID;
+
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import javax.persistence.PrePersist;
 import javax.persistence.Query;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -25,6 +29,7 @@ import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -200,23 +205,50 @@ public class AppController {
 	 *
 	 */
 	@RequestMapping(value = "/addToCart/{bookISBN}", method = RequestMethod.GET)
-	@Transactional
+	@Transactional(propagation = Propagation.REQUIRED)
 	public String addToCart(@PathVariable("bookISBN") String isbn, Model model, HttpServletRequest request){
 		//Session session = entityManager.unwrap(Session.class);
-		Book book = bookService.findBookByISBN(isbn);
-		System.out.println("book object: "+book);
-		book.setAvailableCopies(book.getAvailableCopies()-1);
-		entityManager.merge(book);
-		CartItem cartItem;
-		if (book != null) {
-			cartItem = new CartItem(book, 1);
-			cartItem = cartItemService.saveNewCartItem(cartItem);
-			List<CartItem> cartItems = new ArrayList<CartItem>();
-			cartItems.add(cartItem);
-			BookingCart bookingCart = new BookingCart(cartItems);
-			bookingCartService.saveNewBookingCart(bookingCart);
+		try{
+			System.out.println("isbn: "+isbn);
+			Book book = bookService.findBookByISBN(isbn);
+			System.out.println("book object: "+book);
+			Query q = entityManager.createNativeQuery("SELECT * FROM cart_item where bookid ='"+ isbn +"'",
+					CartItem.class);
+			CartItem cartItem = (CartItem) q.getSingleResult();
+			System.out.println("cartItem: "+cartItem);
+			if(cartItem == null){
+				model.addAttribute("message", "Duplicate Addition to Cart");
+				model.addAttribute("httpStatus","404");
+				return "Error";
+			}
+//			book.setAvailableCopies(book.getAvailableCopies()-1);
+//			System.out.println("book1: "+book);
+//			entityManager.merge(book);
+			//CartItem cartItem;
+			if (book != null) {
+				cartItem = new CartItem(book, 1);
+				List<CartItem> cartItems = new ArrayList<CartItem>();
+				cartItems.add(cartItem);
+				System.out.println("CartItems: "+cartItems);
+				String email = (String) request.getSession().getAttribute("email");
+				Patron patron = patronService.findPatronByEmailId(email);
+				System.out.println("patron: "+patron);
+				BookingCart bookingCart = patron.getBookingCart();
+				bookingCart.setCartItems(cartItems);
+				System.out.println("bookingCart: "+bookingCart);
+				bookingCartService.updateBookingCart(bookingCart);
+				cartItem.setBookCartId(bookingCart);
+				cartItem = cartItemService.saveNewCartItem(cartItem);
+				System.out.println("cartItem: "+cartItem);
+			}
+			System.out.println("3");
 		}
-		System.out.println("3");
+		catch(Exception e){
+			System.out.println("Error: "+e);
+			model.addAttribute("httpStatus","404");
+			model.addAttribute("message","Error in AddBookToCart");
+			return "Error";
+		}
 		return "redirect:/searchBookByTitle/" + request.getSession().getAttribute("pattern");
 
 	}
@@ -240,15 +272,19 @@ public class AppController {
 	 *
 	 */
 	@RequestMapping(value = "/removeFromCart/{bookISBN}", method = RequestMethod.GET)
-	public void removeFromCart(@PathVariable("bookISBN") String isbn, Model model, HttpServletRequest httpServletRequest) {
-		CartItem cartItem = cartItemService.findCartItemByBookId(isbn);
-		String email = (String) httpServletRequest.getSession().getAttribute("email");
-		Patron patron = patronService.findPatronByEmailId(email);
-		BookingCart bookingCart = bookingCartService.findBookingCartById(patron.getBookingCart().getBookingCartId());
-		//List<CartItem> cartItems = bookingCart.findCartItems(cartItem.getCartItemId());
+	public String removeFromCart(@PathVariable("bookISBN") String isbn, Model model, HttpServletRequest request) {
+		System.out.println("isbn: "+isbn);
+		Query q = entityManager.createNativeQuery("SELECT * FROM cart_item where bookid ='"+ isbn +"'",
+				CartItem.class);
+		CartItem cartItem = (CartItem) q.getSingleResult();
+		System.out.println("cartItem: "+cartItem);
+		String bookingCartId = cartItem.getBookCartId().getBookingCartId();
+		System.out.println("bookingCartId: "+bookingCartId);
+		BookingCart bookingCart = cartItem.getBookCartId();
 		cartItemService.deleteCartItemById(cartItem.getCartItemId());
 		bookingCart.removeCartItemByISBN(isbn);
 		bookingCartService.updateBookingCart(bookingCart);
+		return "redirect:/cartCheckout";
 	}
 
 	/**
@@ -633,31 +669,32 @@ public class AppController {
 		model.addAttribute("httpStatus", HttpStatus.OK);
 		return "PatronHome";
 	}
-
+	
+	
 	@RequestMapping(value = "/searchBookByTitle/{pattern}", method = RequestMethod.GET)
 	public String searchBookByTitle(@PathVariable("pattern") String pattern, Model model, HttpServletRequest request) {
 		System.out.println("Hi Search book by Title: " + pattern);
-		// String pattern = reqParams.get("isbn");
-		if (pattern.equals(""))
-			return "PatronHome";
-		request.getSession().setAttribute("pattern", pattern);
-		Query q = entityManager.createNativeQuery("SELECT * FROM book where title LIKE '%" + pattern + "%'",
-				Book.class);
-		List<Book> books = q.getResultList();
-//		int i = 0;
-//		while (books.size() > i) {
-//			System.out.println(books.get(i).getAuthor());
-//			i++;
-//		}
-		model.addAttribute("books", books);
+		try{
+			// String pattern = reqParams.get("isbn");
+			if (pattern.equals(""))
+				return "PatronHome";
+			request.getSession().setAttribute("pattern", pattern);
+			Query q = entityManager.createNativeQuery("SELECT * FROM book where title LIKE '%" + pattern + "%'",
+					Book.class);
+			List<Book> books = q.getResultList();
+			model.addAttribute("books", books);
+		}
+		catch(Exception e){
+			System.out.println("Error: "+e);
+		}
 		return "PatronHome";
 	}	
 	
 
 	@RequestMapping(value = "/cartCheckout", method = RequestMethod.GET)
 	public String cartCheckout(Model model, HttpServletRequest request) {
-		Query q = entityManager.createNativeQuery("SELECT * FROM BOOKING_CART", BookingCart.class);
-		List<BookingCart> bookCart = q.getResultList();
+		Query q = entityManager.createNativeQuery("SELECT * FROM cart_item", CartItem.class);
+		List<CartItem> bookCart = q.getResultList();
 		System.out.println("books size: " + bookCart);
 		model.addAttribute("books", bookCart);
 		return "IssueCheckout";
@@ -1046,6 +1083,7 @@ public class AppController {
 	 * @param reqParams
 	 * @return
 	 */
+	@Transactional
 	@RequestMapping(value = "/newUser", method = RequestMethod.POST)
 	public ModelAndView createNewUser(@RequestParam Map<String, String> reqParams) {
 		System.out.println("inside createNewUser");
@@ -1073,11 +1111,18 @@ public class AppController {
 			} else {
 				if (patronService.findPatronByUniversityId(reqParams.get("universityId")) == null) {
 					Patron patron = new Patron();
+					String id = UUID.randomUUID().toString();
+					Query insertBookingCart = entityManager.createNativeQuery("Insert into Booking_cart values('"+id+"',"+0+")");
+					System.out.println(insertBookingCart);
+					insertBookingCart.executeUpdate();
+					BookingCart bookingCart = bookingCartService.findBookingCartById(id);
+					System.out.println("bookingCart: "+bookingCart);
 					patron.setEmail(reqParams.get("email"));
 					patron.setPassword(reqParams.get("password"));
 					patron.setUniversityId(reqParams.get("universityId"));
 					patron.setFirstName(reqParams.get("firstName"));
 					patron.setLastName(reqParams.get("lastName"));
+					patron.setBookingCart(bookingCart);
 					patron.setActivationCode(randomCode);
 					patron = patronService.saveNewPatron(patron);
 				} else {

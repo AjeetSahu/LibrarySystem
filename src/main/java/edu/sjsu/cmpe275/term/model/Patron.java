@@ -52,7 +52,6 @@ public class Patron  implements Serializable {
 //	private List<BookStatus> bookStatus;
 	
 	@ManyToMany(mappedBy="patrons")
-	
 	private List<BookStatus> bookStatus=new ArrayList<BookStatus>();
 	
 	@OneToOne(cascade = CascadeType.ALL, fetch=FetchType.LAZY)

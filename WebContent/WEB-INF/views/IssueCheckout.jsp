@@ -117,9 +117,9 @@
 				            <tbody>
 					<c:forEach var="book" items="${books}">
 					<tr>
-						<td>${book.bookingCartId}</td>
-						<td>${book.totalQuantity}</td>
-						<td><a href="<%=request.getContextPath() %>/removeFromCart/${book.bookingCartId}"><span class="glyphicon glyphicon-remove"></span></a></td>
+						<td>${book.getBook().getIsbn()}</td>
+						<td>${book.cartItemId}</td>
+						<td><a href="<%=request.getContextPath() %>/removeFromCart/${book.getBook().getIsbn()}"><span class="glyphicon glyphicon-remove"></span></a></td>
 					</tr>
 					</c:forEach>
 					</tbody>
