@@ -9,7 +9,7 @@ public interface BookStatusService {
 	public List<BookStatus> getListOfIssuedBooks(String patronId);
 	public List<BookStatus> getListOfAllIssuedBooks();
 	
-	public BookStatus findBookStatusByISBN(String isbn);
+	public List<BookStatus> findBookStatusByISBN(String isbn);
 	public void updateBookStatus(BookStatus bookStatus);
 	
 }

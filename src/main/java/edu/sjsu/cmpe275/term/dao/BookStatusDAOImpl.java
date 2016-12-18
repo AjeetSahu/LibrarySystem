@@ -22,8 +22,8 @@ public class BookStatusDAOImpl extends AbstractDao<String, BookStatus>  implemen
 	}
 
 	@Override
-	public BookStatus findBookStatusByISBN(String isbn) {
-		return findById(isbn);
+	public List<BookStatus> findBookStatusByISBN(String isbn) {
+		return (List<BookStatus>) findById(isbn);
 	}
 
 	@Override

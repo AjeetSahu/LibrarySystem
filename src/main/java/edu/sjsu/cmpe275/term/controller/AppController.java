@@ -1183,103 +1183,131 @@ public class AppController {
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping(value = "/checkout", method = RequestMethod.POST)
-	@Transactional
-	public ModelAndView checkout(@RequestParam(value = "isbn[]") String[] isbnArray, Model model,
-			HttpServletRequest request) {
-		ModelAndView success = new ModelAndView("PatronHome");
-		ModelAndView error = new ModelAndView("Error");
-		System.out.println("inside checkout ");
-		System.out.println(isbnArray[0]);
-		//String email = "amitesh.jaiswal21@gmail.com";
-		String email =((Patron)request.getSession().getAttribute("loggedIn")).getEmail();
-		System.out.println(email);
-		Calendar c = new GregorianCalendar();
-		Date issueDate = c.getTime();
-		c.add(Calendar.DATE, 30);
-		Date dueDate = c.getTime();
-		Patron patron = patronService.findPatronByEmailId(email);
-		String checkoutData = "";
+	
+	  @RequestMapping(value = "/checkout", method = RequestMethod.POST)
+	  @Transactional
+	  public ModelAndView checkout(@RequestParam(value = "isbn[]") String[] isbnArray, Model model,HttpServletRequest request) {
+	    ModelAndView success = new ModelAndView("PatronHome");
+	    ModelAndView error = new ModelAndView("Error");
+	    System.out.println("inside checkout ");
+	    System.out.println(isbnArray[0]);
+	    //String email = "kadakiaruchit@gmail.com";
+	    String email = ((Patron)request.getSession().getAttribute("loggedIn")).getEmail();
+	    System.out.println(email);
+	    Calendar c = new GregorianCalendar();
+	    Date issueDate = c.getTime();
+	    c.add(Calendar.DATE, 30);
+	    Date dueDate = c.getTime();
+	    Patron patron = patronService.findPatronByEmailId(email);
+	    String checkoutData = "";
+	    if (isbnArray.length > 5) {
+	      error.addObject("message", "You cant checkout more than 5 books at a tiime");
+	      return error;
+	    }
+	    if ((patron.getDayIssuedCount() + isbnArray.length) > 5) {
+	      error.addObject("message", "You can not checkout more than 5 books in one day");
+	      return error;
+	    }
+	    if ((patron.getTotalIssuedCount() + isbnArray.length) > 10) {
+	      error.addObject("message", "You can not checkout more than total 10 books ");
+	      return error;
+	    }
+	    System.out.println("before for in checkout ");
+	    List<BookStatus> patronsBookStatus = patron.getBookStatus();
+	    System.out.println("before for in checkout 1 " + patronsBookStatus.size());
+	    for (int i = 0; i < isbnArray.length; i++) {
+	      for (int j = 0; j < patronsBookStatus.size(); j++) {
+	        if (isbnArray[i].equals(patronsBookStatus.get(j).getBook().getIsbn())&&patronsBookStatus.get(j).getRequestStatus().equals("issued")) {
+	          error.addObject("message", "Book is already issued to you");
+	          return error;
+	        }
+	        
+	        if (isbnArray[i].equals(patronsBookStatus.get(j).getBook().getIsbn())&&patronsBookStatus.get(j).getRequestStatus().equals("requested")) {
+	        		System.out.println("inside requested its working");
+	        		bookStatusService.returnBooks(patronsBookStatus.get(j).getBookStatusId());
+		        }    
+	      }
+	    }
+	    
+	   //select bookstatus.getPatron() from book_status where status="emailed" and bookid=isbn;
+	   List< BookStatus> ans=null;
+	 outer:   for(int i=0;i<isbnArray.length;i++){
+	     Query ans1 = entityManager.createNativeQuery("SELECT * FROM book_status where requeststatus='emailed' and bookid='"+isbnArray[i]+"' ;",BookStatus.class);
+	    ans=ans1.getResultList();
+	    for(int j=0;j<ans.size();j++){
+	    	System.out.println("in request queue manget"+ans.get(j).getPatrons().get(0).getEmail());
+	    	if(!ans.get(j).getPatrons().get(0).getEmail().equals(email)){
+	    		System.out.println("choorrrr saale");
+	    		error.addObject("message", "Book is already on hold for another user");
+	    		return error;
+	    		
+	    	}
+	    }
+	    
+	    }
+	    
+	    
+	    
+	    
+	    System.out.println("before for in checkout ");
+	    List<BookStatus> patronsBookStatus1 = patron.getBookStatus();
+	    System.out.println("before for in checkout 1 " + patronsBookStatus.size());
+	    
+	    
+	    
+//	    for (int i = 0; i < isbnArray.length; i++) {
+//	      for (int j = 0; j < patronsBookStatus.size(); j++) {
+//	        if (isbnArray[i].equals(patronsBookStatus.get(j).getBook().getIsbn())&&patronsBookStatus.get(j).getRequestStatus().equals("emailed")) {
+//	          error.addObject("message", "Book is already issued to you");
+//	          return error;
+//	        }
+//	      }
+//	    }
+	    
 
-		if (isbnArray.length > 5) {
+	    
+	    
+	    
+	    for (int i = 0; i < isbnArray.length; i++) {
+	      BookStatus bookStatus = new BookStatus();
+	      Book book = bookService.findBookByISBN(isbnArray[i]);
+	      System.out.println("challa 1" + patron + book.getIsbn());
+	      if (book.getAvailableCopies() <= 0) {
+	        error.addObject("message", "Sorry, Requested book is out of stock");
+	        return error;
+	      }
+	   
+	      patron.setDayIssuedCount(patron.getDayIssuedCount() + 1);
+	      patron.setTotalIssuedCount(patron.getTotalIssuedCount() + 1);
+	      System.out.println(book.getIsbn() + " book bhai wala is " + book);
+	      bookStatus.setDueDate(dueDate);
+	      bookStatus.setIssueDate(issueDate);
+	      bookStatus.setBook(book);
+	      bookStatus.setRequestStatus("issued");
+	      bookStatus.getPatrons().add(patron);
+	      book.setAvailableCopies(book.getAvailableCopies() - 1);
+	      entityManager.persist(book);
+	      entityManager.persist(patron);
+	      entityManager.persist(bookStatus);
+	      checkoutData += "\n  ISBN: " + book.getIsbn() + " TITLE:" + book.getTitle() + "";
+	    }
+	    System.out.println("Hi You have just checked out following items");
+	    SimpleMailMessage message = new SimpleMailMessage();
+	    message.setTo(email);
+	    message.setSubject("SJSU Library Checkout on " + c.getTime());
+	    message.setText("Hi You have just checked out following items " + checkoutData + "\n = issueDate : " + issueDate
+	    + "   DueDate : " + dueDate + "   " + "\n Please don't reply on this email.");
+	    System.out.println("1");
+	    System.out.println(activationMailSender);
+	    activationMailSender.send(message);
+	    return success;
+	  }
+	
+	
+	
+	
 
-			// model.addAttribute("message2","You cant checkout more than 5
-			// books at a time");
-			error.addObject("message", "You cant checkout more than 5 books at a tiime");
-			return error;
-		}
 
-		if (patron.getDayIssuedCount() + isbnArray.length > 5) {
-			error.addObject("message1", "You cant checkout more than 5 books in one day");
-			return error;
-		}
-
-		if (patron.getTotalIssuedCount() + isbnArray.length > 10) {
-			error.addObject("message1", "You cant checkout more than total 10 books ");
-			return error;
-		}
-
-		System.out.println("before for in checkout ");
-
-		List<BookStatus> patronsBookStatus = patron.getBookStatus();
-
-		System.out.println("before for in checkout 1 " + patronsBookStatus.size());
-
-		for (int i = 0; i < isbnArray.length; i++) {
-
-			for (int j = 0; j < patronsBookStatus.size(); j++) {
-
-				BookStatus bookStatus = new BookStatus();
-
-				if (isbnArray[i].equals(patronsBookStatus.get(j).getBook().getIsbn())) {
-					System.out.println("Book is already there");
-					return error;
-				}
-			}
-		}
-
-		for (int i = 0; i < isbnArray.length; i++) {
-
-			BookStatus bookStatus = new BookStatus();
-
-			Book book = bookService.findBookByISBN(isbnArray[i]);
-			System.out.println("challa 1" + patron + book.getIsbn());
-			if (book.getAvailableCopies() <= 0) {
-				error.addObject("message", "Sorry, Requested book is not available");
-
-				return error;
-			}
-
-			patron.setDayIssuedCount(patron.getDayIssuedCount() + 1);
-			patron.setTotalIssuedCount(patron.getTotalIssuedCount() + 1);
-
-			System.out.println(book.getIsbn() + " book bhai wala is " + book);
-			// bookStatus.setCurrentDate(issueDate);
-			bookStatus.setDueDate(dueDate);
-			bookStatus.setIssueDate(issueDate);
-			// bookStatus.setRequestDate(issueDate);
-			bookStatus.setRequestStatus("issued");
-			bookStatus.setBook(book);
-			bookStatus.getPatrons().add(patron);
-			book.setAvailableCopies(book.getAvailableCopies() - 1);
-			entityManager.persist(book);
-			entityManager.persist(patron);
-			// bookStatus.getPatrons().add(patron);
-			entityManager.persist(bookStatus);
-
-			checkoutData += "\n  ISBN: " + book.getIsbn() + " TITLE:" + book.getTitle() + "	";
-		}
-		System.out.println("Hi You have just checked out following items");
-		SimpleMailMessage message = new SimpleMailMessage();
-		message.setTo(email);
-		message.setSubject("SJSU Library Checkout on " + c.getTime());
-		message.setText("Hi You have just checked out following items " + checkoutData + "\n = issueDate : " + issueDate
-				+ "   DueDate : " + dueDate + "   " + "\n Please don't reply on this email.");
-		System.out.println("1");
-		System.out.println(activationMailSender);
-		activationMailSender.send(message);
-		return success;
-	}
 
 	/*
 	 * Search Books Ruchit code strts here
@@ -1291,94 +1319,166 @@ public class AppController {
 	 * @return
 	 * 
 	 */
+	
 
+	
+	///////////////Ruchit return Book code Starts ///////////////////////
+	
 	@RequestMapping(value = "/checkout/return", method = RequestMethod.POST)
-	public ModelAndView Return(@RequestParam(value = "isbn[]") String[] isbnArray, Model model,
-			HttpServletRequest request) {
-		ModelAndView success = new ModelAndView("PatronHome");
-		ModelAndView error = new ModelAndView("Error");
+	public ModelAndView Return(@RequestParam(value = "isbn[]") String[] isbnArray, Model model, HttpServletRequest request) {
 
-		System.out.println("inside checkout ");
-		String email = "kadakiaruchit@gmail.com";
+	ModelAndView success = new ModelAndView("PatronHome");
 
-		// System.out.println(reqParams.get("isbn"));
-		// String email =
-		// ((Patron)request.getSession().getAttribute("loggedIn")).getEmail();
-		System.out.println(email);
-		Calendar c = new GregorianCalendar();
-		Date returnDate = c.getTime();
-		// int days = Days.daysBetween(returnDate, returnDate).getDays();
-		// c.add(Calendar.DATE, 30);
-		// Date dueDate=c.getTime();
-		// System.out.println();
+	ModelAndView error = new ModelAndView("Error");
 
-		String checkoutReturnData = "";
 
-		Patron patron = patronService.findPatronByEmailId(email);
+	System.out.println("inside checkout ");
 
-		if (isbnArray.length > 10) {
+	String email = "kadakiaruchit@gmail.com";
 
-			// model.addAttribute("message2","You cant checkout more than 5
-			// books at a time");
-			error.addObject("message", "You cant return more than 10 books at a tiime");
 
-			return error;
+	// System.out.println(reqParams.get("isbn"));
 
-		}
+	// String email =
 
-		Date returndate = null;
-		List<BookStatus> patronsBookStatus = patron.getBookStatus();
-		for (int i = 0; i < patronsBookStatus.size(); i++) {
-			System.out.println("bhaijaan" + patronsBookStatus.get(i).getBookStatusId() + "  "
-					+ patronsBookStatus.get(i).getBook().getIsbn());
-			for (int j = 0; j < isbnArray.length; j++) {
+	// ((Patron)request.getSession().getAttribute("loggedIn")).getEmail();
 
-				if (isbnArray[j].equals(patronsBookStatus.get(i).getBook().getIsbn())) {
-					System.out.println("deleting book isbn of " + isbnArray[j]);
-					checkoutReturnData += "\n" + patronsBookStatus.get(i).getBook().getIsbn() + "  "
-							+ patronsBookStatus.get(i).getBook().getTitle() + "  "
-							+ patronsBookStatus.get(i).getIssueDate();
-					System.out.println("penalty deleting book isbn of " + isbnArray[j]);
-					returndate = (Date) request.getSession().getAttribute("appTime");
-					int penalty = (int) (returndate.getTime() - patronsBookStatus.get(i).getDueDate().getTime())
-							/ (1000 * 60 * 60 * 24);
-					System.out.println("aaj ka date is " + returndate);
-					System.out.println("due ka date is " + patronsBookStatus.get(i).getDueDate());
+	System.out.println(email);
 
-					System.out.println(penalty);
-					patron.setTotalIssuedCount(patron.getTotalIssuedCount() - 1);
+	Calendar c = new GregorianCalendar();
 
-					if (penalty > 0) {
+	Date returnDate = c.getTime();
 
-						System.out.println("high heels ");
-						patron.setPenalty(patron.getPenalty() + penalty);
+	// int days = Days.daysBetween(returnDate, returnDate).getDays();
 
-						patronService.updatePatron(patron);
+	// c.add(Calendar.DATE, 30);
 
-					}
+	// Date dueDate=c.getTime();
 
-					bookStatusService.returnBooks(patronsBookStatus.get(i).getBookStatusId());
-					break;
-				}
+	// System.out.println();
 
-			}
 
-		}
+	String checkoutReturnData = "";
 
-		System.out.println("Hi You have just Returned out following item");
-		SimpleMailMessage message = new SimpleMailMessage();
-		message.setTo(email);
-		message.setSubject("SJSU Library Return on " + c.getTime());
-		message.setText("Hi You have just return out following items " + checkoutReturnData + "     Rerturn date is "
-				+ returndate + "\n = " + c.getTime() + "\n Please don't reply on this email.");
-		System.out.println("bhaijaan mail bje dia");
-		System.out.println(activationMailSender);
-		activationMailSender.send(message);
-		return success;
+
+	Patron patron = patronService.findPatronByEmailId(email);
+
+
+	if (isbnArray.length > 10) {
+
+
+	// model.addAttribute("message2","You cant checkout more than 5
+
+	// books at a time");
+
+	error.addObject("message", "You cant return more than 10 books at a tiime");
+
+
+	return error;
+
 
 	}
 
-	/**
+
+	Date returndate = null;
+
+	List<BookStatus> patronsBookStatus = patron.getBookStatus();
+
+	for (int i = 0; i < patronsBookStatus.size(); i++) {
+
+	System.out.println("bhaijaan" + patronsBookStatus.get(i).getBookStatusId() + "  "
+
+	+ patronsBookStatus.get(i).getBook().getIsbn());
+
+	for (int j = 0; j < isbnArray.length; j++) {
+
+
+	if (isbnArray[j].equals(patronsBookStatus.get(i).getBook().getIsbn())) {
+
+	System.out.println("deleting book isbn of " + isbnArray[j]);
+
+	checkoutReturnData += "\n" + patronsBookStatus.get(i).getBook().getIsbn() + "  "
+
+	+ patronsBookStatus.get(i).getBook().getTitle() + "  "
+
+	+ patronsBookStatus.get(i).getIssueDate();
+
+	System.out.println("penalty deleting book isbn of " + isbnArray[j]);
+
+	returndate = (Date) request.getSession().getAttribute("appTime");
+
+	long penalty =  (returndate.getTime() - patronsBookStatus.get(i).getDueDate().getTime())/ (1000 * 60 * 60 * 24);
+
+	System.out.println("aaj ka date is " + returndate);
+
+	System.out.println("due ka date is " + patronsBookStatus.get(i).getDueDate());
+
+	Book b=patronsBookStatus.get(i).getBook();
+
+	System.out.println("book is"+b+" "+b.getAvailableCopies());
+
+	b.setAvailableCopies(b.getAvailableCopies()+1);
+
+	bookService.updateBook(b);
+
+	System.out.println(penalty);
+
+	patron.setTotalIssuedCount(patron.getTotalIssuedCount() - 1);
+
+
+	if (penalty > 0) {
+
+
+	System.out.println("high heels ");
+
+	patron.setPenalty(patron.getPenalty() + (int)penalty);
+
+
+
+	}
+
+	patronService.updatePatron(patron);
+
+	bookStatusService.returnBooks(patronsBookStatus.get(i).getBookStatusId());
+
+	break;
+
+	}
+
+
+	}
+
+
+	}
+
+
+	System.out.println("Hi You have just Returned out following item");
+
+	SimpleMailMessage message = new SimpleMailMessage();
+
+	message.setTo(email);
+
+	message.setSubject("SJSU Library Return on " + c.getTime());
+
+	message.setText("Hi You have just return out following items " + checkoutReturnData + "     Rerturn date is "
+
+	+ returndate + "\n = " + c.getTime() + "\n Please don't reply on this email.");
+
+	System.out.println("bhaijaan mail bje dia");
+
+	System.out.println(activationMailSender);
+
+	activationMailSender.send(message);
+	checkFunctionalityAtReturn(isbnArray);
+	return success;
+	
+
+	}
+	//////////////Ruchit return Book code Ends here /////////////////////
+	  
+	  
+	  
+	  /**
 	 * Will set date and time of application as input by user in variable
 	 * "appTIme"
 	 * 
@@ -1400,6 +1500,7 @@ public class AppController {
 		request.getSession().setAttribute("appTime", date);
 		// Will Execute code for sending reminders
 		sendDueReminder();
+		removeRequestAfterThreeDays();
 	}
 
 	@RequestMapping(value = "/requestBook/{bookISBN}", method = RequestMethod.POST)
@@ -1440,12 +1541,23 @@ public class AppController {
 
 
 	
-	public List<BookStatus> selectRequests(){
+	public List<BookStatus> selectEmailed(){
 		List<BookStatus> bookstatuslist = null;
-		Query selectRequestedRecodrs = entityManager.createNativeQuery("SELECT * FROM cmpe275termdb.book_status where requeststatus = 'emailed';", BookStatus.class);
-		bookstatuslist = selectRequestedRecodrs.getResultList();
+		Query selectEmailedRecodrs = entityManager.createNativeQuery("SELECT * FROM cmpe275termdb.book_status where requeststatus = 'emailed';", BookStatus.class);
+		bookstatuslist = selectEmailedRecodrs.getResultList();
 		return bookstatuslist;
 	}
+	
+/*	public void selectRequested(String isbn){
+		List<BookStatus> requestedBookstatuslist = null;
+		Query selectRequestedRecodrs = entityManager.createNativeQuery("SELECT * FROM cmpe275termdb.book_status where requeststatus = 'requested' and bookid = '" + isbn + "';", BookStatus.class);
+		requestedBookstatuslist = selectRequestedRecodrs.getResultList();
+		int i = 0;
+		List<String> isbnList = new ArrayList<String>();
+		while(requestedBookstatuslist.size() > i){
+			isbnList.add(requestedBookstatuslist.get(i).getBook().get);
+		}
+	}*/
 	
 	
 	public void deleteRowpatron_bookstatus(String bookStatusId){
@@ -1467,23 +1579,28 @@ public class AppController {
 		//removeFromBook_status.getResultList();
 	}
 	
-/*	@Scheduled(fixedRate = 1000 * 10)
+	//@Scheduled(fixedRate = 1000 * 10)
 	public void removeRequestAfterThreeDays(){
-		List<BookStatus> bookstatuslist = selectRequests();
+		List<BookStatus> bookstatuslist = selectEmailed();
 		System.out.println("size of fetched result is " + bookstatuslist.size());
 		Date todayDate = globalDate;
 		System.out.println("printing todays date " + todayDate);
 		int i = 0;
+		List<String> isbns = new ArrayList<String>();
 		while(bookstatuslist.size() > i){
 			Date assignedDate = bookstatuslist.get(i).getAssignedDate();
 			long x = (todayDate.getTime()-assignedDate.getTime());
 			long passedDays = x/(1000 * 60 * 60 * 24);
 			int count = (int)passedDays;
+			System.out.println("NUmber of days " + count);
 			if(count > 3){
 				System.out.println("inside Loop");
+				//Function to find all other requests for the same book
+				//selectRequested(bookstatuslist.get(i).getBook().getIsbn());
+				isbns.add(bookstatuslist.get(i).getBook().getIsbn());
 				String bookStatusId = bookstatuslist.get(i).getBookStatusId();
-				
-				//Query q = entityManager.createNativeQuery("SELECT email FROM cmpe275termdb.patron_bookstatus where book_status_id = '" + bookStatusId + "';");
+				bookStatusService.returnBooks(bookStatusId);
+/*				//Query q = entityManager.createNativeQuery("SELECT email FROM cmpe275termdb.patron_bookstatus where book_status_id = '" + bookStatusId + "';");
 				//List<String> strList = q.getResultList();
 				//Patron patron = patronService.findPatronByEmailId(strList.get(0));
 				//System.out.println("first Name is " + patron.getFirstName());
@@ -1493,35 +1610,58 @@ public class AppController {
 				deleteRowbook_status(bookStatusId);
 				//bookstatuslist.get(i).getPatrons().remove(patron);
 				//entityManager.persist(bookstatuslist.get(i));
-			}
+*/			}
 			i++;
 		}
+		String[] arr = new String[isbns.size()];
+		for(int j = 0; j < isbns.size(); j++){
+			arr[j] = isbns.get(j);
+		}
+		checkFunctionalityAtReturn(arr);
 		System.out.println("cron job running");
 
-	}*/
+	}
+	
+	public List<BookStatus> findBookStatusForISBN(String isbn){
+		List<BookStatus> bookstatuslist = null;
+		Query selectListofBookStaus = entityManager.createNativeQuery("SELECT * FROM cmpe275termdb.book_status where bookid = '" + isbn + "';", BookStatus.class);
+		bookstatuslist = selectListofBookStaus.getResultList();
+		return bookstatuslist;
+	}
 
 
-	public void checkFunctionalityAtReturn(String[] isbnArray, HttpServletRequest request) {
+	public void checkFunctionalityAtReturn(String[] isbnArray) {
+		System.out.println("Inside CheckFuncationalityAt Return");
 		Date minDate = new Date(Long.MAX_VALUE);
 		BookStatus bookStatus1 = null;
 		for (int j = 0; j < isbnArray.length; j++) {
-			BookStatus bookStatus = bookStatusService.findBookStatusByISBN(isbnArray[j]);
-			if (bookStatus.getRequestStatus().equals("requested")) {
-				if (minDate.compareTo(bookStatus.getRequestDate()) > 0) {
-					minDate = bookStatus.getRequestDate();
-					bookStatus1 = bookStatus;
+			List<BookStatus> bookStatus = findBookStatusForISBN(isbnArray[j]);
+			if(bookStatus != null){
+				System.out.println("Total bookstatuses for  " + isbnArray[j] + " is " + bookStatus.size());
+				int k = 0;
+				while(bookStatus.size() > k){
+					if (bookStatus.get(k).getRequestStatus().equals("requested")) {
+						if (minDate.compareTo(bookStatus.get(k).getRequestDate()) > 0) {
+							minDate = bookStatus.get(k).getRequestDate();
+							bookStatus1 = bookStatus.get(k);
+						}
+						System.out.println("BookStatus Id for min value" + bookStatus1.getBookStatusId());
+						String email = getPatronByBookStatusId(bookStatus1.getBookStatusId());
+						System.out.println("Sending email to user");
+						SimpleMailMessage message = new SimpleMailMessage();
+						message.setTo(email);
+						message.setSubject(
+								"Your requested Book is now available");
+						message.setText(
+								"Thank you for requesting the book. \n The Book you requested is now available. Kindly issue it within 3 days. "
+										+ "Otherwise your request would be neglected. \n It is an auto generated email. Please don't reply on this email.");
+						activationMailSender.send(message);
+						System.out.println("Setting request status to emailed");
+						bookStatus1.setRequestStatus("emailed");
+						bookStatusService.updateBookStatus(bookStatus1);
+					}
+					k++;
 				}
-				String email = getPatronByBookStatusId(bookStatus.getBookStatusId());				
-				SimpleMailMessage message = new SimpleMailMessage();
-				message.setTo(email);
-				message.setSubject(
-						"Your requested Book is now available" + (Date) request.getSession().getAttribute("appTime"));
-				message.setText(
-						"Thank you for requesting the book. \n The Book you requested is now available. Kindly issue it within 3 days. "
-								+ "Otherwise your request would be neglected. \n It is an auto generated email. Please don't reply on this email.");
-				activationMailSender.send(message);
-				bookStatus1.setRequestStatus("emailed");
-				bookStatusService.updateBookStatus(bookStatus1);
 			}
 		}
 	}
@@ -1534,7 +1674,7 @@ public class AppController {
 			System.out.println("Mail of he Patron" + allPatron.get(i).getEmail());
 			List<BookStatus> bookStatusList = allPatron.get(i).getBookStatus();
 			int j = 0;
-			String body = null;
+			String body = "";
 			System.out.println("Total Bookstatus fetched for a Patron" + bookStatusList.size());
 			while(bookStatusList.size() > j){
 				Date dueDate = bookStatusList.get(j).getDueDate();
@@ -1547,15 +1687,15 @@ public class AppController {
 					int count = (int)daysLeft;
 					System.out.println("Count is " + count);
 					// change Request status to issued while issuing 
-					if(bookStatusList.get(j).getRequestStatus().equals("issued") && count <= 5){
+					if(bookStatusList.get(j).getRequestStatus().equals("issued") && count <= 5 && count > 0){
 						String isbn = bookStatusList.get(j).getBook().getIsbn();
 						String bookName = bookStatusList.get(j).getBook().getTitle();
-						body = body + "Book " + bookName + " " + " ISBN: " +  isbn + " is due on " + dueDate;
+						body = body + "Book " + bookName + " " + " ISBN: " +  isbn + " is due on " + dueDate + "\n";
 					}
 				}
 				j++;
 			}
-			if(body != null){
+			if(!body.equals("")){
 				System.out.println(body);
 				String email = allPatron.get(i).getEmail();
 				String subject = "Book Due Date Reminder";
@@ -1567,7 +1707,7 @@ public class AppController {
 	}
 
 	public String getPatronByBookStatusId(String bookStatusId){
-		Query getPatronByBookStatusId = entityManager.createNativeQuery("Select email FROM cmpe275termdb.patron_bookstatus WHERE bookstatusid='" + bookStatusId + "'");
+		Query getPatronByBookStatusId = entityManager.createNativeQuery("Select email FROM cmpe275termdb.patron_bookstatus WHERE book_status_id='" + bookStatusId + "';");
 		System.out.println(getPatronByBookStatusId);
 		String email = (String) getPatronByBookStatusId.getSingleResult();
 		return email;
