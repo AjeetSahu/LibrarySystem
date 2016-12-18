@@ -262,6 +262,7 @@ public class AppController {
 	 * @author Pratik
 	 *
 	 */
+	
 	@RequestMapping(value = "/clearCart", method = RequestMethod.GET)
 	public void clearCart(Model model) {
 		BookingCart bookingCart = new BookingCart();
@@ -1214,6 +1215,8 @@ public class AppController {
 			isbnArray[i] = bookList.get(i);
 			//System.out.println(isbnArray[i]);
 		}
+		BookingCart bookingCart = new BookingCart();
+		bookingCart.clearCart();
 		
 	    System.out.println(isbnArray[0]);
 	    // String email = "kadakiaruchit@gmail.com";
