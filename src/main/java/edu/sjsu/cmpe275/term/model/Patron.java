@@ -64,9 +64,8 @@ public class Patron  implements Serializable {
 	}
 	/**
 	 * 
-	 * @param patronId
-	 * @param universityId
 	 * @param email
+	 * @param universityId
 	 * @param firstName
 	 * @param lastName
 	 * @param password
@@ -75,15 +74,16 @@ public class Patron  implements Serializable {
 	 * @param penalty
 	 * @param phoneNumber
 	 * @param status
-	 * @param bookStatus
 	 * @param activationCode
+	 * @param bookStatus
+	 * @param bookingCart
 	 */
-	public Patron(String universityId, String email, String firstName, String lastName, String password,
-			int totalIssuedCount, int dayIssuedCount, int penalty, int phoneNumber, boolean status,
-			List<BookStatus> bookStatus, int activationCode) {
+	public Patron(String email, String universityId, String firstName, String lastName, String password,
+			int totalIssuedCount, int dayIssuedCount, int penalty, int phoneNumber, boolean status, int activationCode,
+			List<BookStatus> bookStatus, BookingCart bookingCart) {
 		super();
-		this.universityId = universityId;
 		this.email = email;
+		this.universityId = universityId;
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.password = password;
@@ -92,9 +92,11 @@ public class Patron  implements Serializable {
 		this.penalty = penalty;
 		this.phoneNumber = phoneNumber;
 		this.status = status;
-		this.bookStatus = bookStatus;
 		this.activationCode = activationCode;
+		this.bookStatus = bookStatus;
+		this.bookingCart = bookingCart;
 	}
+
 	/**
 	 * 
 	 * @return
@@ -258,5 +260,20 @@ public class Patron  implements Serializable {
 	 */
 	public void setActivationCode(int activationCode) {
 		this.activationCode = activationCode;
+	}
+	/**
+	 * 
+	 * @return
+	 */
+	public BookingCart getBookingCart() {
+		return bookingCart;
+	}
+	/**
+	 * 
+	 * @param bookingCart
+	 */
+	public void setBookingCart(BookingCart bookingCart) {
+		this.bookingCart = bookingCart;
 	}	
+	
 }

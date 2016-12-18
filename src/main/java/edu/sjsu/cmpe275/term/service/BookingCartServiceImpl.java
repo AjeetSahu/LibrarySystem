@@ -2,36 +2,36 @@ package edu.sjsu.cmpe275.term.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import edu.sjsu.cmpe275.term.dao.CartDAO;
+import edu.sjsu.cmpe275.term.dao.BookingCartDAO;
 import edu.sjsu.cmpe275.term.model.BookingCart;
 
-public class CartServiceImpl implements CartService {
+public class BookingCartServiceImpl implements BookingCartService {
 	
 	@Autowired
-	private CartDAO cartDAO;
+	private BookingCartDAO bookingCartDAO;
 	
-	public void setCartDAO(CartDAO cartDAO) {
-		this.cartDAO = cartDAO;
+	public void setBookingCartDAO(BookingCartDAO bookingCartDAO) {
+		this.bookingCartDAO = bookingCartDAO;
 	}
 
 	@Override
 	public BookingCart findBookingCartById(String bookingCartId) {
-		return cartDAO.findBookingCartById(bookingCartId);
+		return bookingCartDAO.findBookingCartById(bookingCartId);
 	}
 
 	@Override
 	public BookingCart saveNewBookingCart(BookingCart bookingCart) {
-		return cartDAO.saveNewBookingCart(bookingCart);
+		return bookingCartDAO.saveNewBookingCart(bookingCart);
 	}
 
 	@Override
 	public void updateBookingCart(BookingCart bookingCart) {
-		cartDAO.updateBookingCart(bookingCart);
+		bookingCartDAO.updateBookingCart(bookingCart);
 	}
 
 	@Override
 	public void deleteBookingCartById(String bookingCartId) {
-		cartDAO.deleteBookingCartById(bookingCartId);
+		bookingCartDAO.deleteBookingCartById(bookingCartId);
 	}
 
 }
