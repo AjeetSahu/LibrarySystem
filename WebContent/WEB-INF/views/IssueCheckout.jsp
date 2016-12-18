@@ -111,6 +111,7 @@
 				            <tr>
 				                <th>ISBN</th>
 				                <th>Quantity</th>
+				                <th>Remove</th>
 				            </tr>
 				            </thead>
 				            <tbody>
@@ -118,6 +119,7 @@
 					<tr>
 						<td>${book.bookingCartId}</td>
 						<td>${book.totalQuantity}</td>
+						<td><a href="<%=request.getContextPath() %>/removeFromCart/${book.bookingCartId}"><span class="glyphicon glyphicon-remove"></span></a></td>
 					</tr>
 					</c:forEach>
 					</tbody>

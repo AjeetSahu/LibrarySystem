@@ -20,7 +20,7 @@ public class CartItem implements Serializable {
 	@JoinColumn(name="BOOKID")
     private Book book;
     private int quantity;
-
+    
     public CartItem() {
     }
 

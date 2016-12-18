@@ -178,17 +178,20 @@ public class AppController {
 	@Transactional
 	public String addToCart(@PathVariable("bookISBN") String isbn, Model model, HttpServletRequest request){
 		//Session session = entityManager.unwrap(Session.class);
-		BookingCart bookingCart = new BookingCart();
 		Book book = bookService.findBookByISBN(isbn);
 		System.out.println("book object: "+book);
 		book.setAvailableCopies(book.getAvailableCopies()-1);
 		entityManager.merge(book);
-
 		if (book != null) {
 			CartItem cartItem = new CartItem(book, 1);
-			bookingCart.addCartItem(cartItem);
-			cartService.saveNewBookingCart(bookingCart);
+//			System.out.println("cartItem: "+cartItem+" bookingCart:"+bookingCart.getBookingCartId());
+//			cartService.findBookingCartById(bookingCart.getBookingCartId());
+//			BookingCart bookingCart = bookingCart.addCartItem(cartItem);
+			System.out.println("1");
+			//cartService.saveNewBookingCart(bookingCart);
+			System.out.println("2");
 		}
+		System.out.println("3");
 		return "redirect:/searchBookByTitle/" + request.getSession().getAttribute("pattern");
 
 	}
@@ -581,18 +584,20 @@ public class AppController {
 		if (request.getSession().getAttribute("loggedIn") == null) {
 			return "Login";
 		}
-
-		Book book = bookService.findBookByISBN("9788881555581");
+		System.out.println("Isbn Value: "+isbn);
+		Query q = entityManager.createNativeQuery("SELECT * FROM book where isbn ='"+ isbn +"'",
+				Book.class);
+		List<Book> book = q.getResultList();
+		//Book book = bookService.findBookByISBN(isbn);
 		System.out.println("working getBookByISBN" + book);
-		System.out.println("book " + book);
+		//System.out.println("book " + book);
 		if (book == null) {
 			System.out.println("Unable to find book as book with ISBN " + isbn + " doesnot exist");
 			model.addAttribute("message", "Unable to find book as book with ISBN " + isbn + " doesnot exist");
 			model.addAttribute("httpStatus", HttpStatus.NOT_FOUND);
 			return "Error";
 		}
-		model.addAttribute("book", book);
-		model.addAttribute("author", book.getAuthor());
+		model.addAttribute("books", book);
 		model.addAttribute("test", "test");
 		model.addAttribute("httpStatus", HttpStatus.OK);
 		return "PatronHome";
@@ -608,11 +613,11 @@ public class AppController {
 		Query q = entityManager.createNativeQuery("SELECT * FROM book where title LIKE '%" + pattern + "%'",
 				Book.class);
 		List<Book> books = q.getResultList();
-		int i = 0;
-		while (books.size() > i) {
-			System.out.println(books.get(i).getAuthor());
-			i++;
-		}
+//		int i = 0;
+//		while (books.size() > i) {
+//			System.out.println(books.get(i).getAuthor());
+//			i++;
+//		}
 		model.addAttribute("books", books);
 		return "PatronHome";
 	}	
@@ -807,7 +812,7 @@ public class AppController {
 			return "Login";
 		}
 		// ModelAndView patron = new ModelAndView("PatronHome");
-		Book book = bookService.findBookByISBN("9788881555581");
+		Book book = bookService.findBookByISBN("123457777");
 		// model.addAttribute("author",book.getAuthor());
 		System.out.println("book: " + book);
 		model.addAttribute("pattern", request.getSession().getAttribute("patron"));
@@ -1393,39 +1398,39 @@ public class AppController {
 		entityManager.getTransaction().commit();
 		//removeFromBook_status.getResultList();
 	}
-	
-	@Scheduled(fixedRate = 1000 * 10)
-	public void removeRequestAfterThreeDays(){
-		List<BookStatus> bookstatuslist = selectRequests();
-		System.out.println("size of fetched result is " + bookstatuslist.size());
-		Date todayDate = globalDate;
-		System.out.println("printing todays date " + todayDate);
-		int i = 0;
-		while(bookstatuslist.size() > i){
-			Date assignedDate = bookstatuslist.get(i).getAssignedDate();
-			long x = (todayDate.getTime()-assignedDate.getTime());
-			long passedDays = x/(1000 * 60 * 60 * 24);
-			int count = (int)passedDays;
-			if(count > 3){
-				System.out.println("inside Loop");
-				String bookStatusId = bookstatuslist.get(i).getBookStatusId();
-				
-				//Query q = entityManager.createNativeQuery("SELECT email FROM cmpe275termdb.patron_bookstatus where book_status_id = '" + bookStatusId + "';");
-				//List<String> strList = q.getResultList();
-				//Patron patron = patronService.findPatronByEmailId(strList.get(0));
-				//System.out.println("first Name is " + patron.getFirstName());
-				System.out.println("calling patron_bookstatus");
-				deleteRowpatron_bookstatus(bookStatusId);
-				System.out.println("calling book_status");
-				deleteRowbook_status(bookStatusId);
-				//bookstatuslist.get(i).getPatrons().remove(patron);
-				//entityManager.persist(bookstatuslist.get(i));
-			}
-			i++;
-		}
-		System.out.println("cron job running");
-
-	}
+//	
+//	@Scheduled(fixedRate = 1000 * 100000)
+//	public void removeRequestAfterThreeDays(){
+//		List<BookStatus> bookstatuslist = selectRequests();
+//		System.out.println("size of fetched result is " + bookstatuslist.size());
+//		Date todayDate = globalDate;
+//		System.out.println("printing todays date " + todayDate);
+//		int i = 0;
+//		while(bookstatuslist.size() > i){
+//			Date assignedDate = bookstatuslist.get(i).getAssignedDate();
+//			long x = (todayDate.getTime()-assignedDate.getTime());
+//			long passedDays = x/(1000 * 60 * 60 * 24);
+//			int count = (int)passedDays;
+//			if(count > 3){
+//				System.out.println("inside Loop");
+//				String bookStatusId = bookstatuslist.get(i).getBookStatusId();
+//				
+//				//Query q = entityManager.createNativeQuery("SELECT email FROM cmpe275termdb.patron_bookstatus where book_status_id = '" + bookStatusId + "';");
+//				//List<String> strList = q.getResultList();
+//				//Patron patron = patronService.findPatronByEmailId(strList.get(0));
+//				//System.out.println("first Name is " + patron.getFirstName());
+//				System.out.println("calling patron_bookstatus");
+//				deleteRowpatron_bookstatus(bookStatusId);
+//				System.out.println("calling book_status");
+//				deleteRowbook_status(bookStatusId);
+//				//bookstatuslist.get(i).getPatrons().remove(patron);
+//				//entityManager.persist(bookstatuslist.get(i));
+//			}
+//			i++;
+//		}
+//		System.out.println("cron job running");
+//
+//	}
 
 	public void checkFunctionalityAtReturn(String[] isbnArray, HttpServletRequest request) {
 		Date minDate = new Date(Long.MAX_VALUE);
