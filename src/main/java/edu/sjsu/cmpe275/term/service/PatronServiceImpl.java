@@ -1,5 +1,7 @@
 package edu.sjsu.cmpe275.term.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import edu.sjsu.cmpe275.term.dao.PatronDAO;
@@ -37,5 +39,10 @@ public class PatronServiceImpl implements PatronService {
 		@Override
 		public Patron findPatronByEmailId(String id) {
 			return patronDAO.findPatronByEmailId(id);
+		}
+
+		@Override
+		public List<Patron> findAllPatron() {
+			return patronDAO.findAllPatron();
 		}
 }

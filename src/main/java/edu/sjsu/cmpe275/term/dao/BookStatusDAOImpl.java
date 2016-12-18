@@ -30,5 +30,14 @@ public class BookStatusDAOImpl extends AbstractDao<String, BookStatus>  implemen
 	public void updateBookStatus(BookStatus bookStatus) {
 		update(bookStatus);
 	}
+
+	/* (non-Javadoc)
+	 * @see edu.sjsu.cmpe275.term.dao.BookStatusDAO#getListOfAllBookStatus()
+	 */
+	@Override
+	public List<BookStatus> getListOfAllBookStatus() {
+		// TODO Auto-generated method stub
+		return getListOfAllBookStatus();
+	}
 }
 

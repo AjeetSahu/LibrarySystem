@@ -54,6 +54,7 @@ public abstract class AbstractDao<PK extends Serializable, T> {
 	 */
 	@SuppressWarnings("unchecked")
 	public List<T> findAll() {
+		System.out.println("Fetchig all Patrons");
 		return this.entityManager.createQuery("from "+this.persistentClass.getName()).getResultList();
 	}
 
@@ -106,6 +107,18 @@ public abstract class AbstractDao<PK extends Serializable, T> {
 			return this.entityManager.createNativeQuery("Select bookstatusid from book_status"
 				+ " where bookstatusid IN (Select book_status_id from patron_bookstatus "
 				+ "where email='"+id.toString()+"')").getResultList();
+		}catch(Exception e){
+			System.out.println("Exception "+ e);
+			return null;
+		}
+	}
+	
+	
+	@SuppressWarnings("unchecked")
+	public List<T> getListOfAllBookStatus(){
+		try{
+			System.out.println("Fetching all book statuses");
+			return this.entityManager.createNativeQuery("Select * from book_status").getResultList();
 		}catch(Exception e){
 			System.out.println("Exception "+ e);
 			return null;
