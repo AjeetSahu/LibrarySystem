@@ -1145,6 +1145,11 @@ public class AppController {
 	    System.out.println(isbnArray[0]);
 	    //String email = "kadakiaruchit@gmail.com";
 	    String email = ((Patron)request.getSession().getAttribute("loggedIn")).getEmail();
+	    
+	    
+	    
+	    
+	    
 	    System.out.println(email);
 	    Calendar c = new GregorianCalendar();
 	    Date issueDate = c.getTime();
@@ -1164,17 +1169,72 @@ public class AppController {
 	      error.addObject("message", "You can not checkout more than total 10 books ");
 	      return error;
 	    }
+	    
+	    
+	    
+	    
+	    
+	    
 	    System.out.println("before for in checkout ");
 	    List<BookStatus> patronsBookStatus = patron.getBookStatus();
 	    System.out.println("before for in checkout 1 " + patronsBookStatus.size());
 	    for (int i = 0; i < isbnArray.length; i++) {
 	      for (int j = 0; j < patronsBookStatus.size(); j++) {
-	        if (isbnArray[i].equals(patronsBookStatus.get(j).getBook().getIsbn())) {
+	        if (isbnArray[i].equals(patronsBookStatus.get(j).getBook().getIsbn())&&patronsBookStatus.get(j).getRequestStatus().equals("issued")) {
 	          error.addObject("message", "Book is already issued to you");
 	          return error;
 	        }
+	        
+	        if (isbnArray[i].equals(patronsBookStatus.get(j).getBook().getIsbn())&&patronsBookStatus.get(j).getRequestStatus().equals("requested")) {
+	        		System.out.println("inside requested its working");
+	        		bookStatusService.returnBooks(patronsBookStatus.get(j).getBookStatusId());
+		        }    
+	        
+	     
+	        
+	        
 	      }
 	    }
+	    
+	   //select bookstatus.getPatron() from book_status where status="emailed" and bookid=isbn;
+	   List< BookStatus> ans=null;
+	 outer:   for(int i=0;i<isbnArray.length;i++){
+	     Query ans1 = entityManager.createNativeQuery("SELECT * FROM book_status where requeststatus='emailed' and bookid='"+isbnArray[i]+"' ;",BookStatus.class);
+	    ans=ans1.getResultList();
+	    for(int j=0;j<ans.size();j++){
+	    	System.out.println("in request queue manget"+ans.get(j).getPatrons().get(0).getEmail());
+	    	if(!ans.get(j).getPatrons().get(0).getEmail().equals(email)){
+	    		System.out.println("choorrrr saale");
+	    		error.addObject("message", "Book is already on hold for another user");
+	    		return error;
+	    		
+	    	}
+	    }
+	    
+	    }
+	    
+	    
+	    
+	    
+	    System.out.println("before for in checkout ");
+	    List<BookStatus> patronsBookStatus1 = patron.getBookStatus();
+	    System.out.println("before for in checkout 1 " + patronsBookStatus.size());
+	    
+	    
+	    
+//	    for (int i = 0; i < isbnArray.length; i++) {
+//	      for (int j = 0; j < patronsBookStatus.size(); j++) {
+//	        if (isbnArray[i].equals(patronsBookStatus.get(j).getBook().getIsbn())&&patronsBookStatus.get(j).getRequestStatus().equals("emailed")) {
+//	          error.addObject("message", "Book is already issued to you");
+//	          return error;
+//	        }
+//	      }
+//	    }
+	    
+
+	    
+	    
+	    
 	    for (int i = 0; i < isbnArray.length; i++) {
 	      BookStatus bookStatus = new BookStatus();
 	      Book book = bookService.findBookByISBN(isbnArray[i]);
@@ -1183,6 +1243,7 @@ public class AppController {
 	        error.addObject("message", "Sorry, Requested book is out of stock");
 	        return error;
 	      }
+	   
 	      patron.setDayIssuedCount(patron.getDayIssuedCount() + 1);
 	      patron.setTotalIssuedCount(patron.getTotalIssuedCount() + 1);
 	      System.out.println(book.getIsbn() + " book bhai wala is " + book);
