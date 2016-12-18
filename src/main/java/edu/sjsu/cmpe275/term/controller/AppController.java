@@ -450,6 +450,14 @@ public class AppController {
 		List<BookStatus> books = bookStatusService.getListOfAllIssuedBooks();
 		ModelAndView patronSearch = new ModelAndView("PatronReturnBook");
 		patronSearch.addObject("books",books);
+		List<String> titles = new ArrayList<String>();
+		List<String> isbns = new ArrayList<String>();
+		for(int i=0; i<books.size(); i++){
+			titles.add(books.get(i).getBook().getTitle());
+			isbns.add(books.get(i).getBook().getIsbn());
+		}
+		patronSearch.addObject("titles",titles);
+		patronSearch.addObject("isbns",isbns);
 		return patronSearch;
 	}
 

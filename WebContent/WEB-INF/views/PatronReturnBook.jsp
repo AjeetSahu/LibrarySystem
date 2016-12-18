@@ -94,7 +94,9 @@
 		
             <div class="col-md-7"  style="padding-top:120px;">
            <div class="row">
-            <div class="col-md-1"></div>
+           
+            <div class="col-md-3"></div>
+            <p>abc: "${books[0]}"</p>
                 <div id="tab" class="table-responsive">
 						        <table class="table table-striped">
 						            <thead>
@@ -105,13 +107,13 @@
 						            </tr>
 						            </thead>
 						            <tbody>
-							<c:forEach var="book" items="${books}">
+							<% for(int i = 0; i < books.size(); i+=1) { %>
 							<tr>
-								<td>${book.getBook().getIsbn()}</td>
-								<td>${book.getBook().getTitle()}</td>
-								<td><a href="<%=request.getContextPath() %>/addToCart/${book.isbn}"><button class="btn btn-danger"></button></a></td>
+								<td>${isbns.get(i)}</td>
+								<td>${titles.get(i)}</td>
+								<td><a href="<%=request.getContextPath() %>/addToCart/"><button class="btn btn-danger"></button></a></td>
 							</tr>
-							</c:forEach>
+							<% } %>
 							</tbody>
 				        </table>
 				    </div>
@@ -124,54 +126,10 @@
        
        <script>
        	function func(){
-       		document.getElementById('myForm').action = "/LibrarySystem/book/return/"+document.getElementById('isbn').value;
+       		//document.getElementById('myForm').action = "/LibrarySystem/book/return/"+document.getElementById('isbn').value;
        		alert(document.getElementById('myForm').action);
        	}
        </script>
-       <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-	<script>
-	$("#issueBook").click(function(){
-		var url = "/LibrarySystem/book/json/"+document.getElementById('isbn').value;
-			
-			alert(document.getElementById("isbn"));
-			alert(url);
-	        $.get(url, function(data, status){
-	            alert("hello");
-				alert(data);
-				
-				console.log(data);
-				
-				document.getElementById("tab").hidden=false;
-				//var paramOne =<c:out value="${test}" />
-				alert("${test}");
-			/*var table = document.getElementById("tab1");
-			    var row = table.insertRow(-1);
-			    var cell1 = row.insertCell(0);
-			    var cell2 = row.insertCell(1);
-			    var cell3 = row.insertCell(2);
-			    var cell4 = row.insertCell(3);
-			    var cell5 = row.insertCell(4);
-			    var cell6 = row.insertCell(5);
-	    
-	    
-	    
-	    cell1.innerHTML = data.items[0].volumeInfo.authors.toString();
-	    cell2.innerHTML = data.items[0].volumeInfo.title;
-	    cell3.innerHTML = data.items[0].volumeInfo.publisher;
-	    cell4.innerHTML = data.items[0].volumeInfo.publisher;
-	    cell5.innerHTML = data.items[0].volumeInfo.publishedDate;
-	    cell6.innerHTML = data.items[0].volumeInfo.imageLinks.thumbnail;
-	    
-	    document.getElementById("isbn").value = isbnVal;
-	    document.getElementById("author").value = data.items[0].volumeInfo.authors.toString();
-	    document.getElementById("title").value = data.items[0].volumeInfo.title;
-	    document.getElementById("publisher").value = data.items[0].volumeInfo.publisher;
-	    document.getElementById("yearOfPublication").value = data.items[0].volumeInfo.publishedDate;
-	    document.getElementById("file").value = data.items[0].volumeInfo.imageLinks.thumbnail; */
-	    
-	        });
-	    });
-	
-	</script>
+       
 	</body>
 </html>
