@@ -524,7 +524,9 @@ public class AppController {
 			ModelAndView login = new ModelAndView("Login");
 			return login;
 		}
-		List<BookStatus> bookstatus = bookStatusService.getListOfAllIssuedBooks();
+		String email = (String)request.getSession().getAttribute("email");
+		Patron patron = patronService.findPatronByEmailId(email);
+		List<BookStatus> bookstatus = bookStatusService.getListOfIssuedBooks(patron.getEmail());
 		ModelAndView patronSearch = new ModelAndView("PatronReturnBook");
 		patronSearch.addObject("appTime", request.getSession().getAttribute("appTime"));
 		patronSearch.addObject("bookstatus",bookstatus);
@@ -1175,74 +1177,68 @@ public class AppController {
 	 * @param reqParams
 	 * @return
 	 */
-	@Transactional
-	@RequestMapping(value = "/newUser", method = RequestMethod.POST)
-	public ModelAndView createNewUser(@RequestParam Map<String, String> reqParams, HttpServletRequest request) {
-		System.out.println("inside createNewUser");
-		ModelAndView userActivation = null;
-		try {
-			userActivation = new ModelAndView("ActivationPage");
-			ModelAndView errorPage = new ModelAndView("Error");
-			int randomCode = (int) (Math.random() * 100000);
-			if (reqParams.get("email").contains("@sjsu.edu")) {
-				if (librarianService.findLibrarianByUniversityId(reqParams.get("universityId")) == null) {
-					Librarian librarian = new Librarian();
-					librarian.setEmail(reqParams.get("email"));
-					librarian.setPassword(reqParams.get("password"));
-					librarian.setUniversityId(reqParams.get("universityId"));
-					librarian.setFirstName(reqParams.get("firstName"));
-					librarian.setLastName(reqParams.get("lastName"));
-					librarian.setActivationCode(randomCode);
-					System.out.println("after randomCode");
-					librarian = librarianService.saveNewLibrarian(librarian);
-				} else {
-					errorPage.addObject("httpStatus", "ErrorLogin");
-					errorPage.addObject("message", "Id already Exist");
-					return errorPage;
-				}
-			} else {
-				if (patronService.findPatronByUniversityId(reqParams.get("universityId")) == null) {
-					Patron patron = new Patron();
-					String id = UUID.randomUUID().toString();
-					Query insertBookingCart = entityManager.createNativeQuery("Insert into Booking_cart values('"+id+"',"+0+")");
-					System.out.println(insertBookingCart);
-					insertBookingCart.executeUpdate();
-					BookingCart bookingCart = bookingCartService.findBookingCartById(id);
-					System.out.println("bookingCart: "+bookingCart);
-					patron.setEmail(reqParams.get("email"));
-					patron.setPassword(reqParams.get("password"));
-					patron.setUniversityId(reqParams.get("universityId"));
-					patron.setFirstName(reqParams.get("firstName"));
-					patron.setLastName(reqParams.get("lastName"));
-					patron.setBookingCart(bookingCart);
-					patron.setActivationCode(randomCode);
-					patron = patronService.saveNewPatron(patron);
-				} else {
-					errorPage.addObject("httpStatus", "ErrorLogin");
-					errorPage.addObject("message", "Id already Exist");
-					return errorPage;
-				}
-			}
-			System.out.println("Email: " + reqParams.get("email") + "randomCode: " + randomCode);
-			sendMail(reqParams.get("email"), randomCode);
-			userActivation.addObject("universityId", reqParams.get("universityId"));
-			userActivation.addObject("email", reqParams.get("email"));
-		} catch (DataIntegrityViolationException e1) {
-			System.out.println("Exception: " + e1);
-			userActivation = new ModelAndView("Error");
-			userActivation.addObject("message", "DataIntegrityViolationException");
-		} catch(ConstraintViolationException e2){
-			System.out.println("Exception: " + e2);
-			userActivation = new ModelAndView("Error");
-			userActivation.addObject("message", "ConstraintViolationException");
-		}
-		catch (Exception e) {
-			System.out.println("Exception: " + e);
-			userActivation = new ModelAndView("Error");
-		}
-		userActivation.addObject("appTime", request.getSession().getAttribute("appTime"));
-		return userActivation;
-	}
+	 @Transactional
+	  @RequestMapping(value = "/newUser", method = RequestMethod.POST)
+	  public ModelAndView createNewUser(@RequestParam Map<String, String> reqParams, HttpServletRequest request) {
+	    System.out.println("inside createNewUser");
+	    ModelAndView userActivation = null;
+	    try {
+	      userActivation = new ModelAndView("ActivationPage");
+	      ModelAndView errorPage = new ModelAndView("Error");
+	      int randomCode = (int) (Math.random() * 100000);
+	      if (reqParams.get("email").contains("@sjsu.edu")) {
+	        if (librarianService.findLibrarianByUniversityId(reqParams.get("universityId")) == null) {
+	          Librarian librarian = new Librarian();
+	          librarian.setEmail(reqParams.get("email"));
+	          librarian.setPassword(reqParams.get("password"));
+	          librarian.setUniversityId(reqParams.get("universityId"));
+	          librarian.setFirstName(reqParams.get("firstName"));
+	          librarian.setLastName(reqParams.get("lastName"));
+	          librarian.setActivationCode(randomCode);
+	          System.out.println("after randomCode");
+	          librarian = librarianService.saveNewLibrarian(librarian);
+	        } else {
+	          errorPage.addObject("httpStatus", "ErrorLogin");
+	          errorPage.addObject("message", "Id already Exist");
+	          return errorPage;
+	        }
+	      } else {
+	        if (patronService.findPatronByUniversityId(reqParams.get("universityId")) == null) {
+	          Patron patron = new Patron();
+	          String id = UUID.randomUUID().toString();
+	          Query insertBookingCart = entityManager.createNativeQuery("Insert into booking_cart values('"+id+"',"+0+")");
+	          System.out.println(insertBookingCart);
+	          insertBookingCart.executeUpdate();
+	          BookingCart bookingCart = bookingCartService.findBookingCartById(id);
+	          System.out.println("bookingCart: "+bookingCart);
+	          patron.setEmail(reqParams.get("email"));
+	          patron.setPassword(reqParams.get("password"));
+	          patron.setUniversityId(reqParams.get("universityId"));
+	          patron.setFirstName(reqParams.get("firstName"));
+	          patron.setLastName(reqParams.get("lastName"));
+	          patron.setBookingCart(bookingCart);
+	          patron.setActivationCode(randomCode);
+	          patron = patronService.saveNewPatron(patron);
+	        } else {
+	          errorPage.addObject("httpStatus", "ErrorLogin");
+	          errorPage.addObject("message", "Id already Exist");
+	          return errorPage;
+	        }
+	      }
+	      System.out.println("Email: " + reqParams.get("email") + "randomCode: " + randomCode);
+	      sendMail(reqParams.get("email"), randomCode);
+	      userActivation.addObject("universityId", reqParams.get("universityId"));
+	      userActivation.addObject("email", reqParams.get("email"));
+	    } catch (DataIntegrityViolationException e1) {
+	      System.out.println("Exception: " + e1);
+	      userActivation = new ModelAndView("Error");
+	    }catch (Exception e) {
+	      System.out.println("Exception: " + e);
+	      userActivation = new ModelAndView("Error");
+	    }
+	    userActivation.addObject("appTime", request.getSession().getAttribute("appTime"));
+	    return userActivation;
+	  }
 
 	/*	*//**
 			 * 
