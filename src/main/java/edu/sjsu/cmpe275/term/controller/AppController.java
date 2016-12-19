@@ -11,6 +11,8 @@ import javax.persistence.Query;
 import javax.persistence.Temporal;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.ConstraintViolationException;
+
 import java.io.File;
 import java.io.IOException;
 import java.text.DateFormat;
@@ -1229,7 +1231,13 @@ public class AppController {
 		} catch (DataIntegrityViolationException e1) {
 			System.out.println("Exception: " + e1);
 			userActivation = new ModelAndView("Error");
-		} catch (Exception e) {
+			userActivation.addObject("message", "DataIntegrityViolationException");
+		} catch(ConstraintViolationException e2){
+			System.out.println("Exception: " + e2);
+			userActivation = new ModelAndView("Error");
+			userActivation.addObject("message", "ConstraintViolationException");
+		}
+		catch (Exception e) {
 			System.out.println("Exception: " + e);
 			userActivation = new ModelAndView("Error");
 		}
@@ -1575,7 +1583,7 @@ public class AppController {
 	@RequestMapping(value = "/renewbook/{isbn}", method = RequestMethod.GET)
 	@Transactional
 	public ModelAndView renewBook(@PathVariable("isbn") String isbn, HttpServletRequest request){
-		ModelAndView bookRenewed = new ModelAndView("BookRenewed");
+		ModelAndView bookRenewed = new ModelAndView("PatronSuccess");
 		ModelAndView error = new ModelAndView("Error");
 		Patron patron = (Patron) request.getSession().getAttribute("loggedIn");
 		List<BookStatus> allBookStatusForBook = findBookStatusForISBN(isbn);
@@ -1602,12 +1610,13 @@ public class AppController {
 					bookstatus1.setDueDate(dueDate);
 					bookstatus1.setRenew(bookstatus1.getRenew() + 1);
 					bookStatusService.updateBookStatus(bookstatus1);
+					bookRenewed.addObject("message", "Book has been successfully renewed");
 					return bookRenewed;
 				}
 			} 
 		}
 		
-		
+		bookRenewed.addObject("message", "Book has been successfully renewed");
 		return bookRenewed;
 	}
 	  
