@@ -94,9 +94,8 @@
 	
        </div>
 			<div style="padding-top:100px; padding-left:450px;">
-				<h3>Welcome ${userName}</h3>
-            	<h3><mark>${message}</mark></h3>
-			</div>
+            	<h3><mark>Success: ${message}</mark></h3>
+			
                 </div>
 	</body>
 	

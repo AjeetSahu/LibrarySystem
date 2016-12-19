@@ -757,7 +757,8 @@ public class AppController {
 		bookFound.addObject("httpStatus", HttpStatus.OK);
 		return bookFound;
 	}
-
+	
+	
 	/**
 	 * DELETE AN EXISTING BOOK
 	 * 
@@ -766,13 +767,15 @@ public class AppController {
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping(value = "/book/{bookISBN}", method = RequestMethod.DELETE)
-	public ModelAndView deleteBook(@PathVariable("bookISBN") String isbn, Model model, HttpServletRequest request) {
+	//@PathVariable("bookISBN") String isbn
+	@RequestMapping(value = "/deletebook", method = RequestMethod.POST)
+	public ModelAndView deleteBook(@RequestParam Map<String, String> reqParams, Model model, HttpServletRequest request) {
 		ModelAndView login = new ModelAndView("Login");
+		String isbn = reqParams.get("isbn1");
 		if (request.getSession().getAttribute("loggedIn") == null) {
 			return login;
 		}
-		ModelAndView deletedBook = new ModelAndView("BookDeletedSuccessfully");
+		ModelAndView deletedBook = new ModelAndView("LibrarianSuccess");
 		ModelAndView notDeletedBook = new ModelAndView("Error");
 		System.out.println("inside deleteBook");
 		Book book = bookService.findBookByISBN(isbn);
@@ -782,11 +785,18 @@ public class AppController {
 			return notDeletedBook;
 		}
 		if (book.getNumberOfCopies() == book.getAvailableCopies()) {
+			List<BookStatus> bookStatus = findBookStatusForISBN(isbn);
+			int k = 0;
+			//Removing wait list
+			while(bookStatus.size() > k){
+				bookStatusService.returnBooks(bookStatus.get(k).getBookStatusId());
+				k++;
+			}
 			bookService.deleteBookByISBN(isbn);
-			notDeletedBook.addObject("httpStatus", HttpStatus.OK);
+			deletedBook.addObject("message", "Book with ISBN: " + isbn + "has been deleted from database");
 			return deletedBook;
 		} else {
-			notDeletedBook.addObject("message", "Cannot be deleted as checkout by patron");
+			notDeletedBook.addObject("message", "Cannot be deleted as book is checkout by patron");
 			notDeletedBook.addObject("httpStatus", HttpStatus.FORBIDDEN);
 			return notDeletedBook;
 		}
