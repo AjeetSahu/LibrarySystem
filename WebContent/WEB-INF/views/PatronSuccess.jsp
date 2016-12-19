@@ -39,8 +39,13 @@
                         <a href="<%=request.getContextPath() %>/patronHome">Home</a>
                     </li>
                     <li>
-                        <a href="#">Profile</a>
+                        <a href="<%=request.getContextPath() %>/patronProfile">Profile</a>
                     </li>
+                    <li>
+	                    <a href="<%=request.getContextPath() %>/cartCheckout">
+	                        Check Cart: <span class="badge"></span>
+	                    </a>
+                	</li>
                     <li>
                         <a href="<%=request.getContextPath() %>/logout">Signout</a>
                     </li>
@@ -48,10 +53,14 @@
             </div>
             <!-- /.navbar-collapse -->
     </nav>
+    	<div>
+    		Welcome ${userName}
+    	</div>
     </div>
         <div class="row">
-        <div class="col-md-3">
+        <div class="col-md-2">
 		
+
     <div id="wrapper">
 
         <!-- Sidebar -->
@@ -59,7 +68,7 @@
             <ul class="sidebar-nav">
                 <li class="sidebar-brand">
                     <a href="#">
-                        Start Bootstrap
+                        
                     </a>
                 </li>
                 <li>
@@ -92,12 +101,60 @@
 </div>
 		  
                      
-       	</div>
-       	<div class="row"> 
-			<h3>Success:  ${message}</h3>
-         </div>
-                		
-	
-                </div>
+       
+	       		<div class="col-md-7">
+	             <form id="form1" style="padding-top:100px;">
+		            <div class="row" >
+                        
+                        <div class="col-md-6">
+                        	
+			  				<input class="form-control" type="text" id="title" name="title" value="${pattern}" placeholder="Enter Title Here" onchange="append();" required />
+                        </div>
+                        <div class="col-md-2">
+                            <a id="link" href="<%=request.getContextPath() %>/searchBookByTitle/"><input type="button" class="btn btn-primary" value="Search Book" name="search" id="search"></a>
+                        </div>    
+					</div><br><br>
+					</form>
+					<mark>${message}</mark>
+							<div id="tab" class="table-responsive">
+						        <table class="table table-striped">
+						            <thead>
+						            <tr>
+						                <th>ISBN</th>
+						                <th>Author</th>
+						                <th>Title</th>
+						                <th>Available Count</th>
+						                <th>#</th>
+						            </tr>
+						            </thead>
+						            <tbody>
+							<c:forEach var="book" items="${books}">
+							<tr>
+								<td>${book.isbn}</td>
+								<td>${book.author}</td>
+								<td>${book.title}</td>
+								<td>${book.availableCopies}</td>
+								<td><a href="<%=request.getContextPath() %>/addToCart/${book.isbn}"><span class="glyphicon glyphicon-shopping-cart"></span></a></td>
+							</tr>
+							</c:forEach>
+							</tbody>
+				        </table>
+				    </div>
+				    </div>
+				    <div class="col-md-2" style="padding-top:120px;">
+				    <label>Allocated Time: "${appTime}"</label>
+				    <form action="/LibrarySystem/setDateTime" onsubmit="getValue();" method = "post">
+					    <input type="datetime-local" name="time" id="time">
+					    <input type="hidden" name="appTime" id="appTime">
+					    <input type="submit" value="Set Time" class="btn btn-danger">
+				    </form>
+				    </div>
+				</div>
+				
+				<div class="row">
+        			<div class="col-md-8" >Success :  </div>
+				</div>
+         
+      </div>
 	</body>
 </html>
