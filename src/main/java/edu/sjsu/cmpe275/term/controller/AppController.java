@@ -1657,7 +1657,7 @@ public class AppController {
 		return "PatronHome";
 	}
 
-	@RequestMapping(value = "/requestBook/{bookISBN}", method = RequestMethod.POST)
+	@RequestMapping(value = "/requestBook/{bookISBN}", method = RequestMethod.GET)
 	@Transactional
 	public ModelAndView set(@PathVariable("bookISBN") String isbn, HttpServletRequest request) {
 		ModelAndView requestSuccess = new ModelAndView("BookRequestSuccess");
