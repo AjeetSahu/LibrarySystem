@@ -95,6 +95,7 @@
             <div class="col-md-7"  style="padding-top:120px;">
            <div class="row">
             <div class="col-md-1"></div>
+            <label>Allocated Time: "${appTime}"</label><br>
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <h3 style="text-align:center">Search Book Here</h3>

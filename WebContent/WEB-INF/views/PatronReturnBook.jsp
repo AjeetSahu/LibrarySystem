@@ -94,8 +94,34 @@
 		
             <div class="col-md-9"  style="padding-top:120px;">
            <div class="row">
+<<<<<<< HEAD
+||||||| merged common ancestors
+<<<<<<< HEAD
+=======
+
+>>>>>>> 62d84fa84cb99df40b10001d89c5d7be7dd5958c
             <div class="col-md-0"></div>
             	<form id="form1" style="padding-top:100px;" method="POST" action="<%=request.getContextPath() %>/return">
+<<<<<<< HEAD
+||||||| merged common ancestors
+||||||| merged common ancestors
+           
+            <div class="col-md-3"></div>
+            <p>abc: "${books[0]}"</p>
+=======
+           
+            <div class="col-md-3"></div>
+               
+>>>>>>> 3a75d15a010799bd8154bffe57ca24815768b4df
+=======
+
+           
+            <div class="col-md-3"></div>
+           
+            <div class="col-md-3"></div>
+               <label>Allocated Time: "${appTime}"</label>
+
+>>>>>>> 62d84fa84cb99df40b10001d89c5d7be7dd5958c
                 <div id="tab" class="table-responsive">
 						        <table class="table table-striped">
 						            <thead>
