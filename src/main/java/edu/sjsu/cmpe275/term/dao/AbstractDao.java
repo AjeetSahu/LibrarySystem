@@ -104,12 +104,11 @@ public abstract class AbstractDao<PK extends Serializable, T> {
 	}
 	
 	@SuppressWarnings("unchecked")
-	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public List<T> getListOfIssuedBook(PK id){
 		try{
 			Query getListOfIssuedBook = entityManager.createNativeQuery("Select bookstatusid from book_status"
 					+ " where bookstatusid IN (Select book_status_id from patron_bookstatus "
-					+ "where email='"+id.toString()+"')", BookStatus.class);
+					+ "where email='"+id.toString()+"') and requeststatus = 'issued'", BookStatus.class);
 			return getListOfIssuedBook.getResultList();
 		}catch(Exception e){
 			System.out.println("Exception "+ e);
