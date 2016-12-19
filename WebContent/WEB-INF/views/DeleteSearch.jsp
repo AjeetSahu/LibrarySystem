@@ -100,6 +100,7 @@
                         <h3 style="text-align:center">Search Book To Delete</h3>
                     </div>
                     <div class="panel-body">
+                    <label>Allocated Time: "${appTime}"</label>
                         <form action='/LibrarySystem/deletebook' method="POST" class="form-horizontal">
                             <div class="row">
                             	<div class="col-md-1"></div>

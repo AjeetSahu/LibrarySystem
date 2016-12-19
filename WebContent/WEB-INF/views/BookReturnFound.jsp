@@ -96,6 +96,7 @@
            </div>
             
 			<div class="col-md-5">
+			<label>Allocated Time: "${appTime}"</label>
             	 <form action="/LibrarySystem/checkout/return" method="post">
 		            <div style="padding-top:120px;">
 		            	<h3><mark>ISBN :</mark> <label>${book.isbn}</label></h3><br>

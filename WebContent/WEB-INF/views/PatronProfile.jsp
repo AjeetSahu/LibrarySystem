@@ -96,6 +96,7 @@
        	<div class="row"> 
        		<div class="col-md-3"></div>
 	       		<div class="col-md-7" style="padding-top:110px;">
+	       		<label>Allocated Time: "${appTime}"</label>
 	            	<form>
 		            	<label for="ex1">UNIVERSITYID: </label>
 						<input class="form-control" type="text" name="id" value="123" disabled>

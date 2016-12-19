@@ -43,7 +43,7 @@
                     </li>
                     <li>
 	                    <a href="<%=request.getContextPath() %>/cartCheckout">
-	                        Cart: <span class="badge">${shoppingCart.totalQuantity}</span><span class="badge">$${shoppingCart.totalPrice}</span>
+	                        Check Cart <span class="badge"></span>
 	                    </a>
                 	</li>
                     <li>
@@ -104,6 +104,7 @@
 				<div class="col-md-3"></div>
 					<%-- <h1>${author}</h1> --%>
 					<div class="col-md-8">
+					<label>Allocated Time: "${appTime}"</label>
 					<form action="/LibrarySystem/checkout" method="get">
 					<div id="tab" class="table-responsive">
 				        <table class="table table-striped">
