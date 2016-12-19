@@ -96,6 +96,7 @@
            <div class="row">
             <div class="col-md-3"></div>
                 <div id="tab" class="table-responsive">
+                	<form id="form1" style="padding-top:100px;" method="POST" action="<%=request.getContextPath() %>/return">
 						        <table class="table table-striped">
 						            <thead>
 						            <tr>
