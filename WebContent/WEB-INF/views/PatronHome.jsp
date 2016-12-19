@@ -157,7 +157,6 @@
     	 // alert("here");
       	var d = document.getElementById("time").value;
         var time = (d+":00").replace("T", " ");
-        alert (time);
         document.getElementById("appTime").value = time; 
       }
       
@@ -167,7 +166,6 @@
           link.href = link.href + text.value;
           //document.getElementById("tab").hidden=false;
           /* link.text = text.value; */
-          alert(link.href);
       }
 	</script>
 	</body>
