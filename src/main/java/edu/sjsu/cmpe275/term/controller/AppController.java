@@ -32,6 +32,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
+import org.springframework.web.HttpRequestHandler;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -423,6 +424,7 @@ public class AppController {
 			return login;
 		}
 		ModelAndView welcome = new ModelAndView("AddNewBook");
+		welcome.addObject("appTime", request.getSession().getAttribute("appTime"));
 		return welcome;
 	}
 
@@ -439,6 +441,7 @@ public class AppController {
 			return login;
 		}
 		ModelAndView patronSearch = new ModelAndView("PatronSearchBook");
+		patronSearch.addObject("appTime", request.getSession().getAttribute("appTime"));
 		return patronSearch;
 	}
 
@@ -448,7 +451,7 @@ public class AppController {
 	 * @author Amitesh
 	 *
 	 */
-	@RequestMapping(value = "/patronReturnBook", method = RequestMethod.GET)
+	@RequestMapping(value = "/patronReturnSearch", method = RequestMethod.GET)
 	public ModelAndView patronReturnSearch(HttpServletRequest request) {
 		if (request.getSession().getAttribute("loggedIn") == null) {
 			ModelAndView login = new ModelAndView("Login");
@@ -457,14 +460,7 @@ public class AppController {
 		List<BookStatus> books = bookStatusService.getListOfAllIssuedBooks();
 		ModelAndView patronSearch = new ModelAndView("PatronReturnBook");
 		patronSearch.addObject("books",books);
-		List<String> titles = new ArrayList<String>();
-		List<String> isbns = new ArrayList<String>();
-		for(int i=0; i<books.size(); i++){
-			titles.add(books.get(i).getBook().getTitle());
-			isbns.add(books.get(i).getBook().getIsbn());
-		}
-		patronSearch.addObject("titles",titles);
-		patronSearch.addObject("isbns",isbns);
+		patronSearch.addObject("appTime", request.getSession().getAttribute("appTime"));
 		return patronSearch;
 	}
 
@@ -481,6 +477,7 @@ public class AppController {
 			return login;
 		}
 		ModelAndView register = new ModelAndView("AddNewBookManually");
+		register.addObject("appTime", request.getSession().getAttribute("appTime"));
 		return register;
 	}
 
@@ -583,6 +580,7 @@ public class AppController {
 			book.setKeywords(Arrays.asList(reqParams.get("keywords").split("\\s*,\\s*")));
 		book = bookService.saveNewBook(book);
 		ModelAndView model = new ModelAndView("LibraryHome");
+		model.addObject("appTime", request.getSession().getAttribute("appTime"));
 		model.addObject("httpStatus", HttpStatus.CREATED);
 		model.addObject("book", book);
 		model.addObject("message", "Book Added Successfully");
@@ -647,6 +645,7 @@ public class AppController {
 			book.setKeywords(Arrays.asList(reqParams.get("keywords").split("\\s*,\\s*")));
 		book = bookService.saveNewBook(book);
 		ModelAndView model = new ModelAndView("LibraryHome");
+		model.addObject("appTime", request.getSession().getAttribute("appTime"));
 		model.addObject("httpStatus", HttpStatus.CREATED);
 		model.addObject("book", book);
 		model.addObject("message", "Book Added Successfully");
@@ -687,6 +686,7 @@ public class AppController {
 		model.addAttribute("books", book);
 		model.addAttribute("test", "test");
 		model.addAttribute("httpStatus", HttpStatus.OK);
+		model.addAttribute("appTime", request.getSession().getAttribute("appTime"));
 		return "PatronHome";
 	}
 	
@@ -695,6 +695,7 @@ public class AppController {
 	public String searchBookByTitle(@PathVariable("pattern") String pattern, Model model, HttpServletRequest request) {
 		System.out.println("Hi Search book by Title: " + pattern);
 		try{
+			model.addAttribute("appTime", request.getSession().getAttribute("appTime"));
 			// String pattern = reqParams.get("isbn");
 			if (pattern.equals(""))
 				return "PatronHome";
@@ -717,6 +718,7 @@ public class AppController {
 		List<CartItem> bookCart = q.getResultList();
 		System.out.println("books size: " + bookCart);
 		model.addAttribute("books", bookCart);
+		model.addAttribute("appTime", request.getSession().getAttribute("appTime"));
 		return "IssueCheckout";
 	}
 
@@ -742,6 +744,7 @@ public class AppController {
 		bookFound.addObject("book", book);
 		bookFound.addObject("test", "test");
 		bookFound.addObject("httpStatus", HttpStatus.OK);
+		bookFound.addObject("appTime", request.getSession().getAttribute("appTime"));
 		return bookFound;
 	}
 
@@ -762,6 +765,7 @@ public class AppController {
 			return login;
 		}
 		ModelAndView bookFound = new ModelAndView("LibrarianUpdateBookDetail");
+		bookFound.addObject("appTime", request.getSession().getAttribute("appTime"));
 		ModelAndView bookNotFound = new ModelAndView("Error");
 		Book book = bookService.findBookByISBN(isbn);
 		System.out.println("working getBookByISBN" + book);
@@ -796,6 +800,7 @@ public class AppController {
 			return login;
 		}
 		ModelAndView deletedBook = new ModelAndView("LibrarianSuccess");
+		deletedBook.addObject("appTime", request.getSession().getAttribute("appTime"));
 		ModelAndView notDeletedBook = new ModelAndView("Error");
 		System.out.println("inside deleteBook");
 		Book book = bookService.findBookByISBN(isbn);
@@ -886,10 +891,11 @@ public class AppController {
 	 */
 	@RequestMapping(value = "/newPatron", method = RequestMethod.POST)
 	public String createNewPatron(@ModelAttribute("patron") Patron patron, UriComponentsBuilder ucBuilder,
-			Model model) {
+			Model model, HttpServletRequest request) {
 		patron = patronService.saveNewPatron(patron);
 		if (patron != null) {
 			model.addAttribute("httpStatus", HttpStatus.CREATED);
+			model.addAttribute("appTime", request.getSession().getAttribute("appTime"));
 			return "PatronCreationSuccess";
 		} else {
 			model.addAttribute("httpStatus", HttpStatus.CONFLICT);
@@ -953,6 +959,7 @@ public class AppController {
 			return login;
 		}
 		ModelAndView librarian = new ModelAndView("LibrarianUpdateBook");
+		librarian.addObject("appTime", request.getSession().getAttribute("appTime"));
 		return librarian;
 	}
 
@@ -969,6 +976,7 @@ public class AppController {
 			return login;
 		}
 		ModelAndView librarian = new ModelAndView("AddNewBookManually");
+		librarian.addObject("appTime", request.getSession().getAttribute("appTime"));
 		return librarian;
 	}
 
@@ -985,6 +993,7 @@ public class AppController {
 			return login;
 		}
 		ModelAndView patronProfile = new ModelAndView("PatronProfile");
+		patronProfile.addObject("appTime", request.getSession().getAttribute("appTime"));
 		return patronProfile;
 	}
 
@@ -1002,6 +1011,7 @@ public class AppController {
 		}
 
 		ModelAndView libraryProfile = new ModelAndView("LibrarianProfile");
+		libraryProfile.addObject("appTime", request.getSession().getAttribute("appTime"));
 		return libraryProfile;
 	}
 
@@ -1043,6 +1053,7 @@ public class AppController {
 		}
 		model.addAttribute("patron", patron);
 		model.addAttribute("httpStatus", HttpStatus.OK);
+		model.addAttribute("appTime", request.getSession().getAttribute("appTime"));
 		return patronFound;
 	}
 
@@ -1110,6 +1121,7 @@ public class AppController {
 			return delete;
 		}
 		ModelAndView delete = new ModelAndView("DeleteSearch");
+		delete.addObject("appTime", request.getSession().getAttribute("appTime"));
 		return delete;
 	}
 
@@ -1120,7 +1132,7 @@ public class AppController {
 	 */
 	@Transactional
 	@RequestMapping(value = "/newUser", method = RequestMethod.POST)
-	public ModelAndView createNewUser(@RequestParam Map<String, String> reqParams) {
+	public ModelAndView createNewUser(@RequestParam Map<String, String> reqParams, HttpServletRequest request) {
 		System.out.println("inside createNewUser");
 		ModelAndView userActivation = null;
 		try {
@@ -1177,6 +1189,7 @@ public class AppController {
 			System.out.println("Exception: " + e);
 			userActivation = new ModelAndView("Error");
 		}
+		userActivation.addObject("appTime", request.getSession().getAttribute("appTime"));
 		return userActivation;
 	}
 

@@ -96,7 +96,7 @@
            <div class="row">
            
             <div class="col-md-3"></div>
-               
+               <label>Allocated Time: "${appTime}"</label>
                 <div id="tab" class="table-responsive">
 						        <table class="table table-striped">
 						            <thead>

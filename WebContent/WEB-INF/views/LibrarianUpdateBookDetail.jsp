@@ -95,6 +95,7 @@
        	<div class="row"> 
        		<div class="col-md-3"></div>
 	       		<div class="col-md-7" style="padding-top:110px;">
+	       		<label>Allocated Time: "${appTime}"</label>
 	            	<form id="myForm" action="/LibrarySystem/" method="post" onsubmit="setUrl()">
 		            	<label for="ex1">ISBN: </label>
 						<input class="form-control" type="text" id="isbn" name="isbn" value="${book.isbn}" disabled>

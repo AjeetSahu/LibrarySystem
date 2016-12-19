@@ -95,6 +95,7 @@
        </div>
 			<div style="padding-top:100px; padding-left:450px;">
             	<h3><mark>Success: ${message}</mark></h3>
+            	<label>Allocated Time: "${appTime}"</label>
 			
                 </div>
 	</body>
