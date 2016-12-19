@@ -49,7 +49,7 @@ public class BookStatus implements Serializable {
 	@Column(name = "ASSIGNEDDATE")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date assignedDate;
-	@Column(name = "RENEW")
+	@Column(name = "RENEW", nullable= false, columnDefinition= "int default 0")
 	private int renew;
 	
 	@ManyToOne
