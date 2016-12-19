@@ -236,4 +236,5 @@ public class Book implements Serializable {
 	public void setBookStatus(List<BookStatus> bookStatus) {
 		this.bookStatus = bookStatus;
 	}
+	
 }

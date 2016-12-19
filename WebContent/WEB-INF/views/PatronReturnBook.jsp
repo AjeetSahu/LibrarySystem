@@ -92,11 +92,18 @@
     <!-- /#wrapper -->
 </div>
 		
-            <div class="col-md-7"  style="padding-top:120px;">
+            <div class="col-md-9"  style="padding-top:120px;">
            <div class="row">
+
+            <div class="col-md-0"></div>
+            	<form id="form1" style="padding-top:100px;" method="POST" action="<%=request.getContextPath() %>/return">
+
+           
+            <div class="col-md-3"></div>
            
             <div class="col-md-3"></div>
                <label>Allocated Time: "${appTime}"</label>
+
                 <div id="tab" class="table-responsive">
 						        <table class="table table-striped">
 						            <thead>
@@ -105,16 +112,24 @@
 						                <th>#</th>
 						            </tr>
 						            </thead>
-						            <tbody>
-							<c:forEach var="book" items="${books}">
-							<tr>
-								<td>${book}</td>
-								<td><a href="<%=request.getContextPath() %>/addToCart/"><button class="btn btn-danger"></button></a></td>
-							</tr>
-							</c:forEach>
-							</tbody>
+						          <tbody>
+						   			 <c:forEach var="bs" items="${bookstatus}">
+										<tr>
+									    <td>${bs.book.isbn}</td>
+									    <td>${bs.book.title}</td>
+										<td><input type="checkbox" value="${bs.book.isbn}"></td>
+										<td><a href="<%=request.getContextPath() %>/renewbook/${bs.book.isbn}" class="btn btn-info" role="button">Renew</a></td>
+										</tr>
+					 				</c:forEach>  
+								</tbody>
 				        </table>
-				    </div>
+				        <input type="hidden" name="isbnArray" id="getListOfISBNArray"/>
+				        <br/>
+				        <br/>
+				        <div class="col-md-8 col-md-offset-4">
+				        	<input class="col-md-6" type="submit" value="Return" id="getListOfISBN"/></div>
+				    	</div>
+				    </form>
                  </div>
            </div>  
            <div class="col-md-1"></div>          
@@ -127,6 +142,16 @@
        		//document.getElementById('myForm').action = "/LibrarySystem/book/return/"+document.getElementById('isbn').value;
        		alert(document.getElementById('myForm').action);
        	}
+       	$(document).ready(function() {
+       		$('#getListOfISBN').on('click', function(event) {
+       	        var checkboxValues = [];
+       	        $('input[type="checkbox"]:checked').each(function(index, value) {
+       	            checkboxValues.push($(value).val());
+       	        });
+       	        $('#output').html(checkboxValues.join(','));
+       	     	$('#getListOfISBNArray').val(checkboxValues);
+       	    });
+       	});
        </script>
        
 	</body>

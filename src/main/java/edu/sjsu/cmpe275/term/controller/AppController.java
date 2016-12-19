@@ -318,6 +318,10 @@ public class AppController {
 			if (librarian != null && bool) {
 				librarian.setStatus(true);
 				librarianService.updateLibrarian(librarian);
+				String to=librarian.getEmail();
+				sendGenericMail(to, "Library Management System Activation Code", "You have successfully verified your account");
+			
+				
 				model.addAttribute("message", "Account created Successfully");
 				return "Login";
 			} else {
@@ -335,6 +339,9 @@ public class AppController {
 				patron.setStatus(true);
 				patronService.updatePatron(patron);
 				model.addAttribute("message", "Account created Successfully");
+				String to=patron.getEmail();
+				sendGenericMail(to, "Library Management System Activation Code", "You have successfully verified your account");
+			
 				return "Login";
 			} else {
 				return "Error";
@@ -383,7 +390,7 @@ public class AppController {
 				request.getSession().setAttribute("email", patron.getEmail());
 				request.getSession().setAttribute("userName", patron.getFirstName());
 				request.getSession().setAttribute("pattern", "");
-				request.getSession().setAttribute("loggedIn", patron);
+				//request.getSession().setAttribute("loggedIn", patron);
 				request.getSession().setAttribute("userName", patron.getFirstName());
 
 			} else {
@@ -453,14 +460,15 @@ public class AppController {
 	 */
 	@RequestMapping(value = "/patronReturnSearch", method = RequestMethod.GET)
 	public ModelAndView patronReturnSearch(HttpServletRequest request) {
+		System.out.println("Inside patron return get");
 		if (request.getSession().getAttribute("loggedIn") == null) {
 			ModelAndView login = new ModelAndView("Login");
 			return login;
 		}
-		List<BookStatus> books = bookStatusService.getListOfAllIssuedBooks();
+		List<BookStatus> bookstatus = bookStatusService.getListOfAllIssuedBooks();
 		ModelAndView patronSearch = new ModelAndView("PatronReturnBook");
-		patronSearch.addObject("books",books);
 		patronSearch.addObject("appTime", request.getSession().getAttribute("appTime"));
+		patronSearch.addObject("bookstatus",bookstatus);
 		return patronSearch;
 	}
 
@@ -1239,6 +1247,7 @@ public class AppController {
 	    ModelAndView error = new ModelAndView("Error");
 	    String email = (String)request.getSession().getAttribute("email");
 	    System.out.println("email: "+email);
+	    
 	    Query q = entityManager.createNativeQuery("select cart_item.bookid from cart_item where bookingcartid =(select bookingcartid from patron where email='"+email+"')");
 		List<String> bookList = q.getResultList();
 		System.out.println("book size: "+bookList.toString());
@@ -1256,10 +1265,15 @@ public class AppController {
 	    // String email = "kadakiaruchit@gmail.com";
 	    //String email = ((Patron)request.getSession().getAttribute("loggedIn")).getEmail();
 	    System.out.println(email);
-	    Calendar c = new GregorianCalendar();
-	    Date issueDate = c.getTime();
-	    c.add(Calendar.DATE, 30);
-	    Date dueDate = c.getTime();
+
+        Date issueDate = (Date)request.getSession().getAttribute("appTime");
+        Calendar c = Calendar.getInstance();
+        c.setTime(issueDate);
+        c.add(Calendar.DATE, 30);
+        Date dueDate = c.getTime();
+       
+	    
+	    
 	    Patron patron = patronService.findPatronByEmailId(email);
 	    String checkoutData = "";
 	    if (isbnArray.length > 5) {
@@ -1357,12 +1371,12 @@ public class AppController {
 	    return success;
 	  }
 	  
-	  @RequestMapping(value = "/return", method = RequestMethod.POST)
+	  /*@RequestMapping(value = "/return", method = RequestMethod.POST)
       public ModelAndView BookReturn(@RequestParam(value = "isbn") String isbn, Model model, HttpServletRequest request) {
     	  String[] isbnArray = new String[1];
     	  isbnArray[0] = isbn;
     	  return Return(isbnArray, model, request);
-      }
+      }*/
 	
 	/*
 	 * Search Books Ruchit code strts here
@@ -1376,30 +1390,21 @@ public class AppController {
 	 */
 	
 	///////////////Ruchit return Book code Starts ///////////////////////
-	
+	  @RequestMapping(value = "/return", method = RequestMethod.POST)
 	public ModelAndView Return(String[] isbnArray, Model model, HttpServletRequest request) {
-
+		  System.out.println("isbnArray: "+isbnArray);
+		  for (String s: isbnArray) { 
+			  System.out.println("isbnArray values: "+s);
+		  }
 	ModelAndView success = new ModelAndView("PatronHome");
 
 	ModelAndView error = new ModelAndView("Error");
 
-
-	System.out.println("inside checkout ");
-
-	String email = "kadakiaruchit@gmail.com";
-
-
-	// System.out.println(reqParams.get("isbn"));
-
-	// String email =
-
-	// ((Patron)request.getSession().getAttribute("loggedIn")).getEmail();
-
+	String email = (String)request.getSession().getAttribute("email");
 	System.out.println(email);
-
 	Calendar c = new GregorianCalendar();
 
-	Date returnDate = c.getTime();
+//	Date returnDate = c.getTime();
 
 	// int days = Days.daysBetween(returnDate, returnDate).getDays();
 
@@ -1414,7 +1419,7 @@ public class AppController {
 
 
 	Patron patron = patronService.findPatronByEmailId(email);
-
+	System.out.println("patron"+patron);
 
 	if (isbnArray.length > 10) {
 
@@ -1431,9 +1436,7 @@ public class AppController {
 
 	}
 
-
-	Date returndate = null;
-
+	Date returndate = (Date) request.getSession().getAttribute("appTime");
 	List<BookStatus> patronsBookStatus = patron.getBookStatus();
 
 	for (int i = 0; i < patronsBookStatus.size(); i++) {
@@ -1449,21 +1452,34 @@ public class AppController {
 
 	System.out.println("deleting book isbn of " + isbnArray[j]);
 
-	checkoutReturnData += "\n" + patronsBookStatus.get(i).getBook().getIsbn() + "  "
+	checkoutReturnData += "\n" + (j+1) +"."+  " ISBN: "+patronsBookStatus.get(i).getBook().getIsbn() + "\t TITLE:" + "\n"
 
-	+ patronsBookStatus.get(i).getBook().getTitle() + "  "
+	+ patronsBookStatus.get(i).getBook().getTitle() + "\t ISSUE DATE: "
 
-	+ patronsBookStatus.get(i).getIssueDate();
+	+ patronsBookStatus.get(i).getIssueDate()+ "\t DUE DATE: "
+
+	+ patronsBookStatus.get(i).getDueDate() + "\t DATE RETURNED: "
+
+
+	+ returndate;
 
 	System.out.println("penalty deleting book isbn of " + isbnArray[j]);
 
 	returndate = (Date) request.getSession().getAttribute("appTime");
+	System.out.println("returndate"+returndate);
 
-	long penalty =  (returndate.getTime() - patronsBookStatus.get(i).getDueDate().getTime())/ (1000 * 60 * 60 * 24);
+	long num=(returndate.getTime() - patronsBookStatus.get(i).getDueDate().getTime());
+	double den=86400000d ;
+	double hoursDiff = num/den ;
+	
 
-	System.out.println("aaj ka date is " + returndate);
+	System.out.println("return ka date is " + returndate);
 
 	System.out.println("due ka date is " + patronsBookStatus.get(i).getDueDate());
+	
+	System.out.println("hoursDiff"+Math.ceil(hoursDiff));
+	
+	
 
 	Book b=patronsBookStatus.get(i).getBook();
 
@@ -1472,12 +1488,14 @@ public class AppController {
 	b.setAvailableCopies(b.getAvailableCopies()+1);
 
 	bookService.updateBook(b);
+	
+	int penalty=(int)Math.ceil(hoursDiff);
 
 	System.out.println(penalty);
 
 	patron.setTotalIssuedCount(patron.getTotalIssuedCount() - 1);
 
-
+	
 	if (penalty > 0) {
 
 
@@ -1511,9 +1529,8 @@ public class AppController {
 
 	message.setSubject("SJSU Library Return on " + c.getTime());
 
-	message.setText("Hi You have just return out following items " + checkoutReturnData + "     Rerturn date is "
-
-	+ returndate + "\n = " + c.getTime() + "\n Please don't reply on this email.");
+	message.setText("Hi You have just return out following items \n " +
+	checkoutReturnData + "\n Please don't reply on this email.");
 
 	System.out.println("bhaijaan mail bje dia");
 
@@ -1527,6 +1544,44 @@ public class AppController {
 	}
 	//////////////Ruchit return Book code Ends here /////////////////////
 	  
+	@RequestMapping(value = "/renewbook/{isbn}", method = RequestMethod.POST)
+	@Transactional
+	public ModelAndView renewBook(@PathVariable("isbn") String isbn, HttpServletRequest request){
+		ModelAndView bookRenewed = new ModelAndView("BookRenewed");
+		ModelAndView error = new ModelAndView("Error");
+		Patron patron = (Patron) request.getSession().getAttribute("loggedIn");
+		List<BookStatus> allBookStatusForBook = findBookStatusForISBN(isbn);
+		for (BookStatus bookstatus : allBookStatusForBook){
+			if(bookstatus.getRequestStatus().equals("requested")){
+				error.addObject("message", "The book is requested by other Patrons and can not be reissued");
+				return error;
+			}
+		}
+		List<BookStatus> patronBookStatuses = patron.getBookStatus();
+		for(BookStatus bookstatus1 : patronBookStatuses){
+			if(bookstatus1.getBook().getIsbn().equals(isbn)){
+				if(bookstatus1.getRenew() >= 2){
+					error.addObject("message", "You have already renewed this book twice, It can not be renewed now");
+					return error;
+				}
+				else{
+					Date date = (Date)request.getSession().getAttribute("appTime");
+					Calendar c = Calendar.getInstance();
+					c.setTime(date);
+					c.add(Calendar.DATE, 30);
+					Date dueDate = c.getTime();
+					System.out.println(dueDate);
+					bookstatus1.setDueDate(dueDate);
+					bookstatus1.setRenew(bookstatus1.getRenew() + 1);
+					bookStatusService.updateBookStatus(bookstatus1);
+					return bookRenewed;
+				}
+			} 
+		}
+		
+		
+		return bookRenewed;
+	}
 	  
 	  
 	  /**

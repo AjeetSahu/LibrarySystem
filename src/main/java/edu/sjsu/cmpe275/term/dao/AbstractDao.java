@@ -8,10 +8,13 @@ import java.lang.reflect.ParameterizedType;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.RollbackException;
 
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import edu.sjsu.cmpe275.term.model.BookStatus;
 
 @Transactional
 public abstract class AbstractDao<PK extends Serializable, T> {
@@ -104,9 +107,10 @@ public abstract class AbstractDao<PK extends Serializable, T> {
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public List<T> getListOfIssuedBook(PK id){
 		try{
-			return this.entityManager.createNativeQuery("Select bookstatusid from book_status"
-				+ " where bookstatusid IN (Select book_status_id from patron_bookstatus "
-				+ "where email='"+id.toString()+"')").getResultList();
+			Query getListOfIssuedBook = entityManager.createNativeQuery("Select bookstatusid from book_status"
+					+ " where bookstatusid IN (Select book_status_id from patron_bookstatus "
+					+ "where email='"+id.toString()+"')", BookStatus.class);
+			return getListOfIssuedBook.getResultList();
 		}catch(Exception e){
 			System.out.println("Exception "+ e);
 			return null;
@@ -117,8 +121,8 @@ public abstract class AbstractDao<PK extends Serializable, T> {
 	@SuppressWarnings("unchecked")
 	public List<T> getListOfAllBook(){
 		try{
-			System.out.println("Fetching all book statuses");
-			return this.entityManager.createNativeQuery("Select * from book_status").getResultList();
+			Query getListOfAllBookStatus = entityManager.createNativeQuery("Select * from book_status", BookStatus.class);
+			return getListOfAllBookStatus.getResultList();
 		}catch(Exception e){
 			System.out.println("Exception "+ e);
 			return null;
