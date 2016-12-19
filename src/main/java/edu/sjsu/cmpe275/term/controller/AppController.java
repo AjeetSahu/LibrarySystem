@@ -1283,7 +1283,6 @@ public class AppController {
 	    ModelAndView error = new ModelAndView("Error");
 	    String email = (String)request.getSession().getAttribute("email");
 	    System.out.println("email: "+email);
-	    
 	    Query q = entityManager.createNativeQuery("select cart_item.bookid from cart_item where bookingcartid =(select bookingcartid from patron where email='"+email+"')");
 		List<String> bookList = q.getResultList();
 		System.out.println("book size: "+bookList.toString());
@@ -1295,20 +1294,15 @@ public class AppController {
 			//System.out.println(isbnArray[i]);
 		}
 		clearCart(model, request);
-		
 	    //System.out.println(isbnArray[0]);
 	    // String email = "kadakiaruchit@gmail.com";
 	    //String email = ((Patron)request.getSession().getAttribute("loggedIn")).getEmail();
 	    System.out.println(email);
-
         Date issueDate = (Date)request.getSession().getAttribute("appTime");
         Calendar c = Calendar.getInstance();
         c.setTime(issueDate);
         c.add(Calendar.DATE, 30);
         Date dueDate = c.getTime();
-       
-	    
-	    
 	    Patron patron = patronService.findPatronByEmailId(email);
 	    BookingCart bookingCart = patron.getBookingCart();
 	    System.out.println("bookingCart"+bookingCart);
