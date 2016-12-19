@@ -196,7 +196,7 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 	<script type="text/javascript">
 		function editEnable(){
-			alert("inside editEnable");
+			//alert("inside editEnable");
 			document.getElementById("location").disabled = false;
 			document.getElementById("numberOfCopies").disabled = false;
 			document.getElementById("form1").hidden=true;
@@ -213,7 +213,7 @@
             idurl += "&users[]="  + document.getElementById("isbnData" + i).value;
         }
 
-        alert(idurl);
+        //alert(idurl);
    		 });
 		});
 

@@ -39,9 +39,6 @@
                         <a href="<%=request.getContextPath() %>/libraryHome">Home</a>
                     </li>
                     <li>
-                        <a href="<%=request.getContextPath() %>/libraryProfile">Profile</a>
-                    </li>
-                    <li>
                         <a href="<%=request.getContextPath() %>/logout">SignOut</a>
                     </li>
                 </ul>
@@ -70,16 +67,10 @@
                     <a href="<%=request.getContextPath() %>/patronSearchBook">Search Book</a>
                 </li>
                 <li>
-                    <a href="<%=request.getContextPath() %>/patronHome">Already Issued Books</a>
-                </li>
-                <li>
                     <a href="<%=request.getContextPath() %>/patronSearchBook">Issue Book</a>
                 </li>
                 <li>
                     <a href="<%=request.getContextPath() %>/patronReturnSearch">Return Book</a>
-                </li>
-                <li>
-                    <a href="<%=request.getContextPath() %>/patronProfile">Profile</a>
                 </li>
                 <li>
                     <a href="<%=request.getContextPath() %>/welcome">Signout</a>
@@ -133,7 +124,7 @@
        <script>
        	function func(){
        		//document.getElementById('myForm').action = "/LibrarySystem/book/return/"+document.getElementById('isbn').value;
-       		alert(document.getElementById('myForm').action);
+       		//alert(document.getElementById('myForm').action);
        	}
        	$(document).ready(function() {
        		$('#getListOfISBN').on('click', function(event) {
