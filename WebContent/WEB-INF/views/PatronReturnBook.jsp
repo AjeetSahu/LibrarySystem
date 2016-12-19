@@ -94,23 +94,14 @@
 		
             <div class="col-md-9"  style="padding-top:120px;">
            <div class="row">
-<<<<<<< HEAD
             <div class="col-md-0"></div>
             	<form id="form1" style="padding-top:100px;" method="POST" action="<%=request.getContextPath() %>/return">
-||||||| merged common ancestors
-           
-            <div class="col-md-3"></div>
-            <p>abc: "${books[0]}"</p>
-=======
-           
-            <div class="col-md-3"></div>
-               
->>>>>>> 3a75d15a010799bd8154bffe57ca24815768b4df
                 <div id="tab" class="table-responsive">
 						        <table class="table table-striped">
 						            <thead>
 						            <tr>
 						                <th>ISBN</th>
+						                <th>Title</th>
 						                <th>#</th>
 						            </tr>
 						            </thead>
