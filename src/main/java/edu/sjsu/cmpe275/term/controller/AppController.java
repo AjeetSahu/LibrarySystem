@@ -444,21 +444,14 @@ public class AppController {
 	 */
 	@RequestMapping(value = "/patronReturnBook", method = RequestMethod.GET)
 	public ModelAndView patronReturnSearch(HttpServletRequest request) {
+		System.out.println("Inside patron return get");
 		if (request.getSession().getAttribute("loggedIn") == null) {
 			ModelAndView login = new ModelAndView("Login");
 			return login;
 		}
-		List<BookStatus> books = bookStatusService.getListOfAllIssuedBooks();
+		List<BookStatus> bookstatus = bookStatusService.getListOfAllIssuedBooks();
 		ModelAndView patronSearch = new ModelAndView("PatronReturnBook");
-		patronSearch.addObject("books",books);
-		List<String> titles = new ArrayList<String>();
-		List<String> isbns = new ArrayList<String>();
-		for(int i=0; i<books.size(); i++){
-			titles.add(books.get(i).getBook().getTitle());
-			isbns.add(books.get(i).getBook().getIsbn());
-		}
-		patronSearch.addObject("titles",titles);
-		patronSearch.addObject("isbns",isbns);
+		patronSearch.addObject("bookstatus",bookstatus);
 		return patronSearch;
 	}
 
@@ -1323,12 +1316,12 @@ public class AppController {
 	    return success;
 	  }
 	  
-	  @RequestMapping(value = "/return", method = RequestMethod.POST)
+	  /*@RequestMapping(value = "/return", method = RequestMethod.POST)
       public ModelAndView BookReturn(@RequestParam(value = "isbn") String isbn, Model model, HttpServletRequest request) {
     	  String[] isbnArray = new String[1];
     	  isbnArray[0] = isbn;
     	  return Return(isbnArray, model, request);
-      }
+      }*/
 	
 	/*
 	 * Search Books Ruchit code strts here
@@ -1342,25 +1335,26 @@ public class AppController {
 	 */
 	
 	///////////////Ruchit return Book code Starts ///////////////////////
-	
+	  @RequestMapping(value = "/return", method = RequestMethod.POST)
 	public ModelAndView Return(String[] isbnArray, Model model, HttpServletRequest request) {
-
+		  System.out.println("isbnArray: "+isbnArray);
+		  for (String s: isbnArray) { 
+			  System.out.println("isbnArray values: "+s);
+		  }
 	ModelAndView success = new ModelAndView("PatronHome");
 
 	ModelAndView error = new ModelAndView("Error");
 
 
-	System.out.println("inside checkout ");
+	//System.out.println("inside checkout ");
 
-	String email = "kadakiaruchit@gmail.com";
+	//String email = "kadakiaruchit@gmail.com";
 
 
 	// System.out.println(reqParams.get("isbn"));
 
-	// String email =
-
-	// ((Patron)request.getSession().getAttribute("loggedIn")).getEmail();
-
+	//String email =((Patron)request.getSession().getAttribute("loggedIn")).getEmail();
+	String email = (String)request.getSession().getAttribute("email");
 	System.out.println(email);
 
 	Calendar c = new GregorianCalendar();
@@ -1380,7 +1374,7 @@ public class AppController {
 
 
 	Patron patron = patronService.findPatronByEmailId(email);
-
+	System.out.println("patron"+patron);
 
 	if (isbnArray.length > 10) {
 
@@ -1424,7 +1418,7 @@ public class AppController {
 	System.out.println("penalty deleting book isbn of " + isbnArray[j]);
 
 	returndate = (Date) request.getSession().getAttribute("appTime");
-
+	System.out.println("returndate"+returndate);
 	long penalty =  (returndate.getTime() - patronsBookStatus.get(i).getDueDate().getTime())/ (1000 * 60 * 60 * 24);
 
 	System.out.println("aaj ka date is " + returndate);
