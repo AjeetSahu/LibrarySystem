@@ -18,7 +18,7 @@ public class BookStatusDAOImpl extends AbstractDao<String, BookStatus>  implemen
 
 	@Override
 	public List<BookStatus> getListOfIssuedBooks(String patronId) {
-		return getListOfIssuedBooks(patronId);
+		return getListOfIssuedBook(patronId);
 	}
 
 	@Override
@@ -37,7 +37,7 @@ public class BookStatusDAOImpl extends AbstractDao<String, BookStatus>  implemen
 	@Override
 	public List<BookStatus> getListOfAllBookStatus() {
 		// TODO Auto-generated method stub
-		return getListOfAllBookStatus();
+		return getListOfAllBook();
 	}
 }
 

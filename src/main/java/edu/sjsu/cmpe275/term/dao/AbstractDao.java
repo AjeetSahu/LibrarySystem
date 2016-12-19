@@ -101,7 +101,8 @@ public abstract class AbstractDao<PK extends Serializable, T> {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<T> getListOfIssuedBooks(PK id){
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
+	public List<T> getListOfIssuedBook(PK id){
 		try{
 			return this.entityManager.createNativeQuery("Select bookstatusid from book_status"
 				+ " where bookstatusid IN (Select book_status_id from patron_bookstatus "
@@ -114,7 +115,7 @@ public abstract class AbstractDao<PK extends Serializable, T> {
 	
 	
 	@SuppressWarnings("unchecked")
-	public List<T> getListOfAllBookStatus(){
+	public List<T> getListOfAllBook(){
 		try{
 			System.out.println("Fetching all book statuses");
 			return this.entityManager.createNativeQuery("Select * from book_status").getResultList();

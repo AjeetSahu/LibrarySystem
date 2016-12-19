@@ -208,23 +208,26 @@ public class AppController {
 	@Transactional(propagation = Propagation.REQUIRED)
 	public String addToCart(@PathVariable("bookISBN") String isbn, Model model, HttpServletRequest request){
 		//Session session = entityManager.unwrap(Session.class);
-		try{
+		
 			System.out.println("isbn: "+isbn);
 			Book book = bookService.findBookByISBN(isbn);
 			System.out.println("book object: "+book);
+			CartItem cartItem = null;
+			try{
 			Query q = entityManager.createNativeQuery("SELECT * FROM cart_item where bookid ='"+ isbn +"'",
 					CartItem.class);
-			CartItem cartItem = (CartItem) q.getSingleResult();
+			cartItem = (CartItem) q.getSingleResult();
+			}
+			catch(Exception e1){
+				System.out.println("Error: "+e1);
+			}
 			System.out.println("cartItem: "+cartItem);
-			if(cartItem == null){
+			if(cartItem != null){
 				model.addAttribute("message", "Duplicate Addition to Cart");
 				model.addAttribute("httpStatus","404");
 				return "Error";
 			}
-//			book.setAvailableCopies(book.getAvailableCopies()-1);
-//			System.out.println("book1: "+book);
-//			entityManager.merge(book);
-			//CartItem cartItem;
+			try{
 			if (book != null) {
 				cartItem = new CartItem(book, 1);
 				List<CartItem> cartItems = new ArrayList<CartItem>();
@@ -259,6 +262,7 @@ public class AppController {
 	 * @author Pratik
 	 *
 	 */
+	
 	@RequestMapping(value = "/clearCart", method = RequestMethod.GET)
 	public void clearCart(Model model) {
 		BookingCart bookingCart = new BookingCart();
@@ -438,13 +442,23 @@ public class AppController {
 	 * @author Amitesh
 	 *
 	 */
-	@RequestMapping(value = "/patronReturnSearch", method = RequestMethod.GET)
+	@RequestMapping(value = "/patronReturnBook", method = RequestMethod.GET)
 	public ModelAndView patronReturnSearch(HttpServletRequest request) {
 		if (request.getSession().getAttribute("loggedIn") == null) {
 			ModelAndView login = new ModelAndView("Login");
 			return login;
 		}
-		ModelAndView patronSearch = new ModelAndView("PatronReturnSearch");
+		List<BookStatus> books = bookStatusService.getListOfAllIssuedBooks();
+		ModelAndView patronSearch = new ModelAndView("PatronReturnBook");
+		patronSearch.addObject("books",books);
+		List<String> titles = new ArrayList<String>();
+		List<String> isbns = new ArrayList<String>();
+		for(int i=0; i<books.size(); i++){
+			titles.add(books.get(i).getBook().getTitle());
+			isbns.add(books.get(i).getBook().getIsbn());
+		}
+		patronSearch.addObject("titles",titles);
+		patronSearch.addObject("isbns",isbns);
 		return patronSearch;
 	}
 
@@ -1194,15 +1208,29 @@ public class AppController {
 	 * @return
 	 */
 	
-	  @RequestMapping(value = "/checkout", method = RequestMethod.POST)
+	  @RequestMapping(value = "/checkout", method = RequestMethod.GET)
 	  @Transactional
-	  public ModelAndView checkout(@RequestParam(value = "isbn[]") String[] isbnArray, Model model,HttpServletRequest request) {
+	  public ModelAndView checkout(Model model,HttpServletRequest request) {
 	    ModelAndView success = new ModelAndView("PatronHome");
 	    ModelAndView error = new ModelAndView("Error");
-	    System.out.println("inside checkout ");
+	    String email = (String)request.getSession().getAttribute("email");
+	    System.out.println("email: "+email);
+	    Query q = entityManager.createNativeQuery("select cart_item.bookid from cart_item where bookingcartid =(select bookingcartid from patron where email='"+email+"')");
+		List<String> bookList = q.getResultList();
+		System.out.println("book size: "+bookList.toString());
+		//Book book = bookService.findBookByISBN(isbn);
+		String[] isbnArray = new String[bookList.size()];
+		for(int i=0; i<isbnArray.length; i++ ){
+			System.out.println("bookList "+i+" : "+bookList.get(i));
+			isbnArray[i] = bookList.get(i);
+			//System.out.println(isbnArray[i]);
+		}
+		BookingCart bookingCart = new BookingCart();
+		bookingCart.clearCart();
+		
 	    System.out.println(isbnArray[0]);
-	    //String email = "kadakiaruchit@gmail.com";
-	    String email = ((Patron)request.getSession().getAttribute("loggedIn")).getEmail();
+	    // String email = "kadakiaruchit@gmail.com";
+	    //String email = ((Patron)request.getSession().getAttribute("loggedIn")).getEmail();
 	    System.out.println(email);
 	    Calendar c = new GregorianCalendar();
 	    Date issueDate = c.getTime();
@@ -1256,14 +1284,9 @@ public class AppController {
 	    
 	    }
 	    
-	    
-	    
-	    
 	    System.out.println("before for in checkout ");
 	    List<BookStatus> patronsBookStatus1 = patron.getBookStatus();
 	    System.out.println("before for in checkout 1 " + patronsBookStatus.size());
-	    
-	    
 	    
 //	    for (int i = 0; i < isbnArray.length; i++) {
 //	      for (int j = 0; j < patronsBookStatus.size(); j++) {
@@ -1273,9 +1296,6 @@ public class AppController {
 //	        }
 //	      }
 //	    }
-	    
-
-	    
 	    
 	    
 	    for (int i = 0; i < isbnArray.length; i++) {
@@ -1312,13 +1332,14 @@ public class AppController {
 	    activationMailSender.send(message);
 	    return success;
 	  }
+	  
+	  @RequestMapping(value = "/return", method = RequestMethod.POST)
+      public ModelAndView BookReturn(@RequestParam(value = "isbn") String isbn, Model model, HttpServletRequest request) {
+    	  String[] isbnArray = new String[1];
+    	  isbnArray[0] = isbn;
+    	  return Return(isbnArray, model, request);
+      }
 	
-	
-	
-	
-
-
-
 	/*
 	 * Search Books Ruchit code strts here
 	 * 
@@ -1330,12 +1351,9 @@ public class AppController {
 	 * 
 	 */
 	
-
-	
 	///////////////Ruchit return Book code Starts ///////////////////////
 	
-	@RequestMapping(value = "/checkout/return", method = RequestMethod.POST)
-	public ModelAndView Return(@RequestParam(value = "isbn[]") String[] isbnArray, Model model, HttpServletRequest request) {
+	public ModelAndView Return(String[] isbnArray, Model model, HttpServletRequest request) {
 
 	ModelAndView success = new ModelAndView("PatronHome");
 
@@ -1450,7 +1468,6 @@ public class AppController {
 	patronService.updatePatron(patron);
 
 	bookStatusService.returnBooks(patronsBookStatus.get(i).getBookStatusId());
-
 	break;
 
 	}

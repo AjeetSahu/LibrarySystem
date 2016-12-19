@@ -36,26 +36,18 @@
             <div class="collapse navbar-collapse pull-right" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
                     <li>
-                        <a href="<%=request.getContextPath() %>/patronHome">Home</a>
+                        <a href="<%=request.getContextPath() %>/libraryHome">Home</a>
                     </li>
                     <li>
-                        <a href="<%=request.getContextPath() %>/patronProfile">Profile</a>
+                        <a href="<%=request.getContextPath() %>/libraryProfile">Profile</a>
                     </li>
                     <li>
-	                    <a href="<%=request.getContextPath() %>/cartCheckout">
-	                        Cart: <span class="badge">${shoppingCart.totalQuantity}</span><span class="badge">$${shoppingCart.totalPrice}</span>
-	                    </a>
-                	</li>
-                    <li>
-                        <a href="<%=request.getContextPath() %>/logout">Signout</a>
+                        <a href="<%=request.getContextPath() %>/logout">SignOut</a>
                     </li>
                 </ul>
             </div>
             <!-- /.navbar-collapse -->
     </nav>
-    	<div>
-    		Welcome ${userName}
-    	</div>
     </div>
         <div class="row">
         <div class="col-md-3">
@@ -84,7 +76,7 @@
                     <a href="<%=request.getContextPath() %>/patronSearchBook">Issue Book</a>
                 </li>
                 <li>
-                    <a href="<%=request.getContextPath() %>/patronReturnBook">Return Book</a>
+                    <a href="<%=request.getContextPath() %>/patronReturnSearch">Return Book</a>
                 </li>
                 <li>
                     <a href="<%=request.getContextPath() %>/patronProfile">Profile</a>
@@ -99,68 +91,45 @@
     </div>
     <!-- /#wrapper -->
 </div>
-		  
-                     
-       </div>
-       <div class="row"> 
-       		<div class="col-md-3"></div>
-	       		<div class="col-md-7">
-	             <form id="form1" style="padding-top:100px;">
-		            <div class="row" >
-                        
-                        <div class="col-md-6">
-                        	
-			  				<input class="form-control" type="text" id="title" name="title" value="${pattern}" placeholder="Enter Title Here" onchange="append();" required />
-                        </div>
-                        <div class="col-md-2">
-                            <a id="link" href="<%=request.getContextPath() %>/searchBookByTitle/"><input type="button" class="btn btn-primary" value="Search Book" name="search" id="search"></a>
-                        </div>    
-					</div><br><br>
-					</form>
-					</div>
-			</div>		
-					<div class="row">
-						<div class="col-md-3"></div>
-							<%-- <h1>${author}</h1> --%>
-							<div class="col-md-8">
-							<div id="tab" class="table-responsive">
+		
+            <div class="col-md-7"  style="padding-top:120px;">
+           <div class="row">
+           
+            <div class="col-md-3"></div>
+            <p>abc: "${books[0]}"</p>
+                <div id="tab" class="table-responsive">
 						        <table class="table table-striped">
 						            <thead>
 						            <tr>
 						                <th>ISBN</th>
-						                <th>Author</th>
 						                <th>Title</th>
-						                <th>Available Count</th>
 						                <th>#</th>
 						            </tr>
 						            </thead>
 						            <tbody>
-							<c:forEach var="book" items="${books}">
+							<% for(int i = 0; i < books.size(); i+=1) { %>
 							<tr>
-								<td>${book.isbn}</td>
-								<td>${book.author}</td>
-								<td>${book.title}</td>
-								<td>${book.availableCopies}</td>
-								<td><a href="<%=request.getContextPath() %>/addToCart/${book.isbn}"><span class="glyphicon glyphicon-shopping-cart"></span></a></td>
+								<td>${isbns.get(i)}</td>
+								<td>${titles.get(i)}</td>
+								<td><a href="<%=request.getContextPath() %>/addToCart/"><button class="btn btn-danger"></button></a></td>
 							</tr>
-							</c:forEach>
+							<% } %>
 							</tbody>
 				        </table>
 				    </div>
-				    </div>
-				    <div class="col-md-1"></div>
-				</div>
-         
-      </div>
-      <script>
-      function append() {
-          var link = document.getElementById('link');
-          var text = document.getElementById('title');
-          link.href = link.href + text.value;
-          //document.getElementById("tab").hidden=false;
-          /* link.text = text.value; */
-          alert(link.href);
-      }
-	</script>
+                 </div>
+           </div>  
+           <div class="col-md-1"></div>          
+       </div>
+       
+       </div>
+       
+       <script>
+       	function func(){
+       		//document.getElementById('myForm').action = "/LibrarySystem/book/return/"+document.getElementById('isbn').value;
+       		alert(document.getElementById('myForm').action);
+       	}
+       </script>
+       
 	</body>
 </html>
