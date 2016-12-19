@@ -1005,24 +1005,6 @@ public class AppController {
 	}
 
 	/**
-	 * Goto Patron profile page to update Patron info
-	 * 
-	 * @author Amitesh
-	 *
-	 */
-	@RequestMapping(value = "/libraryProfile", method = RequestMethod.GET)
-	public ModelAndView libraryProfile(Model model, HttpServletRequest request) {
-		if (request.getSession().getAttribute("loggedIn") == null) {
-			ModelAndView login = new ModelAndView("Login");
-			return login;
-		}
-
-		ModelAndView libraryProfile = new ModelAndView("LibrarianProfile");
-		libraryProfile.addObject("appTime", request.getSession().getAttribute("appTime"));
-		return libraryProfile;
-	}
-
-	/**
 	 * Goto Error page, if resource not found
 	 * 
 	 * @author Amitesh
@@ -1390,8 +1372,74 @@ public class AppController {
 	 * @return
 	 * 
 	 */
+	  
+	  
+	  @RequestMapping(value = "/return", method = RequestMethod.POST)  
+	  public ModelAndView ReturnBooks(@RequestParam String[] isbnArray, Model model, HttpServletRequest request) {
+		  ModelAndView success = new ModelAndView("PatronHome"); // change it to sucess page
+		  ModelAndView error = new ModelAndView("Error");
+		  System.out.println("isbnArray: "+isbnArray.length);
+		  for (String s: isbnArray) { 
+		  System.out.println("isbnArray values: "+s);
+		  }
+		  String email = (String)request.getSession().getAttribute("email");
+		  Patron patron = patronService.findPatronByEmailId(email);
+		  List<BookStatus> bookstatusofPatron = patron.getBookStatus();
+		  if(isbnArray.length > 10){
+			  error.addObject("message", "More than 10 books can not be returned");
+			  return error;
+		  }
+		  String mailBody = "";
+		  int totalfine = 0;
+		  int j = 0;
+		  Date returnDate = (Date) request.getSession().getAttribute("appTime");
+		  while(isbnArray.length > j){
+			  int i = 0;
+			  while(bookstatusofPatron.size() > i){
+				  if(bookstatusofPatron.get(i).getBook().getIsbn().equals(isbnArray[j])){
+					  bookstatusofPatron.get(i).getBook().setAvailableCopies(bookstatusofPatron.get(i).getBook().getAvailableCopies() + 1);
+					  bookService.updateBook(bookstatusofPatron.get(i).getBook());
+					  patron.setTotalIssuedCount(patron.getTotalIssuedCount() -1);
+					  	// calculating fine
+						long timeDifference = (returnDate.getTime() - bookstatusofPatron.get(i).getDueDate().getTime());
+						double den = 86400000d ;
+						double hoursDiff = timeDifference/den ;
+						int penalty = (int)Math.ceil(hoursDiff);
+						if(penalty > 0){
+							patron.setPenalty(patron.getPenalty()+penalty);
+						}
+				  }
+				  i++;
+			  }
+			  j++;
+		  }
+		  patronService.updatePatron(patron);
+		  j = 0;
+		  while(isbnArray.length > j){
+			  int i = 0;
+			  while(bookstatusofPatron.size() > i){
+				  if(bookstatusofPatron.get(i).getBook().getIsbn().equals(isbnArray[j])){
+					  //bookstatusofPatron.get(i).setReturnDate(returnDate);
+					  //patron.setTotalIssuedCount(patron.getDayIssuedCount() -1);
+					  mailBody = "/n" + i + "."+ mailBody + " Title "+ bookstatusofPatron.get(i).getBook().getTitle() + "/n"
+							  + " Issue Date " + bookstatusofPatron.get(i).getIssueDate() + "/n" 
+							  + " Due Date " + bookstatusofPatron.get(i).getDueDate() + "/n"
+					  		+ "Return Date " + returnDate + "/n";
+					  	// calculating fine
+/* */
+						bookStatusService.returnBooks(bookstatusofPatron.get(i).getBookStatusId());
+				  }
+				  i++;
+			  }
+			  j++;
+		  }
+		  String subject = "Book return confirmation";
+		  sendGenericMail(email, subject, mailBody);
+		  checkFunctionalityAtReturn(isbnArray);
+		  return success;
+	  }
 	
-	///////////////Ruchit return Book code Starts ///////////////////////
+	/*///////////////Ruchit return Book code Starts ///////////////////////
 	  @RequestMapping(value = "/return", method = RequestMethod.POST)
 	public ModelAndView Return(String[] isbnArray, Model model, HttpServletRequest request) {
 		  System.out.println("isbnArray: "+isbnArray);
@@ -1410,7 +1458,7 @@ public class AppController {
 		error.addObject("message", "You cant return more than 10 books at a tiime");
 		return error;
 		}	
-		/*
+		
 		Date returndate = null;
 		SimpleDateFormat sdf = new SimpleDateFormat("EE MMM dd HH:mm:ss z yyyy", Locale.ENGLISH);
 		Date parsedDate  = null;
@@ -1421,7 +1469,7 @@ public class AppController {
 			}
 		} catch (ParseException e) {
 			e.printStackTrace();
-		} */
+		} 
 		Date returndate = (Date) request.getSession().getAttribute("appTime");
 		System.out.println("returndate"+returndate);
 		List<BookStatus> patronsBookStatus = patron.getBookStatus();
@@ -1472,10 +1520,10 @@ public class AppController {
 		checkFunctionalityAtReturn(isbnArray);
 		return success;
 
-	}
+	}*/
 	//////////////Ruchit return Book code Ends here /////////////////////
 	  
-	@RequestMapping(value = "/renewbook/{isbn}", method = RequestMethod.POST)
+	@RequestMapping(value = "/renewbook/{isbn}", method = RequestMethod.GET)
 	@Transactional
 	public ModelAndView renewBook(@PathVariable("isbn") String isbn, HttpServletRequest request){
 		ModelAndView bookRenewed = new ModelAndView("BookRenewed");

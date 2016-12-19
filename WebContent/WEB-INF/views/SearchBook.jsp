@@ -181,11 +181,11 @@
 	<script>
 	$("#getData").click(function(){
 			var isbnVal = document.getElementById('isbn').value;
-			alert("isbnVal: "+isbnVal);
+			//alert("isbnVal: "+isbnVal);
 			var url = "https://www.googleapis.com/books/v1/volumes?q=isbn:8179923274";
-			alert(url)
+			//alert(url)
 	        $.get(url, function(data, status){
-	            alert("Data: " + JSON.stringify(data, null, 2) + "\nStatus: " + status);
+	            //alert("Data: " + JSON.stringify(data, null, 2) + "\nStatus: " + status);
 				document.getElementById("getData").value = data;
 				//alert("getData: "+document.getElementById("getData").value);
 				document.getElementById("tab").hidden=false;
@@ -203,7 +203,7 @@
 	</script>
 	<script type="text/javascript">
 		function editEnable(){
-			alert("inside editEnable");
+			//alert("inside editEnable");
 			document.getElementById("location").disabled = false;
 			document.getElementById("numberOfCopies").disabled = false;
 			document.getElementById("form1").hidden=true;

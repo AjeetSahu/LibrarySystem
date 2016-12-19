@@ -79,9 +79,6 @@
                     <a href="<%=request.getContextPath() %>/updateBook">Search/Update Book</a>
                 </li>
                 <li>
-                    <a href="<%=request.getContextPath() %>/libraryProfile">Profile</a>
-                </li>
-                <li>
                     <a href="<%=request.getContextPath() %>/logout">Signout</a>
                 </li>
             </ul>

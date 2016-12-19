@@ -67,7 +67,7 @@
                     <a href="<%=request.getContextPath() %>/libraryHome">Dashboard</a>
                 </li>
                 <li>
-                    <a href="<%=request.getContextPath() %>/newBook">Search Book</a>
+                    <a href="<%=request.getContextPath() %>/newBook">Add Book - Google API</a>
                 </li>
                 <li>
                     <a href="<%=request.getContextPath() %>/addNewBookManually">Add Book</a>
@@ -77,9 +77,6 @@
                 </li>
                 <li>
                     <a href="<%=request.getContextPath() %>/updateBook">Search/Update Book</a>
-                </li>
-                <li>
-                    <a href="<%=request.getContextPath() %>/libraryProfile">Profile</a>
                 </li>
                 <li>
                     <a href="<%=request.getContextPath() %>/logout">Signout</a>
