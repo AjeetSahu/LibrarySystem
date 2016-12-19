@@ -97,6 +97,7 @@
        <div class="row"> 
        		<div class="col-md-3"></div>
 	       		<div class="col-md-6" style="padding-top:110px;">
+	       		<label>Allocated Time: "${appTime}"</label>
 	             <form action="/LibrarySystem/newBook" method="post" enctype="multipart/form-data"> 
 			  <label for="ex1">ISBN: </label>
 			  <input class="form-control" type="text" name="isbn" >
