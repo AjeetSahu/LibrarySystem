@@ -67,7 +67,7 @@
                     <a href="<%=request.getContextPath() %>/libraryHome">Dashboard</a>
                 </li>
                 <li>
-                    <a href="<%=request.getContextPath() %>/newBook">Search Book</a>
+                    <a href="<%=request.getContextPath() %>/newBook">Add Book - Google API</a>
                 </li>
                 <li>
                     <a href="<%=request.getContextPath() %>/addNewBookManually">Add Book</a>
@@ -76,7 +76,7 @@
                     <a href="<%=request.getContextPath() %>/deleteSearch">Delete Book</a>
                 </li>
                 <li>
-                    <a href="<%=request.getContextPath() %>/updateBook">Update Book</a>
+                    <a href="<%=request.getContextPath() %>/updateBook">Search/Update Book</a>
                 </li>
                 <li>
                     <a href="<%=request.getContextPath() %>/libraryProfile">Profile</a>
@@ -95,9 +95,25 @@
        </div>
 			<div style="padding-top:100px; padding-left:450px;">
 				<h3>Welcome ${userName}</h3>
+            	<div> <label>Allocated Time: "${appTime}"</label>
+				    <form action="/LibrarySystem/setDateTime" onsubmit="getValue();" method = "post">
+					    <input type="datetime-local" name="time" id="time">
+					    <input type="hidden" name="appTime" id="appTime">
+					    <input type="submit" value="Set Time" class="btn btn-danger">
+				    </form>
+				</div><br>
             	<h3><mark>${message}</mark></h3>
 			</div>
+			
                 </div>
 	</body>
-	
+	<script type="text/javascript">
+	function getValue(){
+   	 // alert("here");
+     	var d = document.getElementById("time").value;
+       var time = (d+":00").replace("T", " ");
+       alert (time);
+       document.getElementById("appTime").value = time; 
+     }
+	</script>
 </html>

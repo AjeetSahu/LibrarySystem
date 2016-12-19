@@ -58,7 +58,7 @@
     	</div>
     </div>
         <div class="row">
-        <div class="col-md-3">
+        <div class="col-md-2">
 		
 
     <div id="wrapper">
@@ -101,9 +101,7 @@
 </div>
 		  
                      
-       </div>
-       <div class="row"> 
-       		<div class="col-md-3"></div>
+       
 	       		<div class="col-md-7">
 	             <form id="form1" style="padding-top:100px;">
 		            <div class="row" >
@@ -117,12 +115,7 @@
                         </div>    
 					</div><br><br>
 					</form>
-					</div>
-			</div>		
-					<div class="row">
-						<div class="col-md-3"></div>
-							<%-- <h1>${author}</h1> --%>
-							<div class="col-md-8">
+					
 							<div id="tab" class="table-responsive">
 						        <table class="table table-striped">
 						            <thead>
@@ -148,11 +141,26 @@
 				        </table>
 				    </div>
 				    </div>
-				    <div class="col-md-1"></div>
+				    <div class="col-md-2" style="padding-top:120px;">
+				    <label>Allocated Time: "${appTime}"</label>
+				    <form action="/LibrarySystem/setDateTime" onsubmit="getValue();" method = "post">
+					    <input type="datetime-local" name="time" id="time">
+					    <input type="hidden" name="appTime" id="appTime">
+					    <input type="submit" value="Set Time" class="btn btn-danger">
+				    </form>
+				    </div>
 				</div>
          
       </div>
       <script>
+      function getValue(){
+    	 // alert("here");
+      	var d = document.getElementById("time").value;
+        var time = (d+":00").replace("T", " ");
+        alert (time);
+        document.getElementById("appTime").value = time; 
+      }
+      
       function append() {
           var link = document.getElementById('link');
           var text = document.getElementById('title');

@@ -351,6 +351,10 @@ public class AppController {
 	public ModelAndView authenticateUser(@RequestParam Map<String, String> reqParams, Model model,
 			HttpServletRequest request) {
 		ModelAndView modelAndView = null;
+		request.getSession().setAttribute("appTime", (new Date()).toString());
+		String setTime = (String)request.getSession().getAttribute("appTime").toString();
+		System.out.println("setTime: "+setTime);
+		model.addAttribute("appTime",setTime);
 		if (reqParams.get("email").contains("@sjsu.edu")) {
 			modelAndView = new ModelAndView("LibraryHome");
 			Librarian librarian = librarianService.findLibrarianByEmailId(reqParams.get("email"));
@@ -387,6 +391,7 @@ public class AppController {
 			}
 		}
 		modelAndView.addObject("userEmail", request.getSession().getAttribute("userEmail"));
+		modelAndView.addObject("appTime", setTime);
 		model.addAttribute("pattern", "");
 		return modelAndView;
 	}
@@ -400,6 +405,7 @@ public class AppController {
 	@RequestMapping(value = "/logout", method = RequestMethod.GET)
 	public String signout(HttpServletRequest request) {
 		request.getSession().setAttribute("loggedIn", null);
+		request.getSession().setAttribute("appTime", null);
 		System.out.println("After logout " + request.getSession().getAttribute("loggedIn"));
 		return "Login";
 	}
@@ -764,7 +770,8 @@ public class AppController {
 		bookFound.addObject("httpStatus", HttpStatus.OK);
 		return bookFound;
 	}
-
+	
+	
 	/**
 	 * DELETE AN EXISTING BOOK
 	 * 
@@ -773,13 +780,15 @@ public class AppController {
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping(value = "/book/{bookISBN}", method = RequestMethod.DELETE)
-	public ModelAndView deleteBook(@PathVariable("bookISBN") String isbn, Model model, HttpServletRequest request) {
+	//@PathVariable("bookISBN") String isbn
+	@RequestMapping(value = "/deletebook", method = RequestMethod.POST)
+	public ModelAndView deleteBook(@RequestParam Map<String, String> reqParams, Model model, HttpServletRequest request) {
 		ModelAndView login = new ModelAndView("Login");
+		String isbn = reqParams.get("isbn1");
 		if (request.getSession().getAttribute("loggedIn") == null) {
 			return login;
 		}
-		ModelAndView deletedBook = new ModelAndView("BookDeletedSuccessfully");
+		ModelAndView deletedBook = new ModelAndView("LibrarianSuccess");
 		ModelAndView notDeletedBook = new ModelAndView("Error");
 		System.out.println("inside deleteBook");
 		Book book = bookService.findBookByISBN(isbn);
@@ -789,11 +798,18 @@ public class AppController {
 			return notDeletedBook;
 		}
 		if (book.getNumberOfCopies() == book.getAvailableCopies()) {
+			List<BookStatus> bookStatus = findBookStatusForISBN(isbn);
+			int k = 0;
+			//Removing wait list
+			while(bookStatus.size() > k){
+				bookStatusService.returnBooks(bookStatus.get(k).getBookStatusId());
+				k++;
+			}
 			bookService.deleteBookByISBN(isbn);
-			notDeletedBook.addObject("httpStatus", HttpStatus.OK);
+			deletedBook.addObject("message", "Book with ISBN: " + isbn + "has been deleted from database");
 			return deletedBook;
 		} else {
-			notDeletedBook.addObject("message", "Cannot be deleted as checkout by patron");
+			notDeletedBook.addObject("message", "Cannot be deleted as book is checkout by patron");
 			notDeletedBook.addObject("httpStatus", HttpStatus.FORBIDDEN);
 			return notDeletedBook;
 		}
@@ -891,6 +907,11 @@ public class AppController {
 		// model.addAttribute("author",book.getAuthor());
 		System.out.println("book: " + book);
 		model.addAttribute("pattern", request.getSession().getAttribute("patron"));
+		String setTime = (String)request.getSession().getAttribute("appTime").toString();
+		System.out.println("setTime: "+setTime);
+		if(setTime.equals("") || setTime == null || setTime.isEmpty())
+			setTime = new Date().toString();
+		model.addAttribute("appTime",setTime);
 		return "PatronHome";
 	}
 
@@ -1498,12 +1519,13 @@ public class AppController {
 	 */
 	@RequestMapping(value = "/setDateTime", method = RequestMethod.POST)
 	@Transactional
-	public void setDateTime(@RequestParam Map<String, String> reqParams, HttpServletRequest request) {
+	public String setDateTime(@RequestParam Map<String, String> reqParams, HttpServletRequest request) {
 		System.out.println("Setting time");
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 		Date date = null;
 		try {
 			date = formatter.parse(reqParams.get("appTime"));
+			System.out.println("AppDatetime: "+date);
 			globalDate = date;
 		} catch (ParseException e) {
 			e.printStackTrace();
@@ -1512,6 +1534,10 @@ public class AppController {
 		// Will Execute code for sending reminders
 		sendDueReminder();
 		removeRequestAfterThreeDays();
+		String email = (String)request.getSession().getAttribute("email");
+		if(email.contains("@sjsu.edu"))
+			return "LibraryHome";
+		return "PatronHome";
 	}
 
 	@RequestMapping(value = "/requestBook/{bookISBN}", method = RequestMethod.POST)

@@ -36,64 +36,67 @@
             <div class="collapse navbar-collapse pull-right" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
                     <li>
-                        <a href="<%=request.getContextPath() %>/welcome">Home</a>
+                        <a href="<%=request.getContextPath() %>/libraryHome">Home</a>
                     </li>
                     <li>
-						<a href="<%=request.getContextPath() %>/login">Login</a>
+                        <a href="<%=request.getContextPath() %>/libraryProfile">Profile</a>
+                    </li>
+                    <li>
+                        <a href="<%=request.getContextPath() %>/logout">SignOut</a>
                     </li>
                 </ul>
             </div>
             <!-- /.navbar-collapse -->
     </nav>
     </div>
-    </div>
-    <div class="container" style="padding-top:120px">
-       <div class="row"> 
-       		<div class="col-md-3"></div>
-	       		<div class="col-md-7">
-	           <form action="/LibrarySystem/newUser" method="POST" onsubmit=" return checkUniversityID()"> 
-			  <label for="ex1">UNIVERSITYID: </label>
-			  <input class="form-control" type="text" name="universityId"  id="universityId1">
-				<br>
-			  <label for="ex1">FIRSTNAME: </label>
-			  <input class="form-control" type="text" name="firstName" >
-				<br>
-			  <label for="ex1">LASTNAME: </label>
-			  <input class="form-control" type="text" name="lastName" >
-			  <br>
-			  <label for="ex1">EMAIL: </label>
-			  <input class="form-control" type="text" name="email" >
-			<br>
-			  <label for="ex1">PASSWORD: </label>
-			  <input class="form-control" type="password" name="password" >
-		<br>
+        <div class="row">
+        <div class="col-md-3">
 		
-		
-		<div style="padding-left:300px;">
-			<input class="btn btn-primary btn-lg" type="submit" name="submit" value="  Register  ">
-			<br>
-			<a class="pull-right" href="<%=request.getContextPath() %>/login">Existing User? Login Here</a>
-			
-		</div>
-		</form>
-	        </div>
-         <div class="col-md-1"></div>
-         </div>
-                		
+
+    <div id="wrapper">
+
+        <!-- Sidebar -->
+        <div id="sidebar-wrapper">
+            <ul class="sidebar-nav">
+                <li class="sidebar-brand">
+                    <a href="#">
+                        Start Bootstrap
+                    </a>
+                </li>
+                <li>
+                    <a href="<%=request.getContextPath() %>/libraryHome">Dashboard</a>
+                </li>
+                <li>
+                    <a href="<%=request.getContextPath() %>/newBook">Add Book - Google API</a>
+                </li>
+                <li>
+                    <a href="<%=request.getContextPath() %>/addNewBookManually">Add Book</a>
+                </li>
+                <li>
+                    <a href="<%=request.getContextPath() %>/deleteSearch">Delete Book</a>
+                </li>
+                <li>
+                    <a href="<%=request.getContextPath() %>/updateBook">Search/Update Book</a>
+                </li>
+                <li>
+                    <a href="<%=request.getContextPath() %>/libraryProfile">Profile</a>
+                </li>
+                <li>
+                    <a href="<%=request.getContextPath() %>/logout">Signout</a>
+                </li>
+            </ul>
+        </div>
+        <!-- /#sidebar-wrapper -->
 	
-                </div> 
-                
-                <script>
-function checkUniversityID() {
-	//alert("yolo");
-	var x = document.getElementById("universityId1").value;
-	//alert(x);
-	if(x.length!=6){
-    alert("University id should be of 6 digits");
-    return false;
-	}
-return true;
-}
-</script>
+    </div>
+    <!-- /#wrapper -->
+</div>     
+	
+       </div>
+			<div style="padding-top:100px; padding-left:450px;">
+            	<h3><mark>Success: ${message}</mark></h3>
+			
+                </div>
 	</body>
+	
 </html>

@@ -76,7 +76,7 @@
                     <a href="<%=request.getContextPath() %>/deleteSearch">Delete Book</a>
                 </li>
                 <li>
-                    <a href="<%=request.getContextPath() %>/updateBook">Update Book</a>
+                    <a href="<%=request.getContextPath() %>/updateBook">Search/Update Book</a>
                 </li>
                 <li>
                     <a href="<%=request.getContextPath() %>/libraryProfile">Profile</a>
@@ -124,7 +124,7 @@
      <script>
 		function setUrl(){
 			var url = "/LibrarySystem/book/"+document.getElementById("isbn").value;
-			alert(url);
+			//alert(url);
 			document.getElementById('myForm').action = url;
 		}
 	</script>
