@@ -317,6 +317,10 @@ public class AppController {
 			if (librarian != null && bool) {
 				librarian.setStatus(true);
 				librarianService.updateLibrarian(librarian);
+				String to=librarian.getEmail();
+				sendGenericMail(to, "Library Management System Activation Code", "You have successfully verified your account");
+			
+				
 				model.addAttribute("message", "Account created Successfully");
 				return "Login";
 			} else {
@@ -334,6 +338,9 @@ public class AppController {
 				patron.setStatus(true);
 				patronService.updatePatron(patron);
 				model.addAttribute("message", "Account created Successfully");
+				String to=patron.getEmail();
+				sendGenericMail(to, "Library Management System Activation Code", "You have successfully verified your account");
+			
 				return "Login";
 			} else {
 				return "Error";
@@ -1219,6 +1226,7 @@ public class AppController {
 	    ModelAndView error = new ModelAndView("Error");
 	    String email = (String)request.getSession().getAttribute("email");
 	    System.out.println("email: "+email);
+	    
 	    Query q = entityManager.createNativeQuery("select cart_item.bookid from cart_item where bookingcartid =(select bookingcartid from patron where email='"+email+"')");
 		List<String> bookList = q.getResultList();
 		System.out.println("book size: "+bookList.toString());
@@ -1236,10 +1244,15 @@ public class AppController {
 	    // String email = "kadakiaruchit@gmail.com";
 	    //String email = ((Patron)request.getSession().getAttribute("loggedIn")).getEmail();
 	    System.out.println(email);
-	    Calendar c = new GregorianCalendar();
-	    Date issueDate = c.getTime();
-	    c.add(Calendar.DATE, 30);
-	    Date dueDate = c.getTime();
+
+        Date issueDate = (Date)request.getSession().getAttribute("appTime");
+        Calendar c = Calendar.getInstance();
+        c.setTime(issueDate);
+        c.add(Calendar.DATE, 30);
+        Date dueDate = c.getTime();
+       
+	    
+	    
 	    Patron patron = patronService.findPatronByEmailId(email);
 	    String checkoutData = "";
 	    if (isbnArray.length > 5) {
@@ -1366,21 +1379,11 @@ public class AppController {
 
 	ModelAndView error = new ModelAndView("Error");
 
-
-	//System.out.println("inside checkout ");
-
-	//String email = "kadakiaruchit@gmail.com";
-
-
-	// System.out.println(reqParams.get("isbn"));
-
-	//String email =((Patron)request.getSession().getAttribute("loggedIn")).getEmail();
 	String email = (String)request.getSession().getAttribute("email");
 	System.out.println(email);
-
 	Calendar c = new GregorianCalendar();
 
-	Date returnDate = c.getTime();
+//	Date returnDate = c.getTime();
 
 	// int days = Days.daysBetween(returnDate, returnDate).getDays();
 
@@ -1412,9 +1415,7 @@ public class AppController {
 
 	}
 
-
-	Date returndate = null;
-
+	Date returndate = (Date) request.getSession().getAttribute("appTime");
 	List<BookStatus> patronsBookStatus = patron.getBookStatus();
 
 	for (int i = 0; i < patronsBookStatus.size(); i++) {
@@ -1430,21 +1431,34 @@ public class AppController {
 
 	System.out.println("deleting book isbn of " + isbnArray[j]);
 
-	checkoutReturnData += "\n" + patronsBookStatus.get(i).getBook().getIsbn() + "  "
+	checkoutReturnData += "\n" + (j+1) +"."+  " ISBN: "+patronsBookStatus.get(i).getBook().getIsbn() + "\t TITLE:" + "\n"
 
-	+ patronsBookStatus.get(i).getBook().getTitle() + "  "
+	+ patronsBookStatus.get(i).getBook().getTitle() + "\t ISSUE DATE: "
 
-	+ patronsBookStatus.get(i).getIssueDate();
+	+ patronsBookStatus.get(i).getIssueDate()+ "\t DUE DATE: "
+
+	+ patronsBookStatus.get(i).getDueDate() + "\t DATE RETURNED: "
+
+
+	+ returndate;
 
 	System.out.println("penalty deleting book isbn of " + isbnArray[j]);
 
 	returndate = (Date) request.getSession().getAttribute("appTime");
 	System.out.println("returndate"+returndate);
-	long penalty =  (returndate.getTime() - patronsBookStatus.get(i).getDueDate().getTime())/ (1000 * 60 * 60 * 24);
 
-	System.out.println("aaj ka date is " + returndate);
+	long num=(returndate.getTime() - patronsBookStatus.get(i).getDueDate().getTime());
+	double den=86400000d ;
+	double hoursDiff = num/den ;
+	
+
+	System.out.println("return ka date is " + returndate);
 
 	System.out.println("due ka date is " + patronsBookStatus.get(i).getDueDate());
+	
+	System.out.println("hoursDiff"+Math.ceil(hoursDiff));
+	
+	
 
 	Book b=patronsBookStatus.get(i).getBook();
 
@@ -1453,12 +1467,14 @@ public class AppController {
 	b.setAvailableCopies(b.getAvailableCopies()+1);
 
 	bookService.updateBook(b);
+	
+	int penalty=(int)Math.ceil(hoursDiff);
 
 	System.out.println(penalty);
 
 	patron.setTotalIssuedCount(patron.getTotalIssuedCount() - 1);
 
-
+	
 	if (penalty > 0) {
 
 
@@ -1492,9 +1508,8 @@ public class AppController {
 
 	message.setSubject("SJSU Library Return on " + c.getTime());
 
-	message.setText("Hi You have just return out following items " + checkoutReturnData + "     Rerturn date is "
-
-	+ returndate + "\n = " + c.getTime() + "\n Please don't reply on this email.");
+	message.setText("Hi You have just return out following items \n " +
+	checkoutReturnData + "\n Please don't reply on this email.");
 
 	System.out.println("bhaijaan mail bje dia");
 
