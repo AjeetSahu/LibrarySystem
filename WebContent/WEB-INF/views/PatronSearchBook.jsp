@@ -39,9 +39,6 @@
                         <a href="<%=request.getContextPath() %>/libraryHome">Home</a>
                     </li>
                     <li>
-                        <a href="<%=request.getContextPath() %>/libraryProfile">Profile</a>
-                    </li>
-                    <li>
                         <a href="<%=request.getContextPath() %>/logout">SignOut</a>
                     </li>
                 </ul>
@@ -70,16 +67,10 @@
                     <a href="<%=request.getContextPath() %>/patronSearchBook">Search Book</a>
                 </li>
                 <li>
-                    <a href="<%=request.getContextPath() %>/patronHome">Already Issued Books</a>
-                </li>
-                <li>
                     <a href="<%=request.getContextPath() %>/patronSearchBook">Issue Book</a>
                 </li>
                 <li>
                     <a href="<%=request.getContextPath() %>/patronReturnSearch">Return Book</a>
-                </li>
-                <li>
-                    <a href="<%=request.getContextPath() %>/patronProfile">Profile</a>
                 </li>
                 <li>
                     <a href="<%=request.getContextPath() %>/welcome">Signout</a>
@@ -155,7 +146,7 @@
        <script>
        	function func(){
        		document.getElementById('myForm').action = "/LibrarySystem/book/"+document.getElementById('isbn').value;
-       		alert(document.getElementById('myForm').action);
+       		//alert(document.getElementById('myForm').action);
        	}
        </script>
        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
@@ -163,17 +154,17 @@
 	$("#issueBook").click(function(){
 		var url = "/LibrarySystem/book/json/"+document.getElementById('isbn').value;
 			
-			alert(document.getElementById("isbn"));
-			alert(url);
+			//alert(document.getElementById("isbn"));
+			//alert(url);
 	        $.get(url, function(data, status){
-	            alert("hello");
-				alert(data);
+	            //alert("hello");
+				//alert(data);
 				
 				console.log(data);
 				
 				document.getElementById("tab").hidden=false;
 				//var paramOne =<c:out value="${test}" />
-				alert("${test}");
+				//alert("${test}");
 			/*var table = document.getElementById("tab1");
 			    var row = table.insertRow(-1);
 			    var cell1 = row.insertCell(0);

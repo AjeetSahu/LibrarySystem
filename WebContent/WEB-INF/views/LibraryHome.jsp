@@ -39,9 +39,6 @@
                         <a href="<%=request.getContextPath() %>/libraryHome">Home</a>
                     </li>
                     <li>
-                        <a href="<%=request.getContextPath() %>/libraryProfile">Profile</a>
-                    </li>
-                    <li>
                         <a href="<%=request.getContextPath() %>/logout">SignOut</a>
                     </li>
                 </ul>
@@ -79,9 +76,6 @@
                     <a href="<%=request.getContextPath() %>/updateBook">Search/Update Book</a>
                 </li>
                 <li>
-                    <a href="<%=request.getContextPath() %>/libraryProfile">Profile</a>
-                </li>
-                <li>
                     <a href="<%=request.getContextPath() %>/logout">Signout</a>
                 </li>
             </ul>
@@ -112,7 +106,7 @@
    	 // alert("here");
      	var d = document.getElementById("time").value;
        var time = (d+":00").replace("T", " ");
-       alert (time);
+      // alert (time);
        document.getElementById("appTime").value = time; 
      }
 	</script>

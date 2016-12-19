@@ -201,7 +201,7 @@ public class AppController {
 		ModelAndView welcome = new ModelAndView("welcome");
 		return welcome;
 	}
-
+	
 	/**
 	 * GET ADD TO CART PAGE
 	 * 
@@ -259,6 +259,61 @@ public class AppController {
 		return "redirect:/searchBookByTitle/" + request.getSession().getAttribute("pattern");
 	}
 
+	
+	@RequestMapping(value = "/addToCartFromIsbn/{bookISBN}", method = RequestMethod.GET)
+	@Transactional(propagation = Propagation.REQUIRED)
+	public String addToCartFromIsbn(@PathVariable("bookISBN") String isbn, Model model, HttpServletRequest request){
+		//Session session = entityManager.unwrap(Session.class);
+		
+			System.out.println("isbn: "+isbn);
+			Book book = bookService.findBookByISBN(isbn);
+			System.out.println("book object: "+book);
+			CartItem cartItem = null;
+			try{
+			Query q = entityManager.createNativeQuery("SELECT * FROM cart_item where bookid ='"+ isbn +"'",
+					CartItem.class);
+			cartItem = (CartItem) q.getSingleResult();
+			}
+			catch(Exception e1){
+				System.out.println("Error: "+e1);
+			}
+			System.out.println("cartItem: "+cartItem);
+			if(cartItem != null){
+				model.addAttribute("message", "Duplicate Addition to Cart");
+				model.addAttribute("httpStatus","404");
+				return "Error";
+			}
+			try{
+			if (book != null) {
+				cartItem = new CartItem(book, 1);
+				List<CartItem> cartItems = new ArrayList<CartItem>();
+				cartItems.add(cartItem);
+				System.out.println("CartItems: "+cartItems);
+				String email = (String) request.getSession().getAttribute("email");
+				Patron patron = patronService.findPatronByEmailId(email);
+				System.out.println("patron: "+patron);
+				BookingCart bookingCart = patron.getBookingCart();
+				bookingCart.setCartItems(cartItems);
+				System.out.println("bookingCart: "+bookingCart);
+				bookingCartService.updateBookingCart(bookingCart);
+				cartItem.setBookCartId(bookingCart);
+				cartItem = cartItemService.saveNewCartItem(cartItem);
+				System.out.println("cartItem: "+cartItem);
+			}
+			System.out.println("3");
+		}
+		catch(Exception e){
+			System.out.println("Error: "+e);
+			model.addAttribute("httpStatus","404");
+			model.addAttribute("message","Error in AddBookToCart");
+			return "Error";
+		}
+		return "redirect:/cartCheckout";
+
+	}
+
+
+	
 	/**
 	 * Remove all items from Cart
 	 * 
@@ -697,7 +752,7 @@ public class AppController {
 		model.addAttribute("test", "test");
 		model.addAttribute("httpStatus", HttpStatus.OK);
 		model.addAttribute("appTime", request.getSession().getAttribute("appTime"));
-		return "PatronHome";
+		return "PatronIsbnSearch";
 	}
 	
 	
@@ -1001,24 +1056,6 @@ public class AppController {
 		ModelAndView patronProfile = new ModelAndView("PatronProfile");
 		patronProfile.addObject("appTime", request.getSession().getAttribute("appTime"));
 		return patronProfile;
-	}
-
-	/**
-	 * Goto Patron profile page to update Patron info
-	 * 
-	 * @author Amitesh
-	 *
-	 */
-	@RequestMapping(value = "/libraryProfile", method = RequestMethod.GET)
-	public ModelAndView libraryProfile(Model model, HttpServletRequest request) {
-		if (request.getSession().getAttribute("loggedIn") == null) {
-			ModelAndView login = new ModelAndView("Login");
-			return login;
-		}
-
-		ModelAndView libraryProfile = new ModelAndView("LibrarianProfile");
-		libraryProfile.addObject("appTime", request.getSession().getAttribute("appTime"));
-		return libraryProfile;
 	}
 
 	/**
@@ -1389,8 +1426,74 @@ public class AppController {
 	 * @return
 	 * 
 	 */
+	  
+	  
+	  @RequestMapping(value = "/return", method = RequestMethod.POST)  
+	  public ModelAndView ReturnBooks(@RequestParam String[] isbnArray, Model model, HttpServletRequest request) {
+		  ModelAndView success = new ModelAndView("PatronHome"); // change it to sucess page
+		  ModelAndView error = new ModelAndView("Error");
+		  System.out.println("isbnArray: "+isbnArray.length);
+		  for (String s: isbnArray) { 
+		  System.out.println("isbnArray values: "+s);
+		  }
+		  String email = (String)request.getSession().getAttribute("email");
+		  Patron patron = patronService.findPatronByEmailId(email);
+		  List<BookStatus> bookstatusofPatron = patron.getBookStatus();
+		  if(isbnArray.length > 10){
+			  error.addObject("message", "More than 10 books can not be returned");
+			  return error;
+		  }
+		  String mailBody = "";
+		  int totalfine = 0;
+		  int j = 0;
+		  Date returnDate = (Date) request.getSession().getAttribute("appTime");
+		  while(isbnArray.length > j){
+			  int i = 0;
+			  while(bookstatusofPatron.size() > i){
+				  if(bookstatusofPatron.get(i).getBook().getIsbn().equals(isbnArray[j])){
+					  bookstatusofPatron.get(i).getBook().setAvailableCopies(bookstatusofPatron.get(i).getBook().getAvailableCopies() + 1);
+					  bookService.updateBook(bookstatusofPatron.get(i).getBook());
+					  patron.setTotalIssuedCount(patron.getTotalIssuedCount() -1);
+					  	// calculating fine
+						long timeDifference = (returnDate.getTime() - bookstatusofPatron.get(i).getDueDate().getTime());
+						double den = 86400000d ;
+						double hoursDiff = timeDifference/den ;
+						int penalty = (int)Math.ceil(hoursDiff);
+						if(penalty > 0){
+							patron.setPenalty(patron.getPenalty()+penalty);
+						}
+				  }
+				  i++;
+			  }
+			  j++;
+		  }
+		  patronService.updatePatron(patron);
+		  j = 0;
+		  while(isbnArray.length > j){
+			  int i = 0;
+			  while(bookstatusofPatron.size() > i){
+				  if(bookstatusofPatron.get(i).getBook().getIsbn().equals(isbnArray[j])){
+					  //bookstatusofPatron.get(i).setReturnDate(returnDate);
+					  //patron.setTotalIssuedCount(patron.getDayIssuedCount() -1);
+					  mailBody = "/n" + i + "."+ mailBody + " Title "+ bookstatusofPatron.get(i).getBook().getTitle() + "/n"
+							  + " Issue Date " + bookstatusofPatron.get(i).getIssueDate() + "/n" 
+							  + " Due Date " + bookstatusofPatron.get(i).getDueDate() + "/n"
+					  		+ "Return Date " + returnDate + "/n";
+					  	// calculating fine
+/* */
+						bookStatusService.returnBooks(bookstatusofPatron.get(i).getBookStatusId());
+				  }
+				  i++;
+			  }
+			  j++;
+		  }
+		  String subject = "Book return confirmation";
+		  sendGenericMail(email, subject, mailBody);
+		  checkFunctionalityAtReturn(isbnArray);
+		  return success;
+	  }
 	
-	///////////////Ruchit return Book code Starts ///////////////////////
+	/*///////////////Ruchit return Book code Starts ///////////////////////
 	  @RequestMapping(value = "/return", method = RequestMethod.POST)
 	public ModelAndView Return(String[] isbnArray, Model model, HttpServletRequest request) {
 		  System.out.println("isbnArray: "+isbnArray);
@@ -1409,7 +1512,7 @@ public class AppController {
 		error.addObject("message", "You cant return more than 10 books at a tiime");
 		return error;
 		}	
-		/*
+		
 		Date returndate = null;
 		SimpleDateFormat sdf = new SimpleDateFormat("EE MMM dd HH:mm:ss z yyyy", Locale.ENGLISH);
 		Date parsedDate  = null;
@@ -1420,7 +1523,7 @@ public class AppController {
 			}
 		} catch (ParseException e) {
 			e.printStackTrace();
-		} */
+		} 
 		Date returndate = (Date) request.getSession().getAttribute("appTime");
 		System.out.println("returndate"+returndate);
 		List<BookStatus> patronsBookStatus = patron.getBookStatus();
@@ -1471,10 +1574,10 @@ public class AppController {
 		checkFunctionalityAtReturn(isbnArray);
 		return success;
 
-	}
+	}*/
 	//////////////Ruchit return Book code Ends here /////////////////////
 	  
-	@RequestMapping(value = "/renewbook/{isbn}", method = RequestMethod.POST)
+	@RequestMapping(value = "/renewbook/{isbn}", method = RequestMethod.GET)
 	@Transactional
 	public ModelAndView renewBook(@PathVariable("isbn") String isbn, HttpServletRequest request){
 		ModelAndView bookRenewed = new ModelAndView("BookRenewed");

@@ -40,9 +40,6 @@
                         <a href="#">Home</a>
                     </li>
                     <li>
-                        <a href="#">Profile</a>
-                    </li>
-                    <li>
                         <a href="<%=request.getContextPath() %>/logout">Signout</a>
                     </li>
                 </ul>
@@ -79,12 +76,6 @@
                   <li><a href="" style="color:white">Update Book</a></li>
                   <li><a href="" style="color:white">Delete Book</a></li>
                 </ul>
-				
-				<li>
-                  <a href="#">
-                  <i class="fa fa-user fa-lg"></i> Profile
-                  </a>
-                  </li>
                   
                  <li>
                   <a href="#">

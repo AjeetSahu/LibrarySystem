@@ -39,9 +39,6 @@
                         <a href="<%=request.getContextPath() %>/libraryHome">Home</a>
                     </li>
                     <li>
-                        <a href="<%=request.getContextPath() %>/libraryProfile">Profile</a>
-                    </li>
-                    <li>
                         <a href="<%=request.getContextPath() %>/logout">SignOut</a>
                     </li>
                 </ul>
@@ -70,16 +67,10 @@
                     <a href="<%=request.getContextPath() %>/patronSearchBook">Search Book</a>
                 </li>
                 <li>
-                    <a href="<%=request.getContextPath() %>/">Already Issued Books</a>
-                </li>
-                <li>
                     <a href="<%=request.getContextPath() %>/">Issue Book</a>
                 </li>
                 <li>
                     <a href="<%=request.getContextPath() %>/">Return Book</a>
-                </li>
-                <li>
-                    <a href="<%=request.getContextPath() %>/patronProfile">Profile</a>
                 </li>
                 <li>
                     <a href="<%=request.getContextPath() %>/welcome">Signout</a>

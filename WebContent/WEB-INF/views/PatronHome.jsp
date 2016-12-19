@@ -39,9 +39,6 @@
                         <a href="<%=request.getContextPath() %>/patronHome">Home</a>
                     </li>
                     <li>
-                        <a href="<%=request.getContextPath() %>/patronProfile">Profile</a>
-                    </li>
-                    <li>
 	                    <a href="<%=request.getContextPath() %>/cartCheckout">
 	                        Check Cart: <span class="badge"></span>
 	                    </a>
@@ -78,16 +75,10 @@
                     <a href="<%=request.getContextPath() %>/patronSearchBook">Search Book</a>
                 </li>
                 <li>
-                    <a href="<%=request.getContextPath() %>/patronHome">Already Issued Books</a>
-                </li>
-                <li>
                     <a href="<%=request.getContextPath() %>/patronSearchBook">Issue Book</a>
                 </li>
                 <li>
                     <a href="<%=request.getContextPath() %>/patronReturnSearch">Return Book</a>
-                </li>
-                <li>
-                    <a href="<%=request.getContextPath() %>/patronProfile">Profile</a>
                 </li>
                 <li>
                     <a href="<%=request.getContextPath() %>/welcome">Signout</a>
@@ -157,7 +148,6 @@
     	 // alert("here");
       	var d = document.getElementById("time").value;
         var time = (d+":00").replace("T", " ");
-        alert (time);
         document.getElementById("appTime").value = time; 
       }
       
@@ -167,7 +157,6 @@
           link.href = link.href + text.value;
           //document.getElementById("tab").hidden=false;
           /* link.text = text.value; */
-          alert(link.href);
       }
 	</script>
 	</body>
