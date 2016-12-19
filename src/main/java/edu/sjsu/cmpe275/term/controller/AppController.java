@@ -358,7 +358,7 @@ public class AppController {
 	public ModelAndView authenticateUser(@RequestParam Map<String, String> reqParams, Model model,
 			HttpServletRequest request) {
 		ModelAndView modelAndView = null;
-		request.getSession().setAttribute("appTime", (new Date()).toString());
+		request.getSession().setAttribute("appTime", new Date());
 		String setTime = (String)request.getSession().getAttribute("appTime").toString();
 		System.out.println("setTime: "+setTime);
 		model.addAttribute("appTime",setTime);
@@ -914,11 +914,11 @@ public class AppController {
 		// model.addAttribute("author",book.getAuthor());
 		System.out.println("book: " + book);
 		model.addAttribute("pattern", request.getSession().getAttribute("patron"));
-		String setTime = (String)request.getSession().getAttribute("appTime").toString();
-		System.out.println("setTime: "+setTime);
-		if(setTime.equals("") || setTime == null || setTime.isEmpty())
-			setTime = new Date().toString();
-		model.addAttribute("appTime",setTime);
+		//String setTime = (String)request.getSession().getAttribute("appTime").toString();
+		//System.out.println("setTime: "+setTime);
+/*		if(setTime.equals("") || setTime == null || setTime.isEmpty())
+			setTime = new Date().toString();*/
+		model.addAttribute("appTime",request.getSession().getAttribute("appTime"));
 		return "PatronHome";
 	}
 
