@@ -21,6 +21,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Locale;
+
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -1258,8 +1260,6 @@ public class AppController {
 			isbnArray[i] = bookList.get(i);
 			//System.out.println(isbnArray[i]);
 		}
-		BookingCart bookingCart = new BookingCart();
-		bookingCart.clearCart();
 		
 	    System.out.println(isbnArray[0]);
 	    // String email = "kadakiaruchit@gmail.com";
@@ -1275,6 +1275,10 @@ public class AppController {
 	    
 	    
 	    Patron patron = patronService.findPatronByEmailId(email);
+	    BookingCart bookingCart = patron.getBookingCart();
+	    System.out.println("bookingCart"+bookingCart);
+	    bookingCartService.deleteBookingCartById(bookingCart.getBookingCartId());
+	    bookingCart.clearCart();
 	    String checkoutData = "";
 	    if (isbnArray.length > 5) {
 	      error.addObject("message", "You cant checkout more than 5 books at a tiime");
@@ -1394,152 +1398,81 @@ public class AppController {
 	public ModelAndView Return(String[] isbnArray, Model model, HttpServletRequest request) {
 		  System.out.println("isbnArray: "+isbnArray);
 		  for (String s: isbnArray) { 
-			  System.out.println("isbnArray values: "+s);
+		  System.out.println("isbnArray values: "+s);
 		  }
-	ModelAndView success = new ModelAndView("PatronHome");
-
-	ModelAndView error = new ModelAndView("Error");
-
-	String email = (String)request.getSession().getAttribute("email");
-	System.out.println(email);
-	Calendar c = new GregorianCalendar();
-
-//	Date returnDate = c.getTime();
-
-	// int days = Days.daysBetween(returnDate, returnDate).getDays();
-
-	// c.add(Calendar.DATE, 30);
-
-	// Date dueDate=c.getTime();
-
-	// System.out.println();
-
-
-	String checkoutReturnData = "";
-
-
-	Patron patron = patronService.findPatronByEmailId(email);
-	System.out.println("patron"+patron);
-
-	if (isbnArray.length > 10) {
-
-
-	// model.addAttribute("message2","You cant checkout more than 5
-
-	// books at a time");
-
-	error.addObject("message", "You cant return more than 10 books at a tiime");
-
-
-	return error;
-
-
-	}
-
-	Date returndate = (Date) request.getSession().getAttribute("appTime");
-	List<BookStatus> patronsBookStatus = patron.getBookStatus();
-
-	for (int i = 0; i < patronsBookStatus.size(); i++) {
-
-	System.out.println("bhaijaan" + patronsBookStatus.get(i).getBookStatusId() + "  "
-
-	+ patronsBookStatus.get(i).getBook().getIsbn());
-
-	for (int j = 0; j < isbnArray.length; j++) {
-
-
-	if (isbnArray[j].equals(patronsBookStatus.get(i).getBook().getIsbn())) {
-
-	System.out.println("deleting book isbn of " + isbnArray[j]);
-
-	checkoutReturnData += "\n" + (j+1) +"."+  " ISBN: "+patronsBookStatus.get(i).getBook().getIsbn() + "\t TITLE:" + "\n"
-
-	+ patronsBookStatus.get(i).getBook().getTitle() + "\t ISSUE DATE: "
-
-	+ patronsBookStatus.get(i).getIssueDate()+ "\t DUE DATE: "
-
-	+ patronsBookStatus.get(i).getDueDate() + "\t DATE RETURNED: "
-
-
-	+ returndate;
-
-	System.out.println("penalty deleting book isbn of " + isbnArray[j]);
-
-	returndate = (Date) request.getSession().getAttribute("appTime");
-	System.out.println("returndate"+returndate);
-
-	long num=(returndate.getTime() - patronsBookStatus.get(i).getDueDate().getTime());
-	double den=86400000d ;
-	double hoursDiff = num/den ;
-	
-
-	System.out.println("return ka date is " + returndate);
-
-	System.out.println("due ka date is " + patronsBookStatus.get(i).getDueDate());
-	
-	System.out.println("hoursDiff"+Math.ceil(hoursDiff));
-	
-	
-
-	Book b=patronsBookStatus.get(i).getBook();
-
-	System.out.println("book is"+b+" "+b.getAvailableCopies());
-
-	b.setAvailableCopies(b.getAvailableCopies()+1);
-
-	bookService.updateBook(b);
-	
-	int penalty=(int)Math.ceil(hoursDiff);
-
-	System.out.println(penalty);
-
-	patron.setTotalIssuedCount(patron.getTotalIssuedCount() - 1);
-
-	
-	if (penalty > 0) {
-
-
-	System.out.println("high heels ");
-
-	patron.setPenalty(patron.getPenalty() + (int)penalty);
-
-
-
-	}
-
-	patronService.updatePatron(patron);
-
-	bookStatusService.returnBooks(patronsBookStatus.get(i).getBookStatusId());
-	break;
-
-	}
-
-
-	}
-
-
-	}
-
-
-	System.out.println("Hi You have just Returned out following item");
-
-	SimpleMailMessage message = new SimpleMailMessage();
-
-	message.setTo(email);
-
-	message.setSubject("SJSU Library Return on " + c.getTime());
-
-	message.setText("Hi You have just return out following items \n " +
-	checkoutReturnData + "\n Please don't reply on this email.");
-
-	System.out.println("bhaijaan mail bje dia");
-
-	System.out.println(activationMailSender);
-
-	activationMailSender.send(message);
-	checkFunctionalityAtReturn(isbnArray);
-	return success;
-	
+		ModelAndView success = new ModelAndView("PatronHome");
+		ModelAndView error = new ModelAndView("Error");
+		String email = (String)request.getSession().getAttribute("email");
+		System.out.println(email);
+		Calendar c = new GregorianCalendar();
+		String checkoutReturnData = "";
+		Patron patron = patronService.findPatronByEmailId(email);
+		System.out.println("patron"+patron);
+		if (isbnArray.length > 10) {
+		error.addObject("message", "You cant return more than 10 books at a tiime");
+		return error;
+		}	
+		/*
+		Date returndate = null;
+		SimpleDateFormat sdf = new SimpleDateFormat("EE MMM dd HH:mm:ss z yyyy", Locale.ENGLISH);
+		Date parsedDate  = null;
+		try {
+			parsedDate  = sdf.parse(request.getSession().getAttribute("appTime").toString());
+			if(parsedDate  != null){
+				returndate = parsedDate;
+			}
+		} catch (ParseException e) {
+			e.printStackTrace();
+		} */
+		Date returndate = (Date) request.getSession().getAttribute("appTime");
+		System.out.println("returndate"+returndate);
+		List<BookStatus> patronsBookStatus = patron.getBookStatus();
+		for (int i = 0; i < patronsBookStatus.size(); i++) {
+		System.out.println("bhaijaan" + patronsBookStatus.get(i).getBookStatusId() + "  "
+		+ patronsBookStatus.get(i).getBook().getIsbn());
+		for (int j = 0; j < isbnArray.length; j++) {
+		if (isbnArray[j].equals(patronsBookStatus.get(i).getBook().getIsbn())) {
+		System.out.println("deleting book isbn of " + isbnArray[j]);
+		checkoutReturnData += "\n" + (j+1) +"."+  " ISBN: "+patronsBookStatus.get(i).getBook().getIsbn() + "\t TITLE:" + "\n"
+		+ patronsBookStatus.get(i).getBook().getTitle() + "\t ISSUE DATE: "
+		+ patronsBookStatus.get(i).getIssueDate()+ "\t DUE DATE: "
+		+ patronsBookStatus.get(i).getDueDate() + "\t DATE RETURNED: "
+		+ returndate;
+		System.out.println("penalty deleting book isbn of " + isbnArray[j]);
+		long num=(returndate.getTime() - patronsBookStatus.get(i).getDueDate().getTime());
+		double den=86400000d ;
+		double hoursDiff = num/den ;
+		System.out.println("return ka date is " + returndate);
+		System.out.println("due ka date is " + patronsBookStatus.get(i).getDueDate());
+		System.out.println("hoursDiff"+Math.ceil(hoursDiff));
+		Book b=patronsBookStatus.get(i).getBook();
+		System.out.println("book is"+b+" "+b.getAvailableCopies());
+		b.setAvailableCopies(b.getAvailableCopies()+1);
+		bookService.updateBook(b);
+		int penalty=(int)Math.ceil(hoursDiff);
+		System.out.println(penalty);
+		patron.setTotalIssuedCount(patron.getTotalIssuedCount() - 1);
+		if (penalty > 0) {
+		System.out.println("high heels ");
+		patron.setPenalty(patron.getPenalty() + (int)penalty);
+		}
+		patronService.updatePatron(patron);
+		bookStatusService.returnBooks(patronsBookStatus.get(i).getBookStatusId());
+		break;
+		}
+		}
+		}
+		System.out.println("Hi You have just Returned out following item");
+		SimpleMailMessage message = new SimpleMailMessage();
+		message.setTo(email);
+		message.setSubject("SJSU Library Return on " + c.getTime());
+		message.setText("Hi You have just return out following items \n " +
+		checkoutReturnData + "\n Please don't reply on this email.");
+		System.out.println("bhaijaan mail bje dia");
+		System.out.println(activationMailSender);
+		activationMailSender.send(message);
+		checkFunctionalityAtReturn(isbnArray);
+		return success;
 
 	}
 	//////////////Ruchit return Book code Ends here /////////////////////
