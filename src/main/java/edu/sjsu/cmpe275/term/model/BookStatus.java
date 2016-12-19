@@ -49,6 +49,8 @@ public class BookStatus implements Serializable {
 	@Column(name = "ASSIGNEDDATE")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date assignedDate;
+	@Column(name = "RENEW")
+	private int renew;
 	
 	@ManyToOne
 	@JoinColumn(name="BOOKID")
@@ -81,7 +83,7 @@ public class BookStatus implements Serializable {
 	 * @param patrons
 	 * @param librarians
 	 */
-	public BookStatus(String bookStatusId, Date issueDate, Date dueDate, Date returnDate, Date requestDate,
+	public BookStatus(String bookStatusId, Date issueDate, Date dueDate, Date returnDate, Date requestDate, int renew,
 			String requestStatus, Date assignedDate, Book book, List<Patron> patrons, List<Librarian> librarians) {
 		super();
 		this.bookStatusId = bookStatusId;
@@ -93,6 +95,7 @@ public class BookStatus implements Serializable {
 		this.requestStatus = requestStatus;
 		this.book = book;
 		this.patrons = patrons;
+		this.renew = renew;
 	}
 	/**
 	 * 
@@ -219,5 +222,21 @@ public class BookStatus implements Serializable {
 	 */
 	public void setPatrons(List<Patron> patrons) {
 		this.patrons = patrons;
+	}
+	/**
+	 * 
+	 * @return
+	 */
+	public int getRenew() {
+		return renew;
+	}
+	/**
+	 * 
+	 * @param renew
+	 */
+	public void setRenew(int renew) {
+		this.renew = renew;
 	}	
+	
+	
 }

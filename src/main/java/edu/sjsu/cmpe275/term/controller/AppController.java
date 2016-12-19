@@ -378,7 +378,7 @@ public class AppController {
 				request.getSession().setAttribute("email", patron.getEmail());
 				request.getSession().setAttribute("userName", patron.getFirstName());
 				request.getSession().setAttribute("pattern", "");
-				request.getSession().setAttribute("loggedIn", patron);
+				//request.getSession().setAttribute("loggedIn", patron);
 				request.getSession().setAttribute("userName", patron.getFirstName());
 
 			} else {
@@ -1503,6 +1503,44 @@ public class AppController {
 	}
 	//////////////Ruchit return Book code Ends here /////////////////////
 	  
+	@RequestMapping(value = "/renewbook/{isbn}", method = RequestMethod.POST)
+	@Transactional
+	public ModelAndView renewBook(@PathVariable("isbn") String isbn, HttpServletRequest request){
+		ModelAndView bookRenewed = new ModelAndView("BookRenewed");
+		ModelAndView error = new ModelAndView("Error");
+		Patron patron = (Patron) request.getSession().getAttribute("loggedIn");
+		List<BookStatus> allBookStatusForBook = findBookStatusForISBN(isbn);
+		for (BookStatus bookstatus : allBookStatusForBook){
+			if(bookstatus.getRequestStatus().equals("requested")){
+				error.addObject("message", "The book is requested by other Patrons and can not be reissued");
+				return error;
+			}
+		}
+		List<BookStatus> patronBookStatuses = patron.getBookStatus();
+		for(BookStatus bookstatus1 : patronBookStatuses){
+			if(bookstatus1.getBook().getIsbn().equals(isbn)){
+				if(bookstatus1.getRenew() >= 2){
+					error.addObject("message", "You have already renewed this book twice, It can not be renewed now");
+					return error;
+				}
+				else{
+					Date date = (Date)request.getSession().getAttribute("appTime");
+					Calendar c = Calendar.getInstance();
+					c.setTime(date);
+					c.add(Calendar.DATE, 30);
+					Date dueDate = c.getTime();
+					System.out.println(dueDate);
+					bookstatus1.setDueDate(dueDate);
+					bookstatus1.setRenew(bookstatus1.getRenew() + 1);
+					bookStatusService.updateBookStatus(bookstatus1);
+					return bookRenewed;
+				}
+			} 
+		}
+		
+		
+		return bookRenewed;
+	}
 	  
 	  
 	  /**
