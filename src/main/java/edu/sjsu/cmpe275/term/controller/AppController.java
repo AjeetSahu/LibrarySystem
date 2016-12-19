@@ -358,6 +358,10 @@ public class AppController {
 	public ModelAndView authenticateUser(@RequestParam Map<String, String> reqParams, Model model,
 			HttpServletRequest request) {
 		ModelAndView modelAndView = null;
+		request.getSession().setAttribute("appTime", (new Date()).toString());
+		String setTime = (String)request.getSession().getAttribute("appTime").toString();
+		System.out.println("setTime: "+setTime);
+		model.addAttribute("appTime",setTime);
 		if (reqParams.get("email").contains("@sjsu.edu")) {
 			modelAndView = new ModelAndView("LibraryHome");
 			Librarian librarian = librarianService.findLibrarianByEmailId(reqParams.get("email"));
@@ -394,6 +398,7 @@ public class AppController {
 			}
 		}
 		modelAndView.addObject("userEmail", request.getSession().getAttribute("userEmail"));
+		modelAndView.addObject("appTime", setTime);
 		model.addAttribute("pattern", "");
 		return modelAndView;
 	}
@@ -407,6 +412,7 @@ public class AppController {
 	@RequestMapping(value = "/logout", method = RequestMethod.GET)
 	public String signout(HttpServletRequest request) {
 		request.getSession().setAttribute("loggedIn", null);
+		request.getSession().setAttribute("appTime", null);
 		System.out.println("After logout " + request.getSession().getAttribute("loggedIn"));
 		return "Login";
 	}
@@ -451,21 +457,14 @@ public class AppController {
 	 */
 	@RequestMapping(value = "/patronReturnBook", method = RequestMethod.GET)
 	public ModelAndView patronReturnSearch(HttpServletRequest request) {
+		System.out.println("Inside patron return get");
 		if (request.getSession().getAttribute("loggedIn") == null) {
 			ModelAndView login = new ModelAndView("Login");
 			return login;
 		}
-		List<BookStatus> books = bookStatusService.getListOfAllIssuedBooks();
+		List<BookStatus> bookstatus = bookStatusService.getListOfAllIssuedBooks();
 		ModelAndView patronSearch = new ModelAndView("PatronReturnBook");
-		patronSearch.addObject("books",books);
-		List<String> titles = new ArrayList<String>();
-		List<String> isbns = new ArrayList<String>();
-		for(int i=0; i<books.size(); i++){
-			titles.add(books.get(i).getBook().getTitle());
-			isbns.add(books.get(i).getBook().getIsbn());
-		}
-		patronSearch.addObject("titles",titles);
-		patronSearch.addObject("isbns",isbns);
+		patronSearch.addObject("bookstatus",bookstatus);
 		return patronSearch;
 	}
 
@@ -778,7 +777,8 @@ public class AppController {
 		bookFound.addObject("httpStatus", HttpStatus.OK);
 		return bookFound;
 	}
-
+	
+	
 	/**
 	 * DELETE AN EXISTING BOOK
 	 * 
@@ -787,13 +787,15 @@ public class AppController {
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping(value = "/book/{bookISBN}", method = RequestMethod.DELETE)
-	public ModelAndView deleteBook(@PathVariable("bookISBN") String isbn, Model model, HttpServletRequest request) {
+	//@PathVariable("bookISBN") String isbn
+	@RequestMapping(value = "/deletebook", method = RequestMethod.POST)
+	public ModelAndView deleteBook(@RequestParam Map<String, String> reqParams, Model model, HttpServletRequest request) {
 		ModelAndView login = new ModelAndView("Login");
+		String isbn = reqParams.get("isbn1");
 		if (request.getSession().getAttribute("loggedIn") == null) {
 			return login;
 		}
-		ModelAndView deletedBook = new ModelAndView("BookDeletedSuccessfully");
+		ModelAndView deletedBook = new ModelAndView("LibrarianSuccess");
 		ModelAndView notDeletedBook = new ModelAndView("Error");
 		System.out.println("inside deleteBook");
 		Book book = bookService.findBookByISBN(isbn);
@@ -803,11 +805,18 @@ public class AppController {
 			return notDeletedBook;
 		}
 		if (book.getNumberOfCopies() == book.getAvailableCopies()) {
+			List<BookStatus> bookStatus = findBookStatusForISBN(isbn);
+			int k = 0;
+			//Removing wait list
+			while(bookStatus.size() > k){
+				bookStatusService.returnBooks(bookStatus.get(k).getBookStatusId());
+				k++;
+			}
 			bookService.deleteBookByISBN(isbn);
-			notDeletedBook.addObject("httpStatus", HttpStatus.OK);
+			deletedBook.addObject("message", "Book with ISBN: " + isbn + "has been deleted from database");
 			return deletedBook;
 		} else {
-			notDeletedBook.addObject("message", "Cannot be deleted as checkout by patron");
+			notDeletedBook.addObject("message", "Cannot be deleted as book is checkout by patron");
 			notDeletedBook.addObject("httpStatus", HttpStatus.FORBIDDEN);
 			return notDeletedBook;
 		}
@@ -905,6 +914,11 @@ public class AppController {
 		// model.addAttribute("author",book.getAuthor());
 		System.out.println("book: " + book);
 		model.addAttribute("pattern", request.getSession().getAttribute("patron"));
+		String setTime = (String)request.getSession().getAttribute("appTime").toString();
+		System.out.println("setTime: "+setTime);
+		if(setTime.equals("") || setTime == null || setTime.isEmpty())
+			setTime = new Date().toString();
+		model.addAttribute("appTime",setTime);
 		return "PatronHome";
 	}
 
@@ -1336,12 +1350,12 @@ public class AppController {
 	    return success;
 	  }
 	  
-	  @RequestMapping(value = "/return", method = RequestMethod.POST)
+	  /*@RequestMapping(value = "/return", method = RequestMethod.POST)
       public ModelAndView BookReturn(@RequestParam(value = "isbn") String isbn, Model model, HttpServletRequest request) {
     	  String[] isbnArray = new String[1];
     	  isbnArray[0] = isbn;
     	  return Return(isbnArray, model, request);
-      }
+      }*/
 	
 	/*
 	 * Search Books Ruchit code strts here
@@ -1355,22 +1369,18 @@ public class AppController {
 	 */
 	
 	///////////////Ruchit return Book code Starts ///////////////////////
-	
+	  @RequestMapping(value = "/return", method = RequestMethod.POST)
 	public ModelAndView Return(String[] isbnArray, Model model, HttpServletRequest request) {
-
+		  System.out.println("isbnArray: "+isbnArray);
+		  for (String s: isbnArray) { 
+			  System.out.println("isbnArray values: "+s);
+		  }
 	ModelAndView success = new ModelAndView("PatronHome");
 
 	ModelAndView error = new ModelAndView("Error");
 
-
-	System.out.println("inside checkout ");
-
-	// System.out.println(reqParams.get("isbn"));
-
-String email =((Patron)request.getSession().getAttribute("loggedIn")).getEmail();
-
-
-
+	String email = (String)request.getSession().getAttribute("email");
+	System.out.println(email);
 	Calendar c = new GregorianCalendar();
 
 //	Date returnDate = c.getTime();
@@ -1388,7 +1398,7 @@ String email =((Patron)request.getSession().getAttribute("loggedIn")).getEmail()
 
 
 	Patron patron = patronService.findPatronByEmailId(email);
-
+	System.out.println("patron"+patron);
 
 	if (isbnArray.length > 10) {
 
@@ -1429,9 +1439,13 @@ String email =((Patron)request.getSession().getAttribute("loggedIn")).getEmail()
 
 	+ patronsBookStatus.get(i).getDueDate() + "\t DATE RETURNED: "
 
+
 	+ returndate;
 
 	System.out.println("penalty deleting book isbn of " + isbnArray[j]);
+
+	returndate = (Date) request.getSession().getAttribute("appTime");
+	System.out.println("returndate"+returndate);
 
 	long num=(returndate.getTime() - patronsBookStatus.get(i).getDueDate().getTime());
 	double den=86400000d ;
@@ -1520,12 +1534,13 @@ String email =((Patron)request.getSession().getAttribute("loggedIn")).getEmail()
 	 */
 	@RequestMapping(value = "/setDateTime", method = RequestMethod.POST)
 	@Transactional
-	public void setDateTime(@RequestParam Map<String, String> reqParams, HttpServletRequest request) {
+	public String setDateTime(@RequestParam Map<String, String> reqParams, HttpServletRequest request) {
 		System.out.println("Setting time");
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 		Date date = null;
 		try {
 			date = formatter.parse(reqParams.get("appTime"));
+			System.out.println("AppDatetime: "+date);
 			globalDate = date;
 		} catch (ParseException e) {
 			e.printStackTrace();
@@ -1534,6 +1549,10 @@ String email =((Patron)request.getSession().getAttribute("loggedIn")).getEmail()
 		// Will Execute code for sending reminders
 		sendDueReminder();
 		removeRequestAfterThreeDays();
+		String email = (String)request.getSession().getAttribute("email");
+		if(email.contains("@sjsu.edu"))
+			return "LibraryHome";
+		return "PatronHome";
 	}
 
 	@RequestMapping(value = "/requestBook/{bookISBN}", method = RequestMethod.POST)

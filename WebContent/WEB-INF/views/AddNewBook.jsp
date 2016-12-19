@@ -76,7 +76,7 @@
                     <a href="<%=request.getContextPath() %>/deleteSearch">Delete Book</a>
                 </li>
                 <li>
-                    <a href="<%=request.getContextPath() %>/updateBook">Update Book</a>
+                    <a href="<%=request.getContextPath() %>/updateBook">Search/Update Book</a>
                 </li>
                 <li>
                     <a href="<%=request.getContextPath() %>/libraryProfile">Profile</a>
@@ -104,7 +104,7 @@
                             <div class="row">
                             	<div class="col-md-1"></div>
                             	<div class="col-md-10">
-                            		<label for="ex1">Search Book By ISBN: </label>
+                            		<label for="ex1">Add Book By ISBN - Google API: </label>
 							  		<input class="form-control" type="text" id="isbn1" name="isbn1" placeholder="Enter ISBN here" required />
                             	</div>
 							</div>

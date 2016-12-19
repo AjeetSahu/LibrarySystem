@@ -36,13 +36,13 @@
             <div class="collapse navbar-collapse pull-right" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
                     <li>
-                        <a href="<%=request.getContextPath() %>/libraryHome">Home</a>
+                        <a href="<%=request.getContextPath() %>/patronHome">Home</a>
                     </li>
                     <li>
-                        <a href="<%=request.getContextPath() %>/libraryProfile">Profile</a>
+                        <a href="#">Profile</a>
                     </li>
                     <li>
-                        <a href="<%=request.getContextPath() %>/logout">SignOut</a>
+                        <a href="<%=request.getContextPath() %>/logout">Signout</a>
                     </li>
                 </ul>
             </div>
@@ -52,7 +52,6 @@
         <div class="row">
         <div class="col-md-3">
 		
-
     <div id="wrapper">
 
         <!-- Sidebar -->
@@ -64,56 +63,41 @@
                     </a>
                 </li>
                 <li>
-                    <a href="<%=request.getContextPath() %>/libraryHome">Dashboard</a>
+                    <a href="<%=request.getContextPath() %>/patronHome">Home</a>
                 </li>
                 <li>
-                    <a href="<%=request.getContextPath() %>/newBook">Add Book - Google API</a>
+                    <a href="<%=request.getContextPath() %>/patronSearchBook">Search Book</a>
                 </li>
                 <li>
-                    <a href="<%=request.getContextPath() %>/addNewBookManually">Add Book</a>
+                    <a href="<%=request.getContextPath() %>/patronHome">Already Issued Books</a>
                 </li>
                 <li>
-                    <a href="<%=request.getContextPath() %>/deleteSearch">Delete Book</a>
+                    <a href="<%=request.getContextPath() %>/patronSearchBook">Issue Book</a>
                 </li>
                 <li>
-                    <a href="<%=request.getContextPath() %>/updateBook">Search/Update Book</a>
+                    <a href="<%=request.getContextPath() %>/patronReturnSearch">Return Book</a>
                 </li>
                 <li>
-                    <a href="<%=request.getContextPath() %>/libraryProfile">Profile</a>
+                    <a href="<%=request.getContextPath() %>/patronProfile">Profile</a>
                 </li>
                 <li>
-                    <a href="<%=request.getContextPath() %>/logout">Signout</a>
+                    <a href="<%=request.getContextPath() %>/welcome">Signout</a>
                 </li>
             </ul>
         </div>
         <!-- /#sidebar-wrapper -->
-	
+
     </div>
     <!-- /#wrapper -->
-</div>     
+</div>
+		  
+                     
+       	</div>
+       	<div class="row"> 
+			<h3>Success:  ${message}</h3>
+         </div>
+                		
 	
-       </div>
-			<div style="padding-top:100px; padding-left:450px;">
-				<h3>Welcome ${userName}</h3>
-            	<div> <label>Allocated Time: "${appTime}"</label>
-				    <form action="/LibrarySystem/setDateTime" onsubmit="getValue();" method = "post">
-					    <input type="datetime-local" name="time" id="time">
-					    <input type="hidden" name="appTime" id="appTime">
-					    <input type="submit" value="Set Time" class="btn btn-danger">
-				    </form>
-				</div><br>
-            	<h3><mark>${message}</mark></h3>
-			</div>
-			
                 </div>
 	</body>
-	<script type="text/javascript">
-	function getValue(){
-   	 // alert("here");
-     	var d = document.getElementById("time").value;
-       var time = (d+":00").replace("T", " ");
-       alert (time);
-       document.getElementById("appTime").value = time; 
-     }
-	</script>
 </html>
