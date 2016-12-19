@@ -8,6 +8,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PrePersist;
 import javax.persistence.Query;
+import javax.persistence.Temporal;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
@@ -266,10 +267,13 @@ public class AppController {
 	 *
 	 */
 	
-	@RequestMapping(value = "/clearCart", method = RequestMethod.GET)
-	public void clearCart(Model model) {
-		BookingCart bookingCart = new BookingCart();
-		bookingCart.clearCart();
+	//@RequestMapping(value = "/clearCart", method = RequestMethod.GET)
+	@Transactional
+	public void clearCart(Model model, HttpServletRequest request) {
+		String email = (String)request.getSession().getAttribute("email");
+		Query clearPatronCart = entityManager.createNativeQuery("delete from cart_item where bookingcartid IN (Select bookingcartid from patron where email = '"+email+"')");
+		System.out.println(clearPatronCart);
+		clearPatronCart.executeUpdate();
 	}
 
 	/**
@@ -362,9 +366,6 @@ public class AppController {
 			HttpServletRequest request) {
 		ModelAndView modelAndView = null;
 		request.getSession().setAttribute("appTime", new Date());
-		String setTime = (String)request.getSession().getAttribute("appTime").toString();
-		System.out.println("setTime: "+setTime);
-		model.addAttribute("appTime",setTime);
 		if (reqParams.get("email").contains("@sjsu.edu")) {
 			modelAndView = new ModelAndView("LibraryHome");
 			Librarian librarian = librarianService.findLibrarianByEmailId(reqParams.get("email"));
@@ -401,8 +402,8 @@ public class AppController {
 			}
 		}
 		modelAndView.addObject("userEmail", request.getSession().getAttribute("userEmail"));
-		modelAndView.addObject("appTime", setTime);
 		model.addAttribute("pattern", "");
+		model.addAttribute("appTime",request.getSession().getAttribute("appTime"));
 		return modelAndView;
 	}
 
@@ -930,10 +931,6 @@ public class AppController {
 		// model.addAttribute("author",book.getAuthor());
 		System.out.println("book: " + book);
 		model.addAttribute("pattern", request.getSession().getAttribute("patron"));
-		//String setTime = (String)request.getSession().getAttribute("appTime").toString();
-		//System.out.println("setTime: "+setTime);
-/*		if(setTime.equals("") || setTime == null || setTime.isEmpty())
-			setTime = new Date().toString();*/
 		model.addAttribute("appTime",request.getSession().getAttribute("appTime"));
 		return "PatronHome";
 	}
@@ -1260,8 +1257,9 @@ public class AppController {
 			isbnArray[i] = bookList.get(i);
 			//System.out.println(isbnArray[i]);
 		}
+		clearCart(model, request);
 		
-	    System.out.println(isbnArray[0]);
+	    //System.out.println(isbnArray[0]);
 	    // String email = "kadakiaruchit@gmail.com";
 	    //String email = ((Patron)request.getSession().getAttribute("loggedIn")).getEmail();
 	    System.out.println(email);
