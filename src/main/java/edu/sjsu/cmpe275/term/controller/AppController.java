@@ -257,7 +257,6 @@ public class AppController {
 			return "Error";
 		}
 		return "redirect:/searchBookByTitle/" + request.getSession().getAttribute("pattern");
-
 	}
 
 	/**
