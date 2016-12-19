@@ -51,9 +51,9 @@
        <div class="row"> 
        		<div class="col-md-3"></div>
 	       		<div class="col-md-7">
-	           <form action="/LibrarySystem/newUser" method="POST"> 
+	           <form action="/LibrarySystem/newUser" method="POST" onsubmit=" return checkUniversityID()"> 
 			  <label for="ex1">UNIVERSITYID: </label>
-			  <input class="form-control" type="text" name="universityId" >
+			  <input class="form-control" type="text" name="universityId"  id="universityId1">
 				<br>
 			  <label for="ex1">FIRSTNAME: </label>
 			  <input class="form-control" type="text" name="firstName" >
@@ -82,5 +82,18 @@
                 		
 	
                 </div> 
+                
+                <script>
+function checkUniversityID() {
+	//alert("yolo");
+	var x = document.getElementById("universityId1").value;
+	//alert(x);
+	if(x.length!=6){
+    alert("University id should be of 6 digits");
+    return false;
+	}
+return true;
+}
+</script>
 	</body>
 </html>
