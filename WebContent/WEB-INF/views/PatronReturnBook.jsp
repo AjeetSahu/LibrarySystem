@@ -96,24 +96,22 @@
            <div class="row">
            
             <div class="col-md-3"></div>
-            <p>abc: "${books[0]}"</p>
+               
                 <div id="tab" class="table-responsive">
 						        <table class="table table-striped">
 						            <thead>
 						            <tr>
 						                <th>ISBN</th>
-						                <th>Title</th>
 						                <th>#</th>
 						            </tr>
 						            </thead>
 						            <tbody>
-							<% for(int i = 0; i < books.size(); i+=1) { %>
+							<c:forEach var="book" items="${books}">
 							<tr>
-								<td>${isbns.get(i)}</td>
-								<td>${titles.get(i)}</td>
+								<td>${book}</td>
 								<td><a href="<%=request.getContextPath() %>/addToCart/"><button class="btn btn-danger"></button></a></td>
 							</tr>
-							<% } %>
+							</c:forEach>
 							</tbody>
 				        </table>
 				    </div>

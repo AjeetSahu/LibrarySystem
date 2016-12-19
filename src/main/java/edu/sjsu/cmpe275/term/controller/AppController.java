@@ -351,6 +351,10 @@ public class AppController {
 	public ModelAndView authenticateUser(@RequestParam Map<String, String> reqParams, Model model,
 			HttpServletRequest request) {
 		ModelAndView modelAndView = null;
+		request.getSession().setAttribute("appTime", (new Date()).toString());
+		String setTime = (String)request.getSession().getAttribute("appTime").toString();
+		System.out.println("setTime: "+setTime);
+		model.addAttribute("appTime",setTime);
 		if (reqParams.get("email").contains("@sjsu.edu")) {
 			modelAndView = new ModelAndView("LibraryHome");
 			Librarian librarian = librarianService.findLibrarianByEmailId(reqParams.get("email"));
@@ -387,6 +391,7 @@ public class AppController {
 			}
 		}
 		modelAndView.addObject("userEmail", request.getSession().getAttribute("userEmail"));
+		modelAndView.addObject("appTime", setTime);
 		model.addAttribute("pattern", "");
 		return modelAndView;
 	}
@@ -400,6 +405,7 @@ public class AppController {
 	@RequestMapping(value = "/logout", method = RequestMethod.GET)
 	public String signout(HttpServletRequest request) {
 		request.getSession().setAttribute("loggedIn", null);
+		request.getSession().setAttribute("appTime", null);
 		System.out.println("After logout " + request.getSession().getAttribute("loggedIn"));
 		return "Login";
 	}
@@ -908,6 +914,11 @@ public class AppController {
 		// model.addAttribute("author",book.getAuthor());
 		System.out.println("book: " + book);
 		model.addAttribute("pattern", request.getSession().getAttribute("patron"));
+		String setTime = (String)request.getSession().getAttribute("appTime").toString();
+		System.out.println("setTime: "+setTime);
+		if(setTime.equals("") || setTime == null || setTime.isEmpty())
+			setTime = new Date().toString();
+		model.addAttribute("appTime",setTime);
 		return "PatronHome";
 	}
 
@@ -1514,12 +1525,13 @@ public class AppController {
 	 */
 	@RequestMapping(value = "/setDateTime", method = RequestMethod.POST)
 	@Transactional
-	public void setDateTime(@RequestParam Map<String, String> reqParams, HttpServletRequest request) {
+	public String setDateTime(@RequestParam Map<String, String> reqParams, HttpServletRequest request) {
 		System.out.println("Setting time");
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 		Date date = null;
 		try {
 			date = formatter.parse(reqParams.get("appTime"));
+			System.out.println("AppDatetime: "+date);
 			globalDate = date;
 		} catch (ParseException e) {
 			e.printStackTrace();
@@ -1528,6 +1540,10 @@ public class AppController {
 		// Will Execute code for sending reminders
 		sendDueReminder();
 		removeRequestAfterThreeDays();
+		String email = (String)request.getSession().getAttribute("email");
+		if(email.contains("@sjsu.edu"))
+			return "LibraryHome";
+		return "PatronHome";
 	}
 
 	@RequestMapping(value = "/requestBook/{bookISBN}", method = RequestMethod.POST)
