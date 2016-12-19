@@ -67,7 +67,7 @@
                     <a href="<%=request.getContextPath() %>/libraryHome">Dashboard</a>
                 </li>
                 <li>
-                    <a href="<%=request.getContextPath() %>/newBook">Search Book</a>
+                    <a href="<%=request.getContextPath() %>/newBook">Add Book - Google API</a>
                 </li>
                 <li>
                     <a href="<%=request.getContextPath() %>/addNewBookManually">Add Book</a>
@@ -76,7 +76,7 @@
                     <a href="<%=request.getContextPath() %>/deleteSearch">Delete Book</a>
                 </li>
                 <li>
-                    <a href="<%=request.getContextPath() %>/updateBook">Update Book</a>
+                    <a href="<%=request.getContextPath() %>/updateBook">Search/Update Book</a>
                 </li>
                 <li>
                     <a href="<%=request.getContextPath() %>/libraryProfile">Profile</a>
@@ -100,7 +100,7 @@
                         <h3 style="text-align:center">Search Book To Delete</h3>
                     </div>
                     <div class="panel-body">
-                        <form action="" method="" class="form-horizontal">
+                        <form action='/LibrarySystem/deletebook' method="POST" class="form-horizontal">
                             <div class="row">
                             	<div class="col-md-1"></div>
                             	<div class="col-md-10">
@@ -110,7 +110,7 @@
 							</div>
 							<br>
                             <div style="padding-left:40%">
-                                <button type="button" class="btn btn-primary" onclick="deleteBook();">Delete Book</button>
+                                <button type="submit" class="btn btn-primary" >Delete Book</button><br>
                             </div>
                         </form>
                         
@@ -128,20 +128,6 @@
 	</body>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 	<script>
-	
-	function deleteBook() {
-		  var xhttp = new XMLHttpRequest();
-		  var url = "/LibrarySystem/book/"+document.getElementById('isbn1').value;
-		  alert(url);
-		  xhttp.onreadystatechange = function() {
-		    if (this.readyState == 4 && this.status == 200) {
-		    	document.getElementById("demo").innerHTML = this.responseText;
-		    }
-		  };
-		  xhttp.open("DELETE", url, true);
-		  xhttp.send();
-		  window.location.assign("/LibrarySystem/libraryHome");
-		} 
 	
 	</script>
 </html>
