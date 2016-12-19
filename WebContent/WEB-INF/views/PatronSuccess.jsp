@@ -87,9 +87,6 @@
                     <a href="<%=request.getContextPath() %>/patronReturnSearch">Return Book</a>
                 </li>
                 <li>
-                    <a href="<%=request.getContextPath() %>/patronProfile">Profile</a>
-                </li>
-                <li>
                     <a href="<%=request.getContextPath() %>/welcome">Signout</a>
                 </li>
             </ul>

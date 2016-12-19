@@ -36,18 +36,26 @@
             <div class="collapse navbar-collapse pull-right" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
                     <li>
-                        <a href="<%=request.getContextPath() %>/libraryHome">Home</a>
+                        <a href="<%=request.getContextPath() %>/patronHome">Home</a>
                     </li>
                     <li>
-                        <a href="<%=request.getContextPath() %>/logout">SignOut</a>
+	                    <a href="<%=request.getContextPath() %>/cartCheckout">
+	                        Check Cart: <span class="badge"></span>
+	                    </a>
+                	</li>
+                    <li>
+                        <a href="<%=request.getContextPath() %>/logout">Signout</a>
                     </li>
                 </ul>
             </div>
             <!-- /.navbar-collapse -->
     </nav>
+    	<div>
+    		Welcome ${userName}
+    	</div>
     </div>
         <div class="row">
-        <div class="col-md-3">
+        <div class="col-md-2">
 		
 
     <div id="wrapper">
@@ -82,61 +90,74 @@
     </div>
     <!-- /#wrapper -->
 </div>
-		
-            <div class="col-md-9"  style="padding-top:120px;">
-           <div class="row">
-            <div class="col-md-3"></div>
-                <div id="tab" class="table-responsive">
-                	<form id="form1" style="padding-top:100px;" method="POST" action="<%=request.getContextPath() %>/return">
+		  
+                     
+       
+	       		<div class="col-md-7">
+	             <form id="form1" style="padding-top:100px;">
+		            <div class="row" >
+                        
+                        <div class="col-md-6">
+                        	
+			  				<input class="form-control" type="text" id="title" name="title" value="${pattern}" placeholder="Enter Title Here" onchange="append();" required />
+                        </div>
+                        <div class="col-md-2">
+                            <a id="link" href="<%=request.getContextPath() %>/searchBookByTitle/"><input type="button" class="btn btn-primary" value="Search Book" name="search" id="search"></a>
+                        </div>    
+					</div><br><br>
+					</form>
+					
+							<div id="tab" class="table-responsive">
 						        <table class="table table-striped">
 						            <thead>
 						            <tr>
 						                <th>ISBN</th>
+						                <th>Author</th>
 						                <th>Title</th>
-						                <th>Return</th>
+						                <th>Available Count</th>
+						                <th>#</th>
 						            </tr>
 						            </thead>
-						          <tbody>
-						   			 <c:forEach var="bs" items="${bookstatus}">
-										<tr>
-									    <td>${bs.book.isbn}</td>
-									    <td>${bs.book.title}</td>
-										<td><input type="checkbox" value="${bs.book.isbn}"></td>
-										<td><a href="<%=request.getContextPath() %>/renewbook/${bs.book.isbn}" class="btn btn-info" role="button">Renew</a></td>
-										</tr>
-					 				</c:forEach>  
-								</tbody>
+						            <tbody>
+							<c:forEach var="book" items="${books}">
+							<tr>
+								<td>${book.isbn}</td>
+								<td>${book.author}</td>
+								<td>${book.title}</td>
+								<td>${book.availableCopies}</td>
+								<td><a href="<%=request.getContextPath() %>/addToCartFromIsbn/${book.isbn}"><span class="glyphicon glyphicon-shopping-cart"></span></a></td>
+							</tr>
+							</c:forEach>
+							</tbody>
 				        </table>
-				        <input type="hidden" name="isbnArray" id="getListOfISBNArray"/>
-				        <br/>
-				        <br/>
-				        <div class="col-md-8 col-md-offset-4">
-				        	<input class="col-md-6" type="submit" value="Return" id="getListOfISBN"/></div>
-				    	</div>
+				    </div>
+				    </div>
+				    <div class="col-md-2" style="padding-top:120px;">
+				    <label>Allocated Time: "${appTime}"</label>
+				    <form action="/LibrarySystem/setDateTime" onsubmit="getValue();" method = "post">
+					    <input type="datetime-local" name="time" id="time">
+					    <input type="hidden" name="appTime" id="appTime">
+					    <input type="submit" value="Set Time" class="btn btn-danger">
 				    </form>
-                 </div>
-           </div>  
-           <div class="col-md-1"></div>          
-       </div>
-       
-       </div>
-       
-       <script>
-       	function func(){
-       		//document.getElementById('myForm').action = "/LibrarySystem/book/return/"+document.getElementById('isbn').value;
-       		//alert(document.getElementById('myForm').action);
-       	}
-       	$(document).ready(function() {
-       		$('#getListOfISBN').on('click', function(event) {
-       	        var checkboxValues = [];
-       	        $('input[type="checkbox"]:checked').each(function(index, value) {
-       	            checkboxValues.push($(value).val());
-       	        });
-       	        $('#output').html(checkboxValues.join(','));
-       	     	$('#getListOfISBNArray').val(checkboxValues);
-       	    });
-       	});
-       </script>
-       
+				    </div>
+				</div>
+         
+      </div>
+      <script>
+      function getValue(){
+    	 // alert("here");
+      	var d = document.getElementById("time").value;
+        var time = (d+":00").replace("T", " ");
+        document.getElementById("appTime").value = time; 
+      }
+      
+      function append() {
+          var link = document.getElementById('link');
+          var text = document.getElementById('title');
+          link.href = link.href + text.value;
+          //document.getElementById("tab").hidden=false;
+          /* link.text = text.value; */
+      }
+	</script>
 	</body>
 </html>

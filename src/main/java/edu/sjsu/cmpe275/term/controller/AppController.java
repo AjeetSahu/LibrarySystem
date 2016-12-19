@@ -203,7 +203,7 @@ public class AppController {
 		ModelAndView welcome = new ModelAndView("welcome");
 		return welcome;
 	}
-
+	
 	/**
 	 * GET ADD TO CART PAGE
 	 * 
@@ -262,6 +262,61 @@ public class AppController {
 
 	}
 
+	
+	@RequestMapping(value = "/addToCartFromIsbn/{bookISBN}", method = RequestMethod.GET)
+	@Transactional(propagation = Propagation.REQUIRED)
+	public String addToCartFromIsbn(@PathVariable("bookISBN") String isbn, Model model, HttpServletRequest request){
+		//Session session = entityManager.unwrap(Session.class);
+		
+			System.out.println("isbn: "+isbn);
+			Book book = bookService.findBookByISBN(isbn);
+			System.out.println("book object: "+book);
+			CartItem cartItem = null;
+			try{
+			Query q = entityManager.createNativeQuery("SELECT * FROM cart_item where bookid ='"+ isbn +"'",
+					CartItem.class);
+			cartItem = (CartItem) q.getSingleResult();
+			}
+			catch(Exception e1){
+				System.out.println("Error: "+e1);
+			}
+			System.out.println("cartItem: "+cartItem);
+			if(cartItem != null){
+				model.addAttribute("message", "Duplicate Addition to Cart");
+				model.addAttribute("httpStatus","404");
+				return "Error";
+			}
+			try{
+			if (book != null) {
+				cartItem = new CartItem(book, 1);
+				List<CartItem> cartItems = new ArrayList<CartItem>();
+				cartItems.add(cartItem);
+				System.out.println("CartItems: "+cartItems);
+				String email = (String) request.getSession().getAttribute("email");
+				Patron patron = patronService.findPatronByEmailId(email);
+				System.out.println("patron: "+patron);
+				BookingCart bookingCart = patron.getBookingCart();
+				bookingCart.setCartItems(cartItems);
+				System.out.println("bookingCart: "+bookingCart);
+				bookingCartService.updateBookingCart(bookingCart);
+				cartItem.setBookCartId(bookingCart);
+				cartItem = cartItemService.saveNewCartItem(cartItem);
+				System.out.println("cartItem: "+cartItem);
+			}
+			System.out.println("3");
+		}
+		catch(Exception e){
+			System.out.println("Error: "+e);
+			model.addAttribute("httpStatus","404");
+			model.addAttribute("message","Error in AddBookToCart");
+			return "Error";
+		}
+		return "redirect:/cartCheckout";
+
+	}
+
+
+	
 	/**
 	 * Remove all items from Cart
 	 * 
@@ -700,7 +755,7 @@ public class AppController {
 		model.addAttribute("test", "test");
 		model.addAttribute("httpStatus", HttpStatus.OK);
 		model.addAttribute("appTime", request.getSession().getAttribute("appTime"));
-		return "PatronHome";
+		return "PatronIsbnSearch";
 	}
 	
 	
