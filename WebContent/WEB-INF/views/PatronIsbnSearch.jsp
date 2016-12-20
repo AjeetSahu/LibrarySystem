@@ -125,8 +125,14 @@
 								<td>${book.author}</td>
 								<td>${book.title}</td>
 								<td>${book.availableCopies}</td>
-								<td><a href="<%=request.getContextPath() %>/addToCartFromIsbn/${book.isbn}"><span class="glyphicon glyphicon-shopping-cart"></span></a></td>
-							</tr>
+								<c:choose> 
+								  <c:when test="${book.availableCopies == 0}">
+								  	<td><a href="<%=request.getContextPath() %>/requestBook/${book.isbn}"><button class="btn btn-danger btn-sm">Waitlist</button></a></td>
+								  </c:when>
+								  <c:otherwise>
+								 	<td><a href="<%=request.getContextPath() %>/addToCart/${book.isbn}"><span class="glyphicon glyphicon-shopping-cart"></span></a></td>   
+								  </c:otherwise>
+								</c:choose>							</tr>
 							</c:forEach>
 							</tbody>
 				        </table>

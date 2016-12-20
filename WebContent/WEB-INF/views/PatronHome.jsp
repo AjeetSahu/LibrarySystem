@@ -99,14 +99,20 @@
                         
                         <div class="col-md-6">
                         	
-			  				<input class="form-control" type="text" id="title" name="title" value="${pattern}" placeholder="Enter Title Here" onchange="append();" required />
+			  				<input class="form-control" type="text" id="title" name="title" value="" placeholder="Enter Title Here" onchange="append();" required />
                         </div>
                         <div class="col-md-2">
                             <a id="link" href="<%=request.getContextPath() %>/searchBookByTitle/"><input type="button" class="btn btn-primary" value="Search Book" name="search" id="search"></a>
                         </div>    
 					</div><br><br>
 					</form>
-					
+							<c:choose> 
+							  <c:when test="${dueDate != null}">
+							  	<p><h3>Due Date: </h3> ${dueDate}</p>
+							  </c:when>
+							  <c:otherwise>
+							  </c:otherwise>
+							</c:choose>
 							<div id="tab" class="table-responsive">
 						        <table class="table table-striped">
 						            <thead>
@@ -158,12 +164,19 @@
         document.getElementById("appTime").value = time; 
       }
       
+
       function append() {
           var link = document.getElementById('link');
           var text = document.getElementById('title');
-          link.href = link.href + text.value;
           //document.getElementById("tab").hidden=false;
           /* link.text = text.value; */
+          //alert("link.href"+link.href);
+          if(text.value==''){
+          link.href = '/';}
+          else{
+       		link.href = link.href + text.value;
+          }
+          //alert(link.href);
       }
 	</script>
 	</body>

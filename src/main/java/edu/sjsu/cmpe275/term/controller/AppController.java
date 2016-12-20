@@ -2,17 +2,11 @@ package edu.sjsu.cmpe275.term.controller;
 
 import java.util.Map;
 import java.util.UUID;
-
 import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
-import javax.persistence.PrePersist;
 import javax.persistence.Query;
-import javax.persistence.Temporal;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.ConstraintViolationException;
-
 import java.io.File;
 import java.io.IOException;
 import java.text.DateFormat;
@@ -22,22 +16,17 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.Locale;
-
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
-import org.springframework.web.HttpRequestHandler;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -213,8 +202,6 @@ public class AppController {
 	@RequestMapping(value = "/addToCart/{bookISBN}", method = RequestMethod.GET)
 	@Transactional(propagation = Propagation.REQUIRED)
 	public String addToCart(@PathVariable("bookISBN") String isbn, Model model, HttpServletRequest request){
-		//Session session = entityManager.unwrap(Session.class);
-		
 			System.out.println("isbn: "+isbn);
 			Book book = bookService.findBookByISBN(isbn);
 			System.out.println("book object: "+book);
@@ -526,10 +513,19 @@ public class AppController {
 		}
 		String email = (String)request.getSession().getAttribute("email");
 		Patron patron = patronService.findPatronByEmailId(email);
-		List<BookStatus> bookstatus = bookStatusService.getListOfIssuedBooks(patron.getEmail());
+/*		List<BookStatus> bookstatus = bookStatusService.getListOfIssuedBooks(patron.getEmail());*/
 		ModelAndView patronSearch = new ModelAndView("PatronReturnBook");
 		patronSearch.addObject("appTime", request.getSession().getAttribute("appTime"));
-		patronSearch.addObject("bookstatus",bookstatus);
+		List<BookStatus> bookstatus = patron.getBookStatus();
+		int i = 0;
+		List<BookStatus> isseudStatus = new ArrayList<BookStatus>();
+		while(bookstatus.size() > i){
+			if(bookstatus.get(i).getRequestStatus().equals("issued")){
+				isseudStatus.add(bookstatus.get(i));
+			}
+			i++;
+		}
+		patronSearch.addObject("bookstatus",isseudStatus);
 		return patronSearch;
 	}
 
@@ -731,7 +727,6 @@ public class AppController {
 	 */
 
 	@RequestMapping(value = "/book/{bookISBN}", method = RequestMethod.GET)
-
 	public String getBookByISBN(@PathVariable("bookISBN") String isbn, Model model, HttpServletRequest request) {
 		System.out.println("getBookByISBN");
 		if (request.getSession().getAttribute("loggedIn") == null) {
@@ -766,8 +761,9 @@ public class AppController {
 		try{
 			model.addAttribute("appTime", request.getSession().getAttribute("appTime"));
 			// String pattern = reqParams.get("isbn");
-			if (pattern.equals(""))
+			if (pattern.equals("")||pattern.isEmpty()){
 				return "PatronHome";
+			}
 			request.getSession().setAttribute("pattern", pattern);
 			Query q = entityManager.createNativeQuery("SELECT * FROM book where title LIKE '%" + pattern + "%'",
 					Book.class);
@@ -1384,6 +1380,7 @@ public class AppController {
 	      patron.setDayIssuedCount(patron.getDayIssuedCount() + 1);
 	      patron.setTotalIssuedCount(patron.getTotalIssuedCount() + 1);
 	      System.out.println(book.getIsbn() + " book bhai wala is " + book);
+	      model.addAttribute("dueDate", dueDate);
 	      bookStatus.setDueDate(dueDate);
 	      bookStatus.setIssueDate(issueDate);
 	      bookStatus.setBook(book);
@@ -1473,12 +1470,10 @@ public class AppController {
 				  if(bookstatusofPatron.get(i).getBook().getIsbn().equals(isbnArray[j])){
 					  //bookstatusofPatron.get(i).setReturnDate(returnDate);
 					  //patron.setTotalIssuedCount(patron.getDayIssuedCount() -1);
-					  mailBody = "/n" + i + "."+ mailBody + " Title "+ bookstatusofPatron.get(i).getBook().getTitle() + "/n"
-							  + " Issue Date " + bookstatusofPatron.get(i).getIssueDate() + "/n" 
-							  + " Due Date " + bookstatusofPatron.get(i).getDueDate() + "/n"
-					  		+ "Return Date " + returnDate + "/n";
-					  	// calculating fine
-/* */
+					  mailBody = i+1+". "+mailBody+" Title "+bookstatusofPatron.get(i).getBook().getTitle()+" "
+							  +" Issue Date " + bookstatusofPatron.get(i).getIssueDate() +" " 
+							  + " Due Date " + bookstatusofPatron.get(i).getDueDate() + " "
+					  		+ "Return Date " + returnDate + " ";
 						bookStatusService.returnBooks(bookstatusofPatron.get(i).getBookStatusId());
 				  }
 				  i++;
@@ -1790,6 +1785,7 @@ public class AppController {
 						}
 						System.out.println("BookStatus Id for min value" + bookStatus1.getBookStatusId());
 						String email = getPatronByBookStatusId(bookStatus1.getBookStatusId());
+						bookStatus1.setAssignedDate(globalDate);
 						System.out.println("Sending email to user");
 						SimpleMailMessage message = new SimpleMailMessage();
 						message.setTo(email);

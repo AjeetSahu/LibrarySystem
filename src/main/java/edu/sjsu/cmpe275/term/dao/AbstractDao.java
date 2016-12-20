@@ -108,7 +108,7 @@ public abstract class AbstractDao<PK extends Serializable, T> {
 		try{
 			Query getListOfIssuedBook = entityManager.createNativeQuery("Select bookstatusid from book_status"
 					+ " where bookstatusid IN (Select book_status_id from patron_bookstatus "
-					+ "where email='"+id.toString()+"') and requeststatus = 'issued'", BookStatus.class);
+					+ "where email='"+id.toString()+"') and requeststatus = 'issued'");
 			return getListOfIssuedBook.getResultList();
 		}catch(Exception e){
 			System.out.println("Exception "+ e);
