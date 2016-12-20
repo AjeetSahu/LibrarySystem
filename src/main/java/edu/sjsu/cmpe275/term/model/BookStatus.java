@@ -48,7 +48,7 @@ public class BookStatus implements Serializable {
 	private String requestStatus;
 	@Column(name = "ASSIGNEDDATE")
 	@Temporal(TemporalType.TIMESTAMP)
-	private Date assignedDate;
+	private Date assigneddate;
 	@Column(name = "RENEW", nullable= false, columnDefinition= "int default 0")
 	private int renew;
 	
@@ -84,14 +84,14 @@ public class BookStatus implements Serializable {
 	 * @param librarians
 	 */
 	public BookStatus(String bookStatusId, Date issueDate, Date dueDate, Date returnDate, Date requestDate, int renew,
-			String requestStatus, Date assignedDate, Book book, List<Patron> patrons, List<Librarian> librarians) {
+			String requestStatus, Date assigneddate, Book book, List<Patron> patrons, List<Librarian> librarians) {
 		super();
 		this.bookStatusId = bookStatusId;
 		this.issueDate = issueDate;
 		this.dueDate = dueDate;
 		this.returnDate = returnDate;
 		this.requestDate = requestDate;
-		this.assignedDate = assignedDate;
+		this.assigneddate = assigneddate;
 		this.requestStatus = requestStatus;
 		this.book = book;
 		this.patrons = patrons;
@@ -137,14 +137,14 @@ public class BookStatus implements Serializable {
 	 * @return
 	 */
 	public Date getAssignedDate() {
-		return assignedDate;
+		return assigneddate;
 	}
 	/**
 	 * 
 	 * @param assignedDate
 	 */
-	public void setAssignedDate(Date assignedDate) {
-		this.assignedDate = assignedDate;
+	public void setAssignedDate(Date assigneddate) {
+		this.assigneddate = assigneddate;
 	}
 	/**
 	 * 
